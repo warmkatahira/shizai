@@ -1,6 +1,6 @@
 <style>
     body { font-family: ipaexg, sans-serif; font-size: 10pt; color: #000; }
-    h1 { font-size: 18pt; text-align: center; margin: 0 0 10px; letter-spacing: 6pt; }
+    h1 { font-size: 18pt; text-align: center; margin: 0 0 24px; letter-spacing: 6pt; }
 
     table { border-collapse: collapse; width: 100%; }
     .header td { vertical-align: top; padding: 0; }
@@ -10,7 +10,7 @@
 
     .supplier-name { font-size: 13pt; font-weight: bold; padding-bottom: 4px; }
 
-    .items { margin-top: 14px; }
+    .items { margin-top: 24px; }
     .items th, .items td { border: 0.6pt solid #000; padding: 4px 5px; }
     .items th { background: #eee; font-weight: normal; text-align: center; }
     .items td { vertical-align: middle; }
@@ -23,7 +23,10 @@
     .box { border: 0.6pt solid #000; padding: 6px 8px; }
     .box td { padding: 1px 0; }
 
-    .note { min-height: 50px; }
+    /* 備考欄。mPDF は div の min-height を効かせないので、
+       テーブルセルの height で「空のときの高さ」を確保する */
+    .note { width: 100%; }
+    .note td { border: 0.6pt solid #000; padding: 8px; height: 70px; vertical-align: top; }
 </style>
 
 <h1>発 注 書</h1>
@@ -89,15 +92,24 @@
 <div class="box">
     <table>
         <tr>
-            <td style="width: 26%; font-weight: bold;">{{ $company['name'] }}　{{ $office->name }}</td>
-            <td style="width: 40%;">
-                @if ($office->postal_code)〒{{ $office->postal_code }}　@endif{{ $office->address }}
+            <td>
+                <span style="font-weight: bold;">{{ $company['name'] }}　{{ $office->name }}</span>
+                　@if ($office->postal_code)〒{{ $office->postal_code }}　@endif{{ $office->address }}
             </td>
-            <td>TEL：{{ $office->tel ?: '—' }}　　FAX：{{ $office->fax ?: '—' }}</td>
+        </tr>
+        {{-- 連絡先は会社名・住所の一段下に、枠内で右寄せ --}}
+        <tr>
+            <td style="text-align: right; padding-top: 3px;">
+                TEL：{{ $office->tel ?: '—' }}　　FAX：{{ $office->fax ?: '—' }}
+            </td>
         </tr>
     </table>
 </div>
 
 {{-- 備考欄：業者への連絡事項。mPDF は white-space:pre-wrap を解さないので改行は <br> にする --}}
 <div class="section-title">【備考欄】</div>
-<div class="box note">{!! nl2br(e($order->supplier_note)) !!}</div>
+<table class="note">
+    <tr>
+        <td>{!! nl2br(e($order->supplier_note)) !!}</td>
+    </tr>
+</table>
