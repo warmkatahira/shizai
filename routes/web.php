@@ -41,8 +41,9 @@ Route::middleware('auth')->group(function () {
     });
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
 
-    // 発注書PDF（発注済のみ・総務/管理者）。1申請＝1業者なので1申請1枚
-    Route::get('/orders/{order}/purchase-order', [PurchaseOrderController::class, 'show'])
+    // 発注書PDF（発注待ち・発注済のみ・総務/管理者）。1申請＝1業者なので1申請1枚。
+    // 出力すると「発注済」に進む（＝実際に業者へ発注した）ので、GETではなくPOSTで受ける
+    Route::post('/orders/{order}/purchase-order', [PurchaseOrderController::class, 'download'])
         ->name('orders.purchaseOrder');
 
     // ----- 資材一覧（閲覧のみ。全ログインユーザー。編集は /admin/materials で管理者のみ） -----
@@ -58,12 +59,19 @@ Route::middleware('auth')->group(function () {
     Route::post('/orders/{order}/special-approve', [OrderApprovalController::class, 'specialApprove'])->name('orders.specialApprove');
     Route::post('/orders/{order}/reject', [OrderApprovalController::class, 'reject'])->name('orders.reject');
 
-    // ----- 管理者のみ：マスタ管理 -----
-    Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
-        Route::resource('offices', OfficeController::class)->except('show');
-        Route::resource('users', UserController::class)->except('show');
-        Route::resource('suppliers', SupplierController::class)->except('show');
-        Route::resource('categories', CategoryController::class)->except('show');
-        Route::resource('materials', MaterialController::class)->except('show');
+    // ----- マスタ管理 -----
+    Route::prefix('admin')->name('admin.')->group(function () {
+        // 管理者・総務が編集できる
+        Route::middleware('role:admin,general_affairs')->group(function () {
+            Route::resource('offices', OfficeController::class)->except('show');
+            Route::resource('suppliers', SupplierController::class)->except('show');
+            Route::resource('categories', CategoryController::class)->except('show');
+            Route::resource('materials', MaterialController::class)->except('show');
+        });
+
+        // ユーザー管理は権限の付与・パスワード変更ができるので管理者のみ
+        Route::middleware('role:admin')->group(function () {
+            Route::resource('users', UserController::class)->except('show');
+        });
     });
 });

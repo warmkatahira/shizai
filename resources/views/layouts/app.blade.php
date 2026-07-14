@@ -20,13 +20,16 @@
                     <nav class="hidden sm:flex items-center gap-4 text-sm text-gray-600">
                         <a href="{{ route('orders.index') }}" class="hover:text-accent-strong">発注申請</a>
                         <a href="{{ route('reports.index') }}" class="hover:text-accent-strong">集計</a>
-                        @unless (auth()->user()->isAdmin())
-                            {{-- 管理者はマスタ管理の「資材」から見られるので、こちらは出さない --}}
+                        @unless (auth()->user()->canManageMasters())
+                            {{-- マスタを編集できる人はマスタ管理の「資材」から見られるので、こちらは出さない --}}
                             <a href="{{ route('materials.index') }}" class="hover:text-accent-strong">資材一覧</a>
                         @endunless
-                        @if (auth()->user()->isAdmin())
+                        @if (auth()->user()->canManageMasters())
                             <a href="{{ route('admin.offices.index') }}" class="hover:text-accent-strong">営業所</a>
-                            <a href="{{ route('admin.users.index') }}" class="hover:text-accent-strong">ユーザー</a>
+                            @if (auth()->user()->isAdmin())
+                                {{-- ユーザー管理は権限の付与ができるので管理者のみ --}}
+                                <a href="{{ route('admin.users.index') }}" class="hover:text-accent-strong">ユーザー</a>
+                            @endif
                             <a href="{{ route('admin.suppliers.index') }}" class="hover:text-accent-strong">業者</a>
                             <a href="{{ route('admin.categories.index') }}" class="hover:text-accent-strong">カテゴリ</a>
                             <a href="{{ route('admin.materials.index') }}" class="hover:text-accent-strong">資材</a>
@@ -61,5 +64,20 @@
             &copy; {{ date('Y') }} 資材発注システム
         </footer>
     </div>
+
+    {{--
+        data-auto-submit を付けた検索フォームは、条件を変えた時点で自動的に検索する。
+        change イベントを使うので、テキスト入力は「Enter」か「フォーカスを外したとき」だけ発火し、
+        1文字ごとにページが再読み込みされることはない。
+        JSが動かない場合は、フォーム内の検索ボタンがそのまま使える。
+    --}}
+    <script>
+        document.querySelectorAll('form[data-auto-submit]').forEach((form) => {
+            form.addEventListener('change', () => {
+                form.setAttribute('aria-busy', 'true');
+                form.submit();
+            });
+        });
+    </script>
 </body>
 </html>

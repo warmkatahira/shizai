@@ -17,7 +17,8 @@
     </div>
 
     {{-- 検索・絞り込み --}}
-    <form method="GET" action="{{ route('orders.index') }}" class="bg-white shadow rounded-lg p-4 mb-6">
+    <form method="GET" action="{{ route('orders.index') }}" data-auto-submit
+          class="bg-white shadow rounded-lg p-4 mb-6">
         <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             <div>
                 <label class="block text-xs text-gray-500 mb-1">ステータス</label>

@@ -34,16 +34,20 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
 
 ## 発注の承認フロー（Order.status）
 ```
-一般ユーザーの申請: pending_manager(所長承認待ち) → [所長承認] → pending_affairs(総務承認待ち) → [総務発注] → ordered(発注済)
+一般ユーザーの申請: pending_manager(所長承認待ち) → [所長承認] → pending_affairs(総務承認待ち)
+                   → [総務承認] → pending_order(発注待ち) → [発注書を作成] → ordered(発注済)
 所長本人の申請:     pending_affairs から開始（所長承認をスキップ）
-特例承認:          pending_manager → [総務が理由必須で直接承認] → ordered（is_special_approval=true）
-却下:              各段階で reject（理由必須）→ rejected
+特例承認:          pending_manager → [総務が理由必須で直接承認] → pending_order（is_special_approval=true）
+却下:              承認待ちの各段階で reject（理由必須）→ rejected
 ```
+**「発注済」にするのは総務の承認ではなく発注書の作成**（＝実際に業者へ発注したタイミング）。
+発注書を出すと `ordered_at`（発注日）と `ordered_by`（出した人）が入る。2回目以降は再発行で、状態は変わらない。
 - 承認・却下ロジックは `OrderApprovalController`、通知先の振り分けは `App\Support\OrderNotifier`。
 - メール通知（`OrderNotifier`）：
   - 申請時 → 次の承認者へ（一般の申請＝その営業所の所長 / 所長の申請＝総務全員）
   - 所長承認時 → 総務全員へ
-  - 発注確定・却下時 → **その営業所の所長へ必ず送り、申請者にメールがあれば申請者にも送る**
+  - 総務承認時・却下時 → **その営業所の所長へ必ず送り、申請者にメールがあれば申請者にも送る**
+    （発注書の作成は総務の事務作業なので通知しない）
     （申請用アカウントはメールを持たないため、所長を必ず宛先に含める）
   - メールが無いユーザーは宛先から除外する（`OrderNotifier::withEmail`）。
 
@@ -83,25 +87,28 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
   - **発注者の氏名は手入力**（`orders.requester_name`）。営業所のアカウントは共通で使い回すため、ログインアカウント（`requested_by`）とは別に持つ
   - 納入希望日（`desired_delivery_date`）は発注単位で1つ。全品目に適用され、発注書の「希望納期」列に印字される
 - `/orders/{order}` 詳細＋承認/却下アクション＋**発注書PDF**のボタン
-- `/orders/{order}/purchase-order` 発注書PDF（`PurchaseOrderController`）
+- `/orders/{order}/purchase-order` 発注書PDF（`PurchaseOrderController`。**POST**）
   - **1申請＝1業者なので、発注書は1申請1枚**
-  - 出せるのは**発注済（ordered）のみ・総務/管理者のみ**。担当者名はボタンを押した本人の氏名が入る
-  - 発注NO＝`orders.id`（`Order::purchaseOrderNo()`）／発注日＝`reviewed_at`／自社の連絡先＝`config/company.php`（本社）
+  - 出せるのは**発注待ち・発注済のみ・総務/管理者のみ**。担当者名はボタンを押した本人の氏名が入る
+  - **出力するとステータスが「発注済」に進む**ため、リンク（GET）ではなくボタン（POST）にしている
+    （GETだとブラウザの先読みや誤クリックで発注済になってしまう）
+  - 発注NO＝`orders.id`（`Order::purchaseOrderNo()`）／発注日＝`ordered_at`／自社の連絡先＝`config/company.php`（本社）
   - 納入先＝発注元の営業所。備考欄＝`orders.supplier_note`（**業者向け**。社内メモの `orders.note` は印字しない）
   - PDFは **mPDF**。日本語フォントは `storage/fonts/ipaexg.ttf`（IPAexゴシック / IPAフォントライセンス）をリポジトリに同梱し、サブセット埋め込みしている
 - `/reports` 発注集計（`ReportController`）
   - 集計軸をプルダウンで切替：カテゴリ別／業者別／営業所別／資材別
-  - 絞り込み：期間（**発注日** = `orders.reviewed_at`）／営業所／カテゴリ／業者。CSVダウンロード付き
+  - 絞り込み：期間（**発注日** = `orders.ordered_at` ＝ 発注書を出した日）／営業所／カテゴリ／業者。CSVダウンロード付き
   - **期間の初期値は当月**（全期間スキャンを既定にしない）。日付を空にして送信すれば全期間。
     日付パラメータが1つも無いときだけ当月を入れる（`applyDefaultPeriod`）ので、フォーム送信時は空欄が尊重される
-  - `orders` に `(status, reviewed_at)` の複合インデックスを張っている（集計の絞り込みがこの2列のため）
+  - `orders` に `(status, ordered_at)` の複合インデックスを張っている（集計の絞り込みがこの2列のため）
   - **対象は `ordered`（発注済）のみ**。承認待ち・却下は実績ではないので含めない
   - グループ化は明細のスナップショット列（`category_name` など）で行う。マスタを改名・削除しても過去の集計は動かない
   - 合計の「発注件数」は `COUNT(DISTINCT orders.id)`。1件の発注が複数カテゴリにまたがると各行で数えられるため、**行の合算では出せない**
 - `/materials` 資材一覧（**閲覧のみ・全ログインユーザー**。`MaterialCatalogController`）
   - 営業所・総務が「どの業者に何がいくらであるか」を確認するための読み取り専用。編集は管理者のみ
   - ナビには管理者以外に表示（管理者はマスタ管理の「資材」から見られるため）
-- `/admin/{offices,users,suppliers,categories,materials}` マスタ管理（管理者のみ）
+- `/admin/{offices,suppliers,categories,materials}` マスタ管理（**管理者と総務**）
+- `/admin/users` ユーザー管理（**管理者のみ**。権限の付与・パスワード変更ができるため）
 - CSVは `OrderController@export` / `ReportController@export`（BOM付きUTF-8、Excel対応）
 
 ## テスト用アカウント（**ログインIDで**ログイン。パスワードは管理者以外すべて `password`）

@@ -24,6 +24,8 @@ class OrderController extends Controller
      */
     public function index(Request $request): View
     {
+        $this->applyDefaultFilters($request);
+
         $orders = $this->filteredOrders($request)
             ->with(['office', 'supplier', 'requester'])
             ->withCount('items')
@@ -39,6 +41,8 @@ class OrderController extends Controller
     /** 検索結果をCSVでダウンロード（明細1行ずつ、Excel対応のBOM付きUTF-8） */
     public function export(Request $request): StreamedResponse
     {
+        $this->applyDefaultFilters($request);
+
         $orders = $this->filteredOrders($request)
             ->with(['office', 'supplier', 'requester', 'items'])
             ->latest()
@@ -78,6 +82,29 @@ class OrderController extends Controller
 
             fclose($out);
         }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
+    /**
+     * 検索条件の初期値。メニューから開いた初回表示のときだけ効く。
+     *
+     * フォームを送信すると各パラメータは空でも必ず送られてくるので、
+     * `has()` で「初回表示かどうか」を判定できる。
+     * つまり条件を空にして検索すれば、全期間・全ステータスも見られる。
+     */
+    private function applyDefaultFilters(Request $request): void
+    {
+        // 期間（申請日）の初期値は当月。全期間を既定にすると、データが増えたとき一覧が重くなる
+        if (! $request->has('date_from') && ! $request->has('date_to')) {
+            $request->merge([
+                'date_from' => now()->startOfMonth()->toDateString(),
+                'date_to' => now()->endOfMonth()->toDateString(),
+            ]);
+        }
+
+        // 総務は「自分が承認すべき申請」から見たいので、ステータスの初期値を総務承認待ちにする
+        if (! $request->has('status') && $request->user()->isGeneralAffairs()) {
+            $request->merge(['status' => Order::STATUS_PENDING_AFFAIRS]);
+        }
     }
 
     /**

@@ -67,6 +67,15 @@ class User extends Authenticatable
         return $this->role === self::ROLE_SALES;
     }
 
+    /**
+     * マスタ（営業所・業者・カテゴリ・資材）を編集できるか。
+     * ユーザー管理だけは権限の付与ができるので管理者のみ（isAdmin を使う）。
+     */
+    public function canManageMasters(): bool
+    {
+        return $this->isAdmin() || $this->isGeneralAffairs();
+    }
+
     /** 所長かどうか（営業所ユーザーで所長フラグが立っている） */
     public function isManager(): bool
     {

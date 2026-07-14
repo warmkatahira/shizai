@@ -16,7 +16,8 @@
     </div>
 
     {{-- 集計条件 --}}
-    <form method="GET" action="{{ route('reports.index') }}" class="bg-white shadow rounded-lg p-4 mb-6">
+    <form method="GET" action="{{ route('reports.index') }}" data-auto-submit
+          class="bg-white shadow rounded-lg p-4 mb-6">
         <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             <div>
                 <label class="block text-xs text-gray-500 mb-1">集計軸</label>
@@ -145,7 +146,7 @@
     </div>
 
     <p class="text-xs text-gray-400 mt-3">
-        ※ 集計対象は「発注済」の申請のみ。期間は発注日（総務が発注を確定した日）で絞り込みます。
+        ※ 集計対象は「発注済」の申請のみ。期間は発注日（発注書を出した日）で絞り込みます。
         金額は申請時点の参考単価 × 数量です。
     </p>
 @endsection

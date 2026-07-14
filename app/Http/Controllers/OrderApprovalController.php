@@ -37,7 +37,10 @@ class OrderApprovalController extends Controller
         return back()->with('status', '承認しました。総務へ申請が回りました。');
     }
 
-    /** 総務による発注確定：総務承認待ち → 発注済 */
+    /**
+     * 総務による承認：総務承認待ち → 発注待ち
+     * 実際に業者へ発注する（＝発注書を出す）と「発注済」になる。
+     */
     public function affairsApprove(Request $request, Order $order): RedirectResponse
     {
         $this->ensureGeneralAffairs($request);
@@ -45,7 +48,7 @@ class OrderApprovalController extends Controller
         abort_unless($order->isPendingAffairs(), 409, 'この申請は総務承認待ちではありません。');
 
         $order->update([
-            'status' => Order::STATUS_ORDERED,
+            'status' => Order::STATUS_PENDING_ORDER,
             'reviewed_by' => $request->user()->id,
             'reviewed_at' => now(),
         ]);
@@ -54,10 +57,10 @@ class OrderApprovalController extends Controller
         $order->load(['requester', 'items']);
         OrderNotifier::notifyApplicant($order);
 
-        return back()->with('status', '発注を確定しました。');
+        return back()->with('status', '承認しました。発注書を作成すると「発注済」になります。');
     }
 
-    /** 総務による特例承認：所長承認待ち → 発注済（所長を飛ばす。理由必須） */
+    /** 総務による特例承認：所長承認待ち → 発注待ち（所長を飛ばす。理由必須） */
     public function specialApprove(Request $request, Order $order): RedirectResponse
     {
         $this->ensureGeneralAffairs($request);
@@ -69,7 +72,7 @@ class OrderApprovalController extends Controller
         ], [], ['special_reason' => '特例承認の理由']);
 
         $order->update([
-            'status' => Order::STATUS_ORDERED,
+            'status' => Order::STATUS_PENDING_ORDER,
             'reviewed_by' => $request->user()->id,
             'reviewed_at' => now(),
             'is_special_approval' => true,
@@ -80,7 +83,7 @@ class OrderApprovalController extends Controller
         $order->load(['requester', 'items']);
         OrderNotifier::notifyApplicant($order);
 
-        return back()->with('status', '特例承認で発注を確定しました。');
+        return back()->with('status', '特例承認しました。発注書を作成すると「発注済」になります。');
     }
 
     /** 却下（所長・総務のいずれか。理由必須） */

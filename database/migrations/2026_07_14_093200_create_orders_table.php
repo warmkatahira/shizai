@@ -11,6 +11,9 @@ return new class extends Migration
      * status: pending_manager=所長承認待ち / pending_affairs=総務承認待ち / ordered=発注済 / rejected=却下
      *
      * 1申請＝1業者。業者を選び、その業者の資材だけを申請する（発注書も1申請1枚）。
+     *
+     * 総務が承認すると「発注待ち」になり、発注書をダウンロードした時点で「発注済」になる
+     * （＝実際に業者へ発注したタイミングでステータスが進む）。
      */
     public function up(): void
     {
@@ -21,7 +24,8 @@ return new class extends Migration
             $table->foreignId('requested_by')->constrained('users')->comment('申請したログインアカウント');
             // 営業所のアカウントは共通で使い回すため、実際の申請者の氏名を別に持つ
             $table->string('requester_name')->nullable()->comment('発注者の氏名（手入力）');
-            $table->string('status')->default('pending_manager')->comment('状態: pending_manager/pending_affairs/ordered/rejected');
+            $table->string('status')->default('pending_manager')
+                ->comment('状態: pending_manager/pending_affairs/pending_order/ordered/rejected');
 
             // 所長承認
             $table->foreignId('manager_approved_by')->nullable()->constrained('users')->nullOnDelete()->comment('所長承認者');
@@ -33,7 +37,11 @@ return new class extends Migration
 
             // 総務の確認・発注
             $table->foreignId('reviewed_by')->nullable()->constrained('users')->nullOnDelete()->comment('総務の確認者');
-            $table->timestamp('reviewed_at')->nullable()->comment('確認日時');
+            $table->timestamp('reviewed_at')->nullable()->comment('総務が承認した日時');
+
+            // 発注書を出した時点で「発注済」になる（＝実際に業者へ発注した日）
+            $table->foreignId('ordered_by')->nullable()->constrained('users')->nullOnDelete()->comment('発注書を出した人');
+            $table->timestamp('ordered_at')->nullable()->comment('発注日（発注書を出した日）');
 
             // 総務による特例承認（所長承認を飛ばした場合）
             $table->boolean('is_special_approval')->default(false)->comment('総務の特例承認フラグ');
@@ -46,7 +54,7 @@ return new class extends Migration
             $table->timestamps();
 
             // 集計（/reports）は「発注済 × 発注日の期間」で絞るので、その複合インデックス
-            $table->index(['status', 'reviewed_at']);
+            $table->index(['status', 'ordered_at']);
         });
     }
 

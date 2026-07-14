@@ -19,7 +19,7 @@
     @endif
 
     {{-- 特例承認の表示 --}}
-    @if ($order->isOrdered() && $order->is_special_approval)
+    @if ($order->is_special_approval && ! $order->isRejected())
         <div class="mb-6 rounded-md bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-800">
             <span class="font-medium">総務による特例承認：</span>{{ $order->special_reason }}
         </div>
@@ -61,11 +61,22 @@
                 </dd>
             </div>
             <div>
-                <dt class="text-gray-500">総務確認</dt>
+                <dt class="text-gray-500">総務承認</dt>
                 <dd class="font-medium">
                     @if ($order->reviewer)
                         {{ $order->reviewer->name }}
                         <span class="text-gray-400 text-xs">{{ $order->reviewed_at?->format('m/d H:i') }}</span>
+                    @else
+                        —
+                    @endif
+                </dd>
+            </div>
+            <div>
+                <dt class="text-gray-500">発注（発注書の作成）</dt>
+                <dd class="font-medium">
+                    @if ($order->orderedBy)
+                        {{ $order->orderedBy->name }}
+                        <span class="text-gray-400 text-xs">{{ $order->ordered_at?->format('m/d H:i') }}</span>
                     @else
                         —
                     @endif
@@ -97,16 +108,32 @@
         @endif
     </div>
 
-    {{-- 発注書PDF（発注済のみ・総務/管理者）。1申請＝1業者なので1枚 --}}
-    @if ($order->isOrdered() && (auth()->user()->isGeneralAffairs() || auth()->user()->isAdmin()))
+    {{-- 発注書PDF（発注待ち・発注済のみ・総務/管理者）。出すと「発注済」に進むのでPOST --}}
+    @if (($order->isPendingOrder() || $order->isOrdered()) && (auth()->user()->isGeneralAffairs() || auth()->user()->isAdmin()))
         <div class="bg-white shadow rounded-lg p-6 mb-6 border-l-4 border-emerald-400">
             <h2 class="font-semibold mb-1">発注書</h2>
-            <p class="text-xs text-gray-500 mb-4">担当者名には、いま操作しているあなたの氏名（{{ auth()->user()->name }}）が入ります。</p>
+            <p class="text-xs text-gray-500 mb-4">
+                @if ($order->isPendingOrder())
+                    <span class="text-emerald-700 font-medium">発注書を作成すると、この申請は「発注済」になります。</span>
+                    担当者名には、いま操作しているあなたの氏名（{{ auth()->user()->name }}）が入ります。
+                @else
+                    発注済です（{{ $order->orderedBy?->name }} / {{ $order->ordered_at?->format('Y/m/d H:i') }}）。同じ内容で再発行できます。
+                @endif
+            </p>
             @if ($order->supplier)
-                <a href="{{ route('orders.purchaseOrder', $order) }}"
-                   class="inline-block bg-emerald-600 hover:bg-emerald-700 text-white text-sm px-4 py-2 rounded-md">
-                    発注書をPDFでダウンロード（{{ $order->supplier->name }}）
-                </a>
+                <form method="POST" action="{{ route('orders.purchaseOrder', $order) }}"
+                      @if ($order->isPendingOrder())
+                          onsubmit="return confirm('発注書を作成します。この申請は「発注済」になります。よろしいですか？')"
+                      @endif>
+                    @csrf
+                    <button class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm px-4 py-2 rounded-md">
+                        @if ($order->isPendingOrder())
+                            発注書を作成して発注する（{{ $order->supplier->name }}）
+                        @else
+                            発注書を再ダウンロード（{{ $order->supplier->name }}）
+                        @endif
+                    </button>
+                </form>
             @else
                 <p class="text-sm text-gray-400">業者が設定されていないため、発注書を作成できません。</p>
             @endif
@@ -132,13 +159,13 @@
                     </form>
                 @endif
 
-                {{-- 総務による発注確定 --}}
+                {{-- 総務による承認（＝発注確定） --}}
                 @if ($actions['affairsApprove'])
                     <form method="POST" action="{{ route('orders.affairsApprove', $order) }}"
-                          onsubmit="return confirm('この申請を発注確定しますか？')">
+                          onsubmit="return confirm('この申請を承認しますか？承認すると「発注待ち」になり、発注書を作成できるようになります。')">
                         @csrf
                         <button class="bg-green-600 hover:bg-green-700 text-white text-sm px-5 py-2 rounded-md">
-                            発注する（確定）
+                            承認する
                         </button>
                     </form>
                 @endif
@@ -148,17 +175,17 @@
             @if ($actions['specialApprove'])
                 <div class="mt-5 pt-5 border-t border-gray-100">
                     <p class="text-sm text-gray-600 mb-2">
-                        <span class="font-medium text-amber-700">特例承認</span>：所長が不在などの場合、所長承認を飛ばして総務が直接発注できます。
+                        <span class="font-medium text-amber-700">特例承認</span>：所長が不在などの場合、所長承認を飛ばして総務が直接承認できます（「発注待ち」になります）。
                     </p>
                     <form method="POST" action="{{ route('orders.specialApprove', $order) }}"
-                          onsubmit="return confirm('所長承認を飛ばして特例で発注確定しますか？')">
+                          onsubmit="return confirm('所長承認を飛ばして特例で承認しますか？「発注待ち」になります。')">
                         @csrf
                         <textarea name="special_reason" rows="2" required
                                   class="w-full max-w-xl rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none"
                                   placeholder="特例承認の理由（必須）例：所長不在のため総務判断で発注">{{ old('special_reason') }}</textarea>
                         <div class="mt-2">
                             <button class="bg-amber-600 hover:bg-amber-700 text-white text-sm px-5 py-2 rounded-md">
-                                特例承認して発注する
+                                特例承認する
                             </button>
                         </div>
                     </form>

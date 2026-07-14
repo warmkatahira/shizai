@@ -44,7 +44,7 @@
                 </tr>
                 <tr>
                     <td class="label">発注日</td>
-                    <td>{{ $order->reviewed_at?->format('Y/m/d') }}</td>
+                    <td>{{ ($order->ordered_at ?? now())->format('Y/m/d') }}</td>
                 </tr>
             </table>
             <div style="margin-top: 6px; font-weight: bold;">{{ $company['name'] }}</div>

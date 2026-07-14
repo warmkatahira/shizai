@@ -14,7 +14,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'office_id', 'supplier_id', 'requested_by', 'requester_name', 'status',
     'note', 'supplier_note', 'desired_delivery_date',
     'manager_approved_by', 'manager_approved_at',
-    'reviewed_by', 'reviewed_at', 'is_special_approval', 'special_reason',
+    'reviewed_by', 'reviewed_at', 'ordered_by', 'ordered_at',
+    'is_special_approval', 'special_reason',
     'reject_reason', 'rejected_by',
 ])]
 class Order extends Model
@@ -22,13 +23,15 @@ class Order extends Model
     /** ステータス定数 */
     public const STATUS_PENDING_MANAGER = 'pending_manager'; // 所長承認待ち
     public const STATUS_PENDING_AFFAIRS = 'pending_affairs'; // 総務承認待ち
-    public const STATUS_ORDERED = 'ordered';                 // 発注済
+    public const STATUS_PENDING_ORDER = 'pending_order';     // 発注待ち（総務承認済み。発注書を出せば発注済になる）
+    public const STATUS_ORDERED = 'ordered';                 // 発注済（発注書を出した）
     public const STATUS_REJECTED = 'rejected';               // 却下
 
     /** ステータスのラベル */
     public const STATUS_LABELS = [
         self::STATUS_PENDING_MANAGER => '所長承認待ち',
         self::STATUS_PENDING_AFFAIRS => '総務承認待ち',
+        self::STATUS_PENDING_ORDER => '発注待ち',
         self::STATUS_ORDERED => '発注済',
         self::STATUS_REJECTED => '却下',
     ];
@@ -38,6 +41,7 @@ class Order extends Model
         return [
             'manager_approved_at' => 'datetime',
             'reviewed_at' => 'datetime',
+            'ordered_at' => 'datetime',
             'desired_delivery_date' => 'date',
             'is_special_approval' => 'boolean',
         ];
@@ -79,6 +83,12 @@ class Order extends Model
         return $this->belongsTo(User::class, 'reviewed_by');
     }
 
+    /** 発注書を出した人（＝実際に業者へ発注した人） */
+    public function orderedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'ordered_by');
+    }
+
     /** 却下者 */
     public function rejectedBy(): BelongsTo
     {
@@ -105,6 +115,11 @@ class Order extends Model
     public function isPendingAffairs(): bool
     {
         return $this->status === self::STATUS_PENDING_AFFAIRS;
+    }
+
+    public function isPendingOrder(): bool
+    {
+        return $this->status === self::STATUS_PENDING_ORDER;
     }
 
     public function isOrdered(): bool

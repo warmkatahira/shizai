@@ -15,8 +15,8 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * 発注実績の集計。カテゴリ別・業者別・営業所別・資材別に切り替えて集計する。
- * 集計対象は「発注済」の申請のみ（承認待ち・却下は実績ではないため含めない）。
- * 期間は発注日（総務が発注確定した日 = reviewed_at）で絞る。
+ * 集計対象は「発注済」の申請のみ（承認待ち・発注待ち・却下は実績ではないため含めない）。
+ * 期間は発注日（発注書を出した日 = ordered_at）で絞る。
  */
 class ReportController extends Controller
 {
@@ -168,11 +168,11 @@ class ReportController extends Controller
                 fn ($q) => $q->where('order_items.category_id', $request->input('category_id')))
             ->when($request->filled('supplier_id'),
                 fn ($q) => $q->where('order_items.supplier_id', $request->input('supplier_id')))
-            // 期間は発注日（総務が発注確定した日）で絞る
+            // 期間は発注日（発注書を出した日）で絞る
             ->when($request->filled('date_from'),
-                fn ($q) => $q->whereDate('orders.reviewed_at', '>=', $request->input('date_from')))
+                fn ($q) => $q->whereDate('orders.ordered_at', '>=', $request->input('date_from')))
             ->when($request->filled('date_to'),
-                fn ($q) => $q->whereDate('orders.reviewed_at', '<=', $request->input('date_to')));
+                fn ($q) => $q->whereDate('orders.ordered_at', '<=', $request->input('date_to')));
     }
 
     /** 絞り込みフォーム用の選択肢 */

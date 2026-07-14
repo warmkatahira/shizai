@@ -25,7 +25,7 @@ use Illuminate\Database\Seeder;
 class OrderSeeder extends Seeder
 {
     /**
-     * [営業所コード, 業者名, 発注者の氏名, ステータス, 発注日からの日数(発注済/却下のみ), 業者への連絡事項]
+     * [営業所コード, 業者名, 発注者の氏名, ステータス, 何日前か(発注済/却下のみ), 業者への連絡事項]
      * 明細はその業者の資材から自動で選ぶ。
      */
     private const ORDERS = [
@@ -36,6 +36,7 @@ class OrderSeeder extends Seeder
         ['LS', '共立', '大森 幸子', Order::STATUS_ORDERED, 6, '名入れの版は前回と同じもので。'],
         ['LP', 'フレックス', '金子 直樹', Order::STATUS_ORDERED, 3, null],
         ['HR', 'セッツカートン', '中村 亮', Order::STATUS_PENDING_AFFAIRS, null, null],
+        ['LP', 'アイセカンド', '金子 直樹', Order::STATUS_PENDING_ORDER, null, null],
         ['2nd', 'セッツカートン', '佐藤 美咲', Order::STATUS_PENDING_MANAGER, null, null],
         ['IMP', 'アイセカンド', '高橋 一郎', Order::STATUS_PENDING_MANAGER, null, '午前中の納品でお願いします。'],
         ['LC', 'フレックス', '小林 慎', Order::STATUS_REJECTED, 5, null],
@@ -62,7 +63,9 @@ class OrderSeeder extends Seeder
                 ->take($i % 2 === 0 ? 3 : 2)
                 ->get();
 
-            $reviewedAt = $daysAgo === null ? null : now()->subDays($daysAgo);
+            // 発注日（発注書を出した日）。総務の承認はその前日という想定
+            $orderedAt = $daysAgo === null ? null : now()->subDays($daysAgo);
+            $reviewedAt = $orderedAt?->copy()->subDay();
 
             $order = Order::create([
                 'office_id' => $office->id,
@@ -71,15 +74,19 @@ class OrderSeeder extends Seeder
                 'requester_name' => $requesterName,
                 'status' => $status,
                 'supplier_note' => $supplierNote,
-                'desired_delivery_date' => ($reviewedAt ?? now())->copy()->addDays(7),
+                'desired_delivery_date' => ($orderedAt ?? now())->copy()->addDays(7),
 
                 // 所長承認待ち以外は、所長の承認が済んでいる
                 'manager_approved_by' => $status === Order::STATUS_PENDING_MANAGER ? null : $manager->id,
                 'manager_approved_at' => $status === Order::STATUS_PENDING_MANAGER ? null : ($reviewedAt ?? now())->copy()->subDay(),
 
-                // 発注済のみ総務が確定している
-                'reviewed_by' => $status === Order::STATUS_ORDERED ? $reviewer->id : null,
-                'reviewed_at' => $status === Order::STATUS_ORDERED ? $reviewedAt : null,
+                // 発注待ち・発注済は総務の承認が済んでいる
+                'reviewed_by' => in_array($status, [Order::STATUS_PENDING_ORDER, Order::STATUS_ORDERED], true) ? $reviewer->id : null,
+                'reviewed_at' => $status === Order::STATUS_ORDERED ? $reviewedAt : ($status === Order::STATUS_PENDING_ORDER ? now()->subDay() : null),
+
+                // 発注済は発注書を出している（＝実際に業者へ発注した）
+                'ordered_by' => $status === Order::STATUS_ORDERED ? $reviewer->id : null,
+                'ordered_at' => $status === Order::STATUS_ORDERED ? $orderedAt : null,
 
                 // 却下は総務が理由付きで却下したことにする
                 'rejected_by' => $status === Order::STATUS_REJECTED ? $reviewer->id : null,
