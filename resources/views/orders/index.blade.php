@@ -119,7 +119,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="8" class="px-4 py-8 text-center text-gray-400">発注申請がまだありません。</td></tr>
+                    <tr><td colspan="8" class="px-4 py-8 text-center text-gray-400">発注申請がありません。</td></tr>
                 @endforelse
             </tbody>
         </table>

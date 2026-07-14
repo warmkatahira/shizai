@@ -33,8 +33,11 @@ class OrderController extends Controller
         $this->applyDefaultFilters($request);
 
         // 詳細から「一覧に戻る」で同じ検索結果に戻れるよう、検索条件を覚えておく。
-        // applyDefaultFilters で入れた既定値も含まれるので、初回表示の状態も復元できる。
-        $request->session()->put(self::LAST_SEARCH_KEY, $request->query());
+        //
+        // 配列ではなくクエリ文字列のまま持つ。配列だと「ステータス＝すべて（空）」が
+        // null に変換されてURL組み立て時に消え、条件なし＝初回表示とみなされて
+        // 既定値（当月・総務承認待ち）が再適用されてしまうため。
+        $request->session()->put(self::LAST_SEARCH_KEY, $request->getQueryString());
 
         $orders = $this->filteredOrders($request)
             ->with(['office', 'supplier', 'requester'])
@@ -340,7 +343,8 @@ class OrderController extends Controller
         ];
 
         // 「一覧に戻る」は直前の検索結果へ戻す（メールのリンクなどから直接来た場合は素の一覧）
-        $backUrl = route('orders.index', $request->session()->get(self::LAST_SEARCH_KEY, []));
+        $lastSearch = $request->session()->get(self::LAST_SEARCH_KEY);
+        $backUrl = route('orders.index') . ($lastSearch ? '?' . $lastSearch : '');
 
         return view('orders.show', compact('order', 'actions', 'backUrl'));
     }
