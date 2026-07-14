@@ -12,6 +12,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[Fillable(['order_id', 'material_id', 'material_name', 'supplier_id', 'supplier_name', 'unit', 'unit_price', 'quantity'])]
 class OrderItem extends Model
 {
+    protected function casts(): array
+    {
+        return [
+            'unit_price' => 'decimal:2',
+        ];
+    }
+
     /** 所属する発注申請 */
     public function order(): BelongsTo
     {
@@ -30,9 +37,9 @@ class OrderItem extends Model
         return $this->belongsTo(Supplier::class);
     }
 
-    /** この明細の小計（参考） */
-    public function subtotal(): int
+    /** この明細の小計（参考）。単価は小数を取りうる */
+    public function subtotal(): float
     {
-        return (int) $this->unit_price * $this->quantity;
+        return (float) $this->unit_price * $this->quantity;
     }
 }

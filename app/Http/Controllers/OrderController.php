@@ -125,8 +125,12 @@ class OrderController extends Controller
     /** 新規発注申請フォーム（営業所ユーザーのみ） */
     public function create(): View
     {
-        $materials = Material::with('supplier')->where('is_active', true)
-            ->orderBy('category')->orderBy('name')->get();
+        // categories を join するため is_active はテーブル名で修飾する（categories 側にも同名カラムがある）
+        $materials = Material::with(['supplier', 'category'])->where('materials.is_active', true)
+            ->leftJoin('categories', 'materials.category_id', '=', 'categories.id')
+            ->orderBy('categories.sort_order')->orderBy('categories.name')->orderBy('materials.name')
+            ->select('materials.*')
+            ->get();
 
         return view('orders.create', compact('materials'));
     }

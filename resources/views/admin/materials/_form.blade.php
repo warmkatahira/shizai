@@ -1,3 +1,8 @@
+@php
+    // 詳細確認リストでよく使われている発注方法。入力補助として候補に出す（自由入力も可）。
+    $orderMethods = ['メール', 'FAX', '発注書FAX', 'サイボウズ', 'ロジレス', '電話', 'ネット', '専用サイト'];
+@endphp
+
 <div class="space-y-4">
     <div>
         <label for="name" class="block text-sm font-medium text-gray-700 mb-1">品名 <span class="text-red-500">*</span></label>
@@ -6,14 +11,23 @@
     </div>
 
     <div>
-        <label for="category" class="block text-sm font-medium text-gray-700 mb-1">カテゴリ</label>
-        <input id="category" name="category" type="text" value="{{ old('category', $material->category) }}"
-               class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
-        <p class="text-xs text-gray-400 mt-1">任意。例：文具, 清掃用品 など</p>
+        <label for="category_id" class="block text-sm font-medium text-gray-700 mb-1">商品カテゴリ</label>
+        <select id="category_id" name="category_id"
+                class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
+            <option value="">（未設定）</option>
+            @foreach ($categories as $category)
+                <option value="{{ $category->id }}" {{ (string) old('category_id', $material->category_id) === (string) $category->id ? 'selected' : '' }}>
+                    {{ $category->name }}
+                </option>
+            @endforeach
+        </select>
+        @if ($categories->isEmpty())
+            <p class="text-xs text-amber-600 mt-1">カテゴリマスタが未登録です。先にカテゴリを登録すると選べます。</p>
+        @endif
     </div>
 
     <div>
-        <label for="supplier_id" class="block text-sm font-medium text-gray-700 mb-1">仕入先業者</label>
+        <label for="supplier_id" class="block text-sm font-medium text-gray-700 mb-1">発注業者</label>
         <select id="supplier_id" name="supplier_id"
                 class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
             <option value="">（未設定）</option>
@@ -28,6 +42,51 @@
         @endif
     </div>
 
+    <div class="grid grid-cols-3 gap-4">
+        <div>
+            <label for="contact_person" class="block text-sm font-medium text-gray-700 mb-1">担当者名</label>
+            <input id="contact_person" name="contact_person" type="text" value="{{ old('contact_person', $material->contact_person) }}"
+                   class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
+        </div>
+        <div>
+            <label for="contact" class="block text-sm font-medium text-gray-700 mb-1">連絡先</label>
+            <input id="contact" name="contact" type="text" value="{{ old('contact', $material->contact) }}"
+                   class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
+        </div>
+        <div>
+            <label for="order_method" class="block text-sm font-medium text-gray-700 mb-1">発注方法</label>
+            <input id="order_method" name="order_method" type="text" list="order-methods"
+                   value="{{ old('order_method', $material->order_method) }}"
+                   class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
+            <datalist id="order-methods">
+                @foreach ($orderMethods as $method)
+                    <option value="{{ $method }}"></option>
+                @endforeach
+            </datalist>
+        </div>
+    </div>
+
+    <div>
+        <span class="block text-sm font-medium text-gray-700 mb-1">寸法（mm）</span>
+        <div class="grid grid-cols-3 gap-4">
+            <div>
+                <label for="length_mm" class="block text-xs text-gray-500 mb-1">縦</label>
+                <input id="length_mm" name="length_mm" type="number" min="0" value="{{ old('length_mm', $material->length_mm) }}"
+                       class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
+            </div>
+            <div>
+                <label for="width_mm" class="block text-xs text-gray-500 mb-1">横</label>
+                <input id="width_mm" name="width_mm" type="number" min="0" value="{{ old('width_mm', $material->width_mm) }}"
+                       class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
+            </div>
+            <div>
+                <label for="height_mm" class="block text-xs text-gray-500 mb-1">高</label>
+                <input id="height_mm" name="height_mm" type="number" min="0" value="{{ old('height_mm', $material->height_mm) }}"
+                       class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
+            </div>
+        </div>
+    </div>
+
     <div class="grid grid-cols-2 gap-4">
         <div>
             <label for="unit" class="block text-sm font-medium text-gray-700 mb-1">単位 <span class="text-red-500">*</span></label>
@@ -35,11 +94,48 @@
                    class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
         </div>
         <div>
-            <label for="unit_price" class="block text-sm font-medium text-gray-700 mb-1">参考単価（円）</label>
-            <input id="unit_price" name="unit_price" type="number" min="0" value="{{ old('unit_price', $material->unit_price) }}"
+            <label for="unit_price" class="block text-sm font-medium text-gray-700 mb-1">単価（円）</label>
+            <input id="unit_price" name="unit_price" type="number" step="0.01" min="0" value="{{ old('unit_price', $material->unit_price) }}"
                    class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
+            <p class="text-xs text-gray-400 mt-1">小数可（例：34.5）</p>
         </div>
     </div>
+
+    <div>
+        <span class="block text-sm font-medium text-gray-700 mb-1">最低ロット</span>
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label for="min_lot_qty" class="block text-xs text-gray-500 mb-1">数量</label>
+                <input id="min_lot_qty" name="min_lot_qty" type="number" min="0" value="{{ old('min_lot_qty', $material->min_lot_qty) }}"
+                       class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
+            </div>
+            <div>
+                <label for="min_lot_unit" class="block text-xs text-gray-500 mb-1">単位</label>
+                <input id="min_lot_unit" name="min_lot_unit" type="text" list="lot-units"
+                       value="{{ old('min_lot_unit', $material->min_lot_unit) }}" placeholder="枚 / ケース / 本"
+                       class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
+                <datalist id="lot-units">
+                    <option value="枚"></option>
+                    <option value="ケース"></option>
+                    <option value="本"></option>
+                    <option value="個"></option>
+                    <option value="巻"></option>
+                </datalist>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <label for="note" class="block text-sm font-medium text-gray-700 mb-1">備考</label>
+        <textarea id="note" name="note" rows="2"
+                  class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">{{ old('note', $material->note) }}</textarea>
+    </div>
+
+    <label class="flex items-center gap-2 text-sm text-gray-700">
+        <input type="checkbox" name="has_imprint" value="1" class="rounded border-gray-300"
+               {{ old('has_imprint', $material->has_imprint ?? false) ? 'checked' : '' }}>
+        名入れあり
+    </label>
 
     <label class="flex items-center gap-2 text-sm text-gray-700">
         <input type="checkbox" name="is_active" value="1" class="rounded border-gray-300"

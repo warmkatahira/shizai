@@ -1,15 +1,54 @@
 <div class="space-y-4">
-    <div>
-        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">営業所名 <span class="text-red-500">*</span></label>
-        <input id="name" name="name" type="text" value="{{ old('name', $office->name) }}" required
-               class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
+    <div class="grid grid-cols-2 gap-4">
+        <div>
+            <label for="name" class="block text-sm font-medium text-gray-700 mb-1">営業所名 <span class="text-red-500">*</span></label>
+            <input id="name" name="name" type="text" value="{{ old('name', $office->name) }}" required
+                   class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
+        </div>
+        <div>
+            <label for="short_name" class="block text-sm font-medium text-gray-700 mb-1">略称</label>
+            <input id="short_name" name="short_name" type="text" value="{{ old('short_name', $office->short_name) }}"
+                   class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
+            <p class="text-xs text-gray-400 mt-1">例：第1, ロジS など</p>
+        </div>
     </div>
 
     <div>
         <label for="code" class="block text-sm font-medium text-gray-700 mb-1">営業所コード</label>
         <input id="code" name="code" type="text" value="{{ old('code', $office->code) }}"
                class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
-        <p class="text-xs text-gray-400 mt-1">任意。例：TKY, OSK など</p>
+        <p class="text-xs text-gray-400 mt-1">任意。例：1st, LS, IMP など</p>
+    </div>
+
+    <div class="grid grid-cols-4 gap-4">
+        <div>
+            <label for="postal_code" class="block text-sm font-medium text-gray-700 mb-1">郵便番号</label>
+            <input id="postal_code" name="postal_code" type="text" value="{{ old('postal_code', $office->postal_code) }}" placeholder="340-0822"
+                   class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
+        </div>
+        <div class="col-span-3">
+            <label for="address" class="block text-sm font-medium text-gray-700 mb-1">住所</label>
+            <input id="address" name="address" type="text" value="{{ old('address', $office->address) }}"
+                   class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
+        </div>
+    </div>
+
+    <div class="grid grid-cols-3 gap-4">
+        <div>
+            <label for="tel" class="block text-sm font-medium text-gray-700 mb-1">電話番号</label>
+            <input id="tel" name="tel" type="text" value="{{ old('tel', $office->tel) }}" placeholder="048-995-0001"
+                   class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
+        </div>
+        <div>
+            <label for="fax" class="block text-sm font-medium text-gray-700 mb-1">FAX番号</label>
+            <input id="fax" name="fax" type="text" value="{{ old('fax', $office->fax) }}"
+                   class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
+        </div>
+        <div>
+            <label for="sort_order" class="block text-sm font-medium text-gray-700 mb-1">表示順</label>
+            <input id="sort_order" name="sort_order" type="number" min="0" max="9999" value="{{ old('sort_order', $office->sort_order ?? 0) }}"
+                   class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
+        </div>
     </div>
 
     <label class="flex items-center gap-2 text-sm text-gray-700">

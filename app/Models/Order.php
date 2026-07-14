@@ -104,8 +104,8 @@ class Order extends Model
     }
 
     /** 合計金額（参考単価 × 数量の合計。単価不明の明細は0扱い） */
-    public function totalPrice(): int
+    public function totalPrice(): float
     {
-        return $this->items->sum(fn (OrderItem $item) => (int) $item->unit_price * $item->quantity);
+        return $this->items->sum(fn (OrderItem $item) => $item->subtotal());
     }
 }

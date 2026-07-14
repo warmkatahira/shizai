@@ -22,6 +22,7 @@
                             <a href="{{ route('admin.offices.index') }}" class="hover:text-indigo-700">営業所</a>
                             <a href="{{ route('admin.users.index') }}" class="hover:text-indigo-700">ユーザー</a>
                             <a href="{{ route('admin.suppliers.index') }}" class="hover:text-indigo-700">業者</a>
+                            <a href="{{ route('admin.categories.index') }}" class="hover:text-indigo-700">カテゴリ</a>
                             <a href="{{ route('admin.materials.index') }}" class="hover:text-indigo-700">資材</a>
                         @endif
                     </nav>

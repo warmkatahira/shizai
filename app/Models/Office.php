@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * 営業所モデル。
  */
-#[Fillable(['name', 'code', 'is_active'])]
+#[Fillable(['name', 'code', 'short_name', 'postal_code', 'address', 'tel', 'fax', 'sort_order', 'is_active'])]
 class Office extends Model
 {
     protected function casts(): array

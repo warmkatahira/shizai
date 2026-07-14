@@ -13,7 +13,7 @@ class OfficeController extends Controller
     /** 営業所一覧 */
     public function index(): View
     {
-        $offices = Office::withCount('users')->orderBy('id')->get();
+        $offices = Office::withCount('users')->orderBy('sort_order')->orderBy('id')->get();
 
         return view('admin.offices.index', compact('offices'));
     }
@@ -65,10 +65,25 @@ class OfficeController extends Controller
         return $request->validate([
             'name' => ['required', 'string', 'max:100'],
             'code' => ['nullable', 'string', 'max:20', 'unique:offices,code' . ($office ? ",{$office->id}" : '')],
+            'short_name' => ['nullable', 'string', 'max:20'],
+            'postal_code' => ['nullable', 'string', 'max:8'],
+            'address' => ['nullable', 'string', 'max:255'],
+            'tel' => ['nullable', 'string', 'max:20'],
+            'fax' => ['nullable', 'string', 'max:20'],
+            'sort_order' => ['nullable', 'integer', 'min:0', 'max:9999'],
             'is_active' => ['boolean'],
         ], [], [
             'name' => '営業所名',
             'code' => '営業所コード',
-        ]) + ['is_active' => $request->boolean('is_active')];
+            'short_name' => '略称',
+            'postal_code' => '郵便番号',
+            'address' => '住所',
+            'tel' => '電話番号',
+            'fax' => 'FAX番号',
+            'sort_order' => '表示順',
+        ]) + [
+            'sort_order' => (int) $request->input('sort_order', 0),
+            'is_active' => $request->boolean('is_active'),
+        ];
     }
 }

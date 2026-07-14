@@ -166,12 +166,10 @@
                         <td class="px-4 py-3 font-medium">{{ $item->material_name }}</td>
                         <td class="px-4 py-3 text-gray-500">{{ $item->supplier_name ?: '—' }}</td>
                         <td class="px-4 py-3 text-gray-500">{{ $item->unit }}</td>
-                        <td class="px-4 py-3 text-right">
-                            {{ $item->unit_price !== null ? '¥' . number_format($item->unit_price) : '—' }}
-                        </td>
+                        <td class="px-4 py-3 text-right">{{ \App\Support\Money::yen($item->unit_price) }}</td>
                         <td class="px-4 py-3 text-right">{{ number_format($item->quantity) }}</td>
                         <td class="px-4 py-3 text-right">
-                            {{ $item->unit_price !== null ? '¥' . number_format($item->subtotal()) : '—' }}
+                            {{ $item->unit_price !== null ? \App\Support\Money::yen($item->subtotal()) : '—' }}
                         </td>
                     </tr>
                 @endforeach
@@ -179,7 +177,7 @@
             <tfoot class="bg-gray-50">
                 <tr>
                     <td colspan="5" class="px-4 py-3 text-right font-medium">合計（参考）</td>
-                    <td class="px-4 py-3 text-right font-bold">¥{{ number_format($order->totalPrice()) }}</td>
+                    <td class="px-4 py-3 text-right font-bold">{{ \App\Support\Money::yen($order->totalPrice()) }}</td>
                 </tr>
             </tfoot>
         </table>

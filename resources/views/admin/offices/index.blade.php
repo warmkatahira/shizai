@@ -9,13 +9,15 @@
            class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm px-4 py-2 rounded-md">＋ 新規営業所</a>
     </div>
 
-    <div class="bg-white shadow rounded-lg overflow-hidden">
+    <div class="bg-white shadow rounded-lg overflow-x-auto">
         <table class="w-full text-sm">
             <thead class="bg-gray-50 text-gray-500 text-left">
                 <tr>
                     <th class="px-4 py-3">営業所名</th>
                     <th class="px-4 py-3">コード</th>
-                    <th class="px-4 py-3">所属人数</th>
+                    <th class="px-4 py-3">住所</th>
+                    <th class="px-4 py-3 whitespace-nowrap">電話 / FAX</th>
+                    <th class="px-4 py-3 whitespace-nowrap">所属人数</th>
                     <th class="px-4 py-3">状態</th>
                     <th class="px-4 py-3 text-right">操作</th>
                 </tr>
@@ -23,9 +25,28 @@
             <tbody class="divide-y divide-gray-100">
                 @forelse ($offices as $office)
                     <tr>
-                        <td class="px-4 py-3 font-medium">{{ $office->name }}</td>
+                        <td class="px-4 py-3 font-medium">
+                            {{ $office->name }}
+                            @if ($office->short_name)
+                                <span class="text-xs text-gray-400 font-normal">（{{ $office->short_name }}）</span>
+                            @endif
+                        </td>
                         <td class="px-4 py-3 text-gray-500">{{ $office->code ?: '—' }}</td>
-                        <td class="px-4 py-3">{{ $office->users_count }} 名</td>
+                        <td class="px-4 py-3 text-gray-500">
+                            @if ($office->address)
+                                @if ($office->postal_code)
+                                    <span class="block text-xs text-gray-400">〒{{ $office->postal_code }}</span>
+                                @endif
+                                {{ $office->address }}
+                            @else
+                                —
+                            @endif
+                        </td>
+                        <td class="px-4 py-3 text-gray-500 whitespace-nowrap">
+                            {{ $office->tel ?: '—' }}
+                            <span class="block text-xs text-gray-400">FAX {{ $office->fax ?: '—' }}</span>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap">{{ $office->users_count }} 名</td>
                         <td class="px-4 py-3">
                             @include('admin.partials.status-badge', ['active' => $office->is_active])
                         </td>
@@ -39,7 +60,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="5" class="px-4 py-8 text-center text-gray-400">営業所がまだありません。</td></tr>
+                    <tr><td colspan="7" class="px-4 py-8 text-center text-gray-400">営業所がまだありません。</td></tr>
                 @endforelse
             </tbody>
         </table>

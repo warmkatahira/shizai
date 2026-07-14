@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\MaterialController;
 use App\Http\Controllers\Admin\OfficeController;
 use App\Http\Controllers\Admin\SupplierController;
@@ -48,6 +49,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('offices', OfficeController::class)->except('show');
         Route::resource('users', UserController::class)->except('show');
         Route::resource('suppliers', SupplierController::class)->except('show');
+        Route::resource('categories', CategoryController::class)->except('show');
         Route::resource('materials', MaterialController::class)->except('show');
     });
 });

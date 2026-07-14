@@ -7,7 +7,10 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * ユーザーテーブル。
+     * role: admin=管理者 / general_affairs=総務 / sales=営業所
+     * 営業所ユーザーのうち is_manager=true は所長（自営業所の一次承認者）。
+     * ※ office_id が offices を参照するため、offices テーブルより後に実行する。
      */
     public function up(): void
     {
@@ -15,6 +18,10 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('role')->default('sales')->comment('権限: admin/general_affairs/sales');
+            $table->foreignId('office_id')->nullable()->constrained('offices')->nullOnDelete()->comment('所属営業所');
+            $table->boolean('is_manager')->default(false)->comment('所長フラグ');
+            $table->boolean('is_active')->default(true)->comment('有効フラグ');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
@@ -37,9 +44,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('users');

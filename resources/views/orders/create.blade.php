@@ -34,11 +34,9 @@
                         @foreach ($materials as $material)
                             <tr>
                                 <td class="px-4 py-3 font-medium">{{ $material->name }}</td>
-                                <td class="px-4 py-3 text-gray-500">{{ $material->category ?: '—' }}</td>
+                                <td class="px-4 py-3 text-gray-500">{{ $material->category?->name ?? '—' }}</td>
                                 <td class="px-4 py-3 text-gray-500">{{ $material->supplier?->name ?? '—' }}</td>
-                                <td class="px-4 py-3 text-right">
-                                    {{ $material->unit_price !== null ? '¥' . number_format($material->unit_price) : '—' }}
-                                </td>
+                                <td class="px-4 py-3 text-right">{{ \App\Support\Money::yen($material->unit_price) }}</td>
                                 <td class="px-4 py-3 text-gray-500">{{ $material->unit }}</td>
                                 <td class="px-4 py-3">
                                     <input type="number" min="0" max="9999"
