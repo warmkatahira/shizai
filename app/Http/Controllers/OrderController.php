@@ -47,7 +47,7 @@ class OrderController extends Controller
         $this->applyDefaultFilters($request);
 
         $orders = $this->filteredOrders($request)
-            ->with(['office', 'supplier', 'requester', 'items'])
+            ->with(['office', 'supplier', 'requester', 'managerApprover', 'reviewer', 'orderedBy', 'rejectedBy', 'items'])
             ->latest()
             ->get();
 
@@ -58,21 +58,52 @@ class OrderController extends Controller
             // ExcelでUTF-8を正しく開くためのBOM
             fwrite($out, "\xEF\xBB\xBF");
 
+            $datetime = fn (?\Carbon\CarbonInterface $at) => $at?->format('Y/m/d H:i') ?? '';
+
             fputcsv($out, [
-                '申請番号', '申請日', '営業所', '発注業者', '発注者', 'アカウント', 'ステータス',
+                // 申請
+                '申請番号', '申請日', '営業所', '発注業者', '発注者', '申請アカウント', 'ステータス',
+                // 承認・発注・却下の履歴
+                '所長承認者', '所長承認日時',
+                '総務承認者', '総務承認日時',
+                '特例承認', '特例承認の理由',
+                '発注書作成者', '発注日',
+                '却下者', '却下理由',
+                // 申請内容
+                '納入希望日', '業者への連絡事項', '備考（社内）',
+                // 明細
                 '品名', 'カテゴリ', '単位', '参考単価', '数量', '小計',
             ]);
 
             foreach ($orders as $order) {
+                // 申請1件ぶんの情報。明細の行数だけ繰り返す
+                $header = [
+                    $order->id,
+                    $datetime($order->created_at),
+                    $order->office->name,
+                    $order->supplier?->name ?? '',
+                    $order->requester_name ?? '',
+                    $order->requester->name,
+                    $order->statusLabel(),
+
+                    $order->managerApprover?->name ?? '',
+                    $datetime($order->manager_approved_at),
+                    $order->reviewer?->name ?? '',
+                    $datetime($order->reviewed_at),
+                    $order->is_special_approval ? 'あり' : '',
+                    $order->special_reason ?? '',
+                    $order->orderedBy?->name ?? '',
+                    $datetime($order->ordered_at),
+                    $order->rejectedBy?->name ?? '',
+                    $order->reject_reason ?? '',
+
+                    $order->desired_delivery_date?->format('Y/m/d') ?? '',
+                    $order->supplier_note ?? '',
+                    $order->note ?? '',
+                ];
+
                 foreach ($order->items as $item) {
-                    fputcsv($out, [
-                        $order->id,
-                        $order->created_at->format('Y/m/d H:i'),
-                        $order->office->name,
-                        $order->supplier?->name ?? '',
-                        $order->requester_name ?? '',
-                        $order->requester->name,
-                        $order->statusLabel(),
+                    fputcsv($out, [...$header,
                         $item->material_name,
                         $item->category_name ?? '',
                         $item->unit,
