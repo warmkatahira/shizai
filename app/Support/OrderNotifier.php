@@ -6,10 +6,14 @@ use App\Models\Order;
 use App\Models\User;
 use App\Notifications\OrderPendingApprovalNotification;
 use App\Notifications\OrderResultNotification;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Notification;
 
 /**
  * 発注申請の状態に応じて、適切な相手にメール通知を送るヘルパー。
+ *
+ * メールアドレスは任意（営業所の申請用アカウントは共通で使い回すため、
+ * 実在のアドレスを持たないことがある）。宛先が無いユーザーは送信対象から外す。
  */
 class OrderNotifier
 {
@@ -21,23 +25,38 @@ class OrderNotifier
     public static function notifyNextApprover(Order $order): void
     {
         if ($order->isPendingManager()) {
-            $managers = $order->office->managers()->get();
+            $managers = self::withEmail($order->office->managers()->get());
             Notification::send($managers, new OrderPendingApprovalNotification($order, 'manager'));
+
             return;
         }
 
         if ($order->isPendingAffairs()) {
-            $affairs = User::where('role', User::ROLE_GENERAL_AFFAIRS)
-                ->where('is_active', true)->get();
+            $affairs = self::withEmail(
+                User::where('role', User::ROLE_GENERAL_AFFAIRS)->where('is_active', true)->get()
+            );
             Notification::send($affairs, new OrderPendingApprovalNotification($order, 'affairs'));
         }
     }
 
     /**
-     * 最終結果（発注済 or 却下）を申請者へ通知する。
+     * 最終結果（発注済 or 却下）を通知する。
+     *
+     * 申請用アカウントはアドレスを持たないことがあるので、
+     * その営業所の所長には必ず送り、申請者にアドレスがあれば申請者にも送る。
      */
     public static function notifyApplicant(Order $order): void
     {
-        $order->requester->notify(new OrderResultNotification($order));
+        $recipients = self::withEmail(
+            $order->office->managers()->get()->push($order->requester)
+        )->unique('id');
+
+        Notification::send($recipients, new OrderResultNotification($order));
+    }
+
+    /** 通知先メールアドレスを持つユーザーだけに絞る */
+    private static function withEmail(Collection $users): Collection
+    {
+        return $users->filter(fn (User $user) => filled($user->email))->values();
     }
 }

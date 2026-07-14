@@ -169,7 +169,7 @@ class OrderController extends Controller
             'supplier_note' => ['nullable', 'string', 'max:1000'],
             'desired_delivery_date' => ['nullable', 'date'],
             'quantities' => ['array'],
-            'quantities.*' => ['nullable', 'integer', 'min:0', 'max:9999'],
+            'quantities.*' => ['nullable', 'integer', 'min:0', 'max:999999'],
         ], [], [
             'supplier_id' => '発注業者',
             'requester_name' => '発注者の氏名',
@@ -201,6 +201,28 @@ class OrderController extends Controller
             throw ValidationException::withMessages([
                 'quantities' => '選択された資材が、指定の業者の資材ではありません。',
             ]);
+        }
+
+        // 最低ロットがある資材は、ロットの倍数でしか発注できない
+        // （画面側でも弾いているが、フォームを細工されても通らないようにここでも検証する）
+        $lotErrors = [];
+        foreach ($selected as $materialId => $qty) {
+            $material = $materials->get($materialId);
+            $lot = $material?->min_lot_qty;
+
+            if ($material && $lot && (int) $qty % $lot !== 0) {
+                $lotErrors[] = sprintf(
+                    '「%s」は %s%s 単位で発注してください（入力値：%s）。',
+                    $material->name,
+                    number_format($lot),
+                    $material->min_lot_unit ?? '',
+                    number_format((int) $qty),
+                );
+            }
+        }
+
+        if ($lotErrors !== []) {
+            throw ValidationException::withMessages(['quantities' => $lotErrors]);
         }
 
         // 申請者が所長なら所長承認を飛ばして総務へ、そうでなければ所長承認待ち

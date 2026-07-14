@@ -9,6 +9,7 @@ return new class extends Migration
     /**
      * 資材マスタ。全社共通で発注できる品目を管理する。
      * 項目は社内の「資材発注 詳細確認リスト」に対応。
+     * 担当者名・連絡先・発注方法は業者ごとに決まるので suppliers 側に持つ。
      * ※ categories / suppliers を参照するため、それらより後に実行する。
      */
     public function up(): void
@@ -18,10 +19,6 @@ return new class extends Migration
             $table->string('name')->comment('品名');
             $table->foreignId('category_id')->nullable()->constrained('categories')->nullOnDelete()->comment('商品カテゴリ');
             $table->foreignId('supplier_id')->nullable()->constrained('suppliers')->nullOnDelete()->comment('発注業者');
-
-            $table->string('contact_person')->nullable()->comment('担当者名');
-            $table->string('contact')->nullable()->comment('連絡先');
-            $table->string('order_method')->nullable()->comment('発注方法（メール/FAX/サイボウズ など）');
 
             $table->unsignedInteger('length_mm')->nullable()->comment('縦（mm）');
             $table->unsignedInteger('width_mm')->nullable()->comment('横（mm）');

@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             SupplierSeeder::class,
             MaterialSeeder::class,  // カテゴリと業者が必要
+            OrderSeeder::class,     // 営業所・ユーザー・資材が必要
         ]);
     }
 }

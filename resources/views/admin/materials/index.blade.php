@@ -16,8 +16,6 @@
                     <th class="px-4 py-3">品名</th>
                     <th class="px-4 py-3">カテゴリ</th>
                     <th class="px-4 py-3">発注業者</th>
-                    <th class="px-4 py-3">担当者</th>
-                    <th class="px-4 py-3">発注方法</th>
                     <th class="px-4 py-3">寸法(mm)</th>
                     <th class="px-4 py-3">単位</th>
                     <th class="px-4 py-3 text-right">単価</th>
@@ -38,8 +36,6 @@
                         </td>
                         <td class="px-4 py-3 text-gray-500">{{ $material->category?->name ?? '—' }}</td>
                         <td class="px-4 py-3">{{ $material->supplier?->name ?? '—' }}</td>
-                        <td class="px-4 py-3 text-gray-500">{{ $material->contact_person ?: '—' }}</td>
-                        <td class="px-4 py-3 text-gray-500">{{ $material->order_method ?: '—' }}</td>
                         <td class="px-4 py-3 text-gray-500">{{ $material->sizeText() ?? '—' }}</td>
                         <td class="px-4 py-3">{{ $material->unit }}</td>
                         <td class="px-4 py-3 text-right">{{ \App\Support\Money::yen($material->unit_price) }}</td>
@@ -58,7 +54,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="12" class="px-4 py-8 text-center text-gray-400">資材がまだありません。</td></tr>
+                    <tr><td colspan="10" class="px-4 py-8 text-center text-gray-400">資材がまだありません。</td></tr>
                 @endforelse
             </tbody>
         </table>

@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrderApprovalController;
+use App\Http\Controllers\MaterialCatalogController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\ReportController;
@@ -43,6 +44,9 @@ Route::middleware('auth')->group(function () {
     // 発注書PDF（発注済のみ・総務/管理者）。1申請＝1業者なので1申請1枚
     Route::get('/orders/{order}/purchase-order', [PurchaseOrderController::class, 'show'])
         ->name('orders.purchaseOrder');
+
+    // ----- 資材一覧（閲覧のみ。全ログインユーザー。編集は /admin/materials で管理者のみ） -----
+    Route::get('/materials', [MaterialCatalogController::class, 'index'])->name('materials.index');
 
     // ----- 発注集計（カテゴリ別・業者別・営業所別・資材別） -----
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');

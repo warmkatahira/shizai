@@ -40,16 +40,24 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
 却下:              各段階で reject（理由必須）→ rejected
 ```
 - 承認・却下ロジックは `OrderApprovalController`、通知先の振り分けは `App\Support\OrderNotifier`。
-- メール通知：申請時→次の承認者へ / 所長承認時→総務へ / 発注・却下時→申請者へ。
+- メール通知（`OrderNotifier`）：
+  - 申請時 → 次の承認者へ（一般の申請＝その営業所の所長 / 所長の申請＝総務全員）
+  - 所長承認時 → 総務全員へ
+  - 発注確定・却下時 → **その営業所の所長へ必ず送り、申請者にメールがあれば申請者にも送る**
+    （申請用アカウントはメールを持たないため、所長を必ず宛先に含める）
+  - メールが無いユーザーは宛先から除外する（`OrderNotifier::withEmail`）。
 
 ## データモデル
 - `offices`（営業所・拠点） … name/code/postal_code/address/tel/fax/sort_order/is_active。社内の拠点マスタ（BaseSeeder）の9拠点を投入
-- `users`（role・office_id・is_manager を保持）
-- `suppliers`（業者マスタ） … `materials.supplier_id` で参照
+- `users`（login_id・email・role・office_id・is_manager を保持）
+  - **ログインは `login_id`**（メールではない）。営業所の申請用アカウントは共通で使い回すため、実在のメールを持たない
+  - `email` は **null 許容の「通知先」**。無ければそのユーザーには通知を送らないだけで、ログインには影響しない
+- `suppliers`（業者マスタ） … name/code/contact_person/phone/fax/email/order_method/is_active。`materials.supplier_id` で参照
+  - **担当者名・連絡先・発注方法は業者ごとに決まる**ので、資材ではなくここに持つ（資材側に持つと同じ値が何十行も重複する）
+  - `order_method` は `mail` / `phone` / `fax` / `web` の4択（`Supplier::ORDER_METHODS`）。サイボウズ・ロジレスなどの専用システムは `web`
 - `categories`（商品カテゴリマスタ） … name/sort_order/is_active。`materials.category_id` で参照
 - `materials`（資材マスタ） … 社内の「資材発注 詳細確認リスト」の項目に対応
   - name（品名） / category_id / supplier_id（発注業者）
-  - contact_person（担当者名） / contact（連絡先） / order_method（発注方法：メール・FAX・サイボウズ等の自由入力）
   - length_mm / width_mm / height_mm（縦・横・高）
   - unit（単位） / unit_price（単価） / min_lot_qty ＋ min_lot_unit（最低ロット。「2700枚」を数量と単位に分けて保持）
   - has_imprint（名入れフラグ） / note（備考） / is_active
@@ -68,6 +76,10 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
 - `/orders/create` 発注申請（営業所ユーザーのみ）
   - **1申請＝1業者**。発注業者をプルダウンで選ぶと、その業者の有効な資材だけが並ぶ（`onchange` で GET 再読込。JSフレームワークは使わない）
   - 数量を入れた資材だけが申請される。他業者の資材を混ぜられないよう `store` 側でも業者で絞って検証する
+  - **最低ロットがある資材はロットの倍数でしか発注できない**（3,000単位なら 3,000 / 6,000 …）。
+    画面は `step` 属性＋JSで弾き、`store` でも倍数かどうか検証する（フォームを迂回されても通らないように）
+  - 数量を入れるたびに小計・合計を素のJavaScriptで再計算して表示する
+  - 発注者の氏名は、**所長アカウントなら本人の氏名を初期値**に入れる（所長は個人アカウントのため）
   - **発注者の氏名は手入力**（`orders.requester_name`）。営業所のアカウントは共通で使い回すため、ログインアカウント（`requested_by`）とは別に持つ
   - 納入希望日（`desired_delivery_date`）は発注単位で1つ。全品目に適用され、発注書の「希望納期」列に印字される
 - `/orders/{order}` 詳細＋承認/却下アクション＋**発注書PDF**のボタン
@@ -86,21 +98,25 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
   - **対象は `ordered`（発注済）のみ**。承認待ち・却下は実績ではないので含めない
   - グループ化は明細のスナップショット列（`category_name` など）で行う。マスタを改名・削除しても過去の集計は動かない
   - 合計の「発注件数」は `COUNT(DISTINCT orders.id)`。1件の発注が複数カテゴリにまたがると各行で数えられるため、**行の合算では出せない**
+- `/materials` 資材一覧（**閲覧のみ・全ログインユーザー**。`MaterialCatalogController`）
+  - 営業所・総務が「どの業者に何がいくらであるか」を確認するための読み取り専用。編集は管理者のみ
+  - ナビには管理者以外に表示（管理者はマスタ管理の「資材」から見られるため）
 - `/admin/{offices,users,suppliers,categories,materials}` マスタ管理（管理者のみ）
 - CSVは `OrderController@export` / `ReportController@export`（BOM付きUTF-8、Excel対応）
 
-## テスト用アカウント（パスワードは管理者以外すべて `password`）
-| メール | 役割 |
+## テスト用アカウント（**ログインIDで**ログイン。パスワードは管理者以外すべて `password`）
+| ログインID | 役割 |
 |--------|------|
-| t.katahira@warm.co.jp | 管理者（パスワードのみ `katahira134`）|
-| ooizumi@warm.co.jp / namiki@warm.co.jp / m.horiuchi@warm.co.jp / m.okano@warm.co.jp | 総務 |
-| ty01@warm.co.jp | 第1営業所・**所長**（里本さん）|
-| soneda@warm.co.jp | 第2営業所・**所長**（曽根田さん）|
-| `{コード}-manager@example.com` | 残り7拠点の**所長**（仮名。例：`ls-manager@example.com`）|
-| `{コード}@example.com` | 各営業所の申請用ユーザー（拠点で1人を使い回す。例：`1st@example.com`, `ls@example.com`）|
+| `t.katahira` | 管理者（パスワードのみ `katahira134`）|
+| `ooizumi` / `namiki` / `m.horiuchi` / `m.okano` | 総務 |
+| `ty01` | 第1営業所・**所長**（里本さん）|
+| `soneda` | 第2営業所・**所長**（曽根田さん）|
+| `{コード}-manager` | 残り7拠点の**所長**（仮名。例：`ls-manager`）|
+| `{コード}` | 各営業所の申請用ユーザー（拠点で1人を使い回す。例：`1st`, `ls`）|
 
 `{コード}` は `offices.code` の小文字（`honsha` / `1st` / `2nd` / `3rd` / `ls` / `lp` / `lc` / `imp` / `hr`）。
 第1・第2以外の所長は**実名が未確定のため仮名**（`UserSeeder::MANAGERS` に定義）。実名が分かったらここを差し替える。
+**メールを持つのは管理者・総務・第1/第2の所長だけ**。申請用アカウントと仮名の所長はメールなし（通知が飛ばない）。
 
 ## コード規約メモ
 - Laravel 13 では fillable/hidden を **PHP属性** `#[Fillable([...])]` `#[Hidden([...])]` で書く（`$fillable` 配列ではない）。

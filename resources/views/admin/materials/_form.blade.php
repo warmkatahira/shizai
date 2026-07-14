@@ -1,8 +1,3 @@
-@php
-    // 詳細確認リストでよく使われている発注方法。入力補助として候補に出す（自由入力も可）。
-    $orderMethods = ['メール', 'FAX', '発注書FAX', 'サイボウズ', 'ロジレス', '電話', 'ネット', '専用サイト'];
-@endphp
-
 <div class="space-y-4">
     <div>
         <label for="name" class="block text-sm font-medium text-gray-700 mb-1">品名 <span class="text-red-500">*</span></label>
@@ -40,30 +35,6 @@
         @if ($suppliers->isEmpty())
             <p class="text-xs text-amber-600 mt-1">業者マスタが未登録です。先に業者を登録すると選べます。</p>
         @endif
-    </div>
-
-    <div class="grid grid-cols-3 gap-4">
-        <div>
-            <label for="contact_person" class="block text-sm font-medium text-gray-700 mb-1">担当者名</label>
-            <input autocomplete="off" id="contact_person" name="contact_person" type="text" value="{{ old('contact_person', $material->contact_person) }}"
-                   class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
-        </div>
-        <div>
-            <label for="contact" class="block text-sm font-medium text-gray-700 mb-1">連絡先</label>
-            <input autocomplete="off" id="contact" name="contact" type="text" value="{{ old('contact', $material->contact) }}"
-                   class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
-        </div>
-        <div>
-            <label for="order_method" class="block text-sm font-medium text-gray-700 mb-1">発注方法</label>
-            <input autocomplete="off" id="order_method" name="order_method" type="text" list="order-methods"
-                   value="{{ old('order_method', $material->order_method) }}"
-                   class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
-            <datalist id="order-methods">
-                @foreach ($orderMethods as $method)
-                    <option value="{{ $method }}"></option>
-                @endforeach
-            </datalist>
-        </div>
     </div>
 
     <div>

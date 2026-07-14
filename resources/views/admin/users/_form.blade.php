@@ -6,9 +6,19 @@
     </div>
 
     <div>
-        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">メールアドレス <span class="text-red-500">*</span></label>
-        <input autocomplete="off" id="email" name="email" type="email" value="{{ old('email', $user->email) }}" required
+        <label for="login_id" class="block text-sm font-medium text-gray-700 mb-1">ログインID <span class="text-red-500">*</span></label>
+        <input autocomplete="off" id="login_id" name="login_id" type="text" value="{{ old('login_id', $user->login_id) }}" required
                class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
+        <p class="text-xs text-gray-400 mt-1">ログインに使うIDです。例：1st（営業所の申請用）, ooizumi（個人）</p>
+    </div>
+
+    <div>
+        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">メールアドレス</label>
+        <input autocomplete="off" id="email" name="email" type="email" value="{{ old('email', $user->email) }}"
+               class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
+        <p class="text-xs text-gray-400 mt-1">
+            通知メールの宛先です。任意。営業所で共通のアカウントなど、宛先が無い場合は空のままで構いません（そのユーザーには通知が送られません）。
+        </p>
     </div>
 
     <div>

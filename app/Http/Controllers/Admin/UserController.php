@@ -88,12 +88,15 @@ class UserController extends Controller
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:50'],
-            'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user?->id)],
+            // ログインIDで認証する。メールは通知先なので任意
+            'login_id' => ['required', 'string', 'max:50', 'alpha_dash', Rule::unique('users', 'login_id')->ignore($user?->id)],
+            'email' => ['nullable', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user?->id)],
             'role' => ['required', Rule::in(array_keys(User::ROLE_LABELS))],
             'office_id' => ['nullable', 'exists:offices,id'],
             'password' => $passwordRule,
         ], [], [
             'name' => '氏名',
+            'login_id' => 'ログインID',
             'email' => 'メールアドレス',
             'role' => '権限',
             'office_id' => '所属営業所',

@@ -14,6 +14,7 @@
             <thead class="bg-gray-50 text-gray-500 text-left">
                 <tr>
                     <th class="px-4 py-3">氏名</th>
+                    <th class="px-4 py-3">ログインID</th>
                     <th class="px-4 py-3">メールアドレス</th>
                     <th class="px-4 py-3">権限</th>
                     <th class="px-4 py-3">所属営業所</th>
@@ -25,7 +26,8 @@
                 @forelse ($users as $user)
                     <tr>
                         <td class="px-4 py-3 font-medium">{{ $user->name }}</td>
-                        <td class="px-4 py-3 text-gray-500">{{ $user->email }}</td>
+                        <td class="px-4 py-3 font-mono text-xs">{{ $user->login_id }}</td>
+                        <td class="px-4 py-3 text-gray-500">{{ $user->email ?: '—' }}</td>
                         <td class="px-4 py-3">
                             {{ $user->roleLabel() }}
                             @if ($user->is_manager)
@@ -48,7 +50,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="6" class="px-4 py-8 text-center text-gray-400">ユーザーがまだいません。</td></tr>
+                    <tr><td colspan="7" class="px-4 py-8 text-center text-gray-400">ユーザーがまだいません。</td></tr>
                 @endforelse
             </tbody>
         </table>

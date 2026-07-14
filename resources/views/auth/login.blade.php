@@ -21,7 +21,7 @@
 
             @php
                 // 開発中のログインを省くための初期値。本番（local 以外）では空になる。
-                $devEmail = app()->isLocal() ? 't.katahira@warm.co.jp' : '';
+                $devLoginId = app()->isLocal() ? 't.katahira' : '';
                 $devPassword = app()->isLocal() ? 'katahira134' : '';
             @endphp
 
@@ -29,8 +29,8 @@
                 @csrf
 
                 <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">メールアドレス</label>
-                    <input autocomplete="off" id="email" name="email" type="email" value="{{ old('email', $devEmail) }}" required autofocus
+                    <label for="login_id" class="block text-sm font-medium text-gray-700 mb-1">ログインID</label>
+                    <input autocomplete="off" id="login_id" name="login_id" type="text" value="{{ old('login_id', $devLoginId) }}" required autofocus
                         class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
                 </div>
 

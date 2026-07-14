@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Supplier;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class SupplierController extends Controller
@@ -67,6 +68,7 @@ class SupplierController extends Controller
             'contact_person' => ['nullable', 'string', 'max:50'],
             'phone' => ['nullable', 'string', 'max:30'],
             'fax' => ['nullable', 'string', 'max:30'],
+            'order_method' => ['nullable', Rule::in(array_keys(Supplier::ORDER_METHODS))],
             'email' => ['nullable', 'email', 'max:255'],
             'is_active' => ['boolean'],
         ], [], [
@@ -75,6 +77,7 @@ class SupplierController extends Controller
             'contact_person' => '担当者名',
             'phone' => '電話番号',
             'fax' => 'FAX番号',
+            'order_method' => '発注方法',
             'email' => 'メールアドレス',
         ]) + ['is_active' => $request->boolean('is_active')];
     }

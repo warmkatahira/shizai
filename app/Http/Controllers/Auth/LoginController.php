@@ -21,21 +21,25 @@ class LoginController extends Controller
         return view('auth.login');
     }
 
-    /** ログイン処理 */
+    /**
+     * ログイン処理。
+     * 認証はメールではなく login_id で行う（営業所の申請用アカウントは
+     * 共通で使い回すため、実在のメールアドレスを持たないことがある）。
+     */
     public function login(Request $request): RedirectResponse
     {
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
+            'login_id' => ['required', 'string'],
             'password' => ['required'],
         ], [], [
-            'email' => 'メールアドレス',
+            'login_id' => 'ログインID',
             'password' => 'パスワード',
         ]);
 
         // 有効なユーザーのみログイン可能
         if (! Auth::attempt([...$credentials, 'is_active' => true], $request->boolean('remember'))) {
             throw ValidationException::withMessages([
-                'email' => 'メールアドレスまたはパスワードが正しくありません。',
+                'login_id' => 'ログインIDまたはパスワードが正しくありません。',
             ]);
         }
 

@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('phone')->nullable()->comment('電話番号');
             $table->string('fax')->nullable()->comment('FAX番号（発注書に印字）');
             $table->string('email')->nullable()->comment('メールアドレス');
+            // 発注方法は業者ごとに決まる（mail/phone/fax/web）
+            $table->string('order_method', 20)->nullable()->comment('発注方法: mail/phone/fax/web');
             $table->boolean('is_active')->default(true)->comment('有効フラグ');
             $table->timestamps();
         });

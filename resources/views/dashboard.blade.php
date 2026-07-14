@@ -6,12 +6,9 @@
     @php($user = auth()->user())
 
     <h1 class="text-xl font-bold mb-2">こんにちは、{{ $user->name }} さん</h1>
-    <p class="text-gray-600 mb-6">
-        あなたの権限は「<span class="font-medium">{{ $user->roleLabel() }}</span>」です。
-        @if ($user->office)
-            （所属: {{ $user->office->name }}）
-        @endif
-    </p>
+    @if ($user->office)
+        <p class="text-gray-600 mb-6">所属: {{ $user->office->name }}</p>
+    @endif
 
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {{-- 営業所ユーザー向け --}}

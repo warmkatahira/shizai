@@ -20,6 +20,10 @@
                     <nav class="hidden sm:flex items-center gap-4 text-sm text-gray-600">
                         <a href="{{ route('orders.index') }}" class="hover:text-accent-strong">発注申請</a>
                         <a href="{{ route('reports.index') }}" class="hover:text-accent-strong">集計</a>
+                        @unless (auth()->user()->isAdmin())
+                            {{-- 管理者はマスタ管理の「資材」から見られるので、こちらは出さない --}}
+                            <a href="{{ route('materials.index') }}" class="hover:text-accent-strong">資材一覧</a>
+                        @endunless
                         @if (auth()->user()->isAdmin())
                             <a href="{{ route('admin.offices.index') }}" class="hover:text-accent-strong">営業所</a>
                             <a href="{{ route('admin.users.index') }}" class="hover:text-accent-strong">ユーザー</a>
@@ -30,12 +34,7 @@
                     </nav>
                 </div>
                 <div class="flex items-center gap-4 text-sm">
-                    <span class="text-gray-600">
-                        {{ auth()->user()->name }}
-                        <span class="ml-1 inline-block px-2 py-0.5 rounded bg-gray-100 text-gray-500 text-xs">
-                            {{ auth()->user()->roleLabel() }}
-                        </span>
-                    </span>
+                    <span class="text-gray-600">{{ auth()->user()->name }}</span>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit" class="text-gray-500 hover:text-red-600">ログアウト</button>

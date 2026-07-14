@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * 資材マスタモデル。
  */
 #[Fillable([
-    'name', 'category_id', 'supplier_id', 'contact_person', 'contact', 'order_method',
+    'name', 'category_id', 'supplier_id',
     'length_mm', 'width_mm', 'height_mm',
     'unit', 'unit_price', 'min_lot_qty', 'min_lot_unit', 'has_imprint', 'note', 'is_active',
 ])]

@@ -7,11 +7,19 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * 業者（仕入先）マスタモデル。
+ * 業者（仕入先）モデル。
  */
-#[Fillable(['name', 'code', 'contact_person', 'phone', 'fax', 'email', 'is_active'])]
+#[Fillable(['name', 'code', 'contact_person', 'phone', 'fax', 'email', 'order_method', 'is_active'])]
 class Supplier extends Model
 {
+    /** 発注方法（業者ごとに決まる） */
+    public const ORDER_METHODS = [
+        'mail' => 'メール',
+        'phone' => '電話',
+        'fax' => 'FAX',
+        'web' => 'web',
+    ];
+
     protected function casts(): array
     {
         return [
@@ -23,5 +31,11 @@ class Supplier extends Model
     public function materials(): HasMany
     {
         return $this->hasMany(Material::class);
+    }
+
+    /** 発注方法のラベル（メール／電話／FAX／web） */
+    public function orderMethodLabel(): ?string
+    {
+        return self::ORDER_METHODS[$this->order_method] ?? null;
     }
 }
