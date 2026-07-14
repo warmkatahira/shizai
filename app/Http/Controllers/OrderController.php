@@ -7,6 +7,7 @@ use App\Models\Office;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Supplier;
+use App\Http\Controllers\Concerns\FiltersByPeriod;
 use App\Support\OrderNotifier;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
@@ -18,6 +19,8 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class OrderController extends Controller
 {
+    use FiltersByPeriod;
+
     /**
      * 発注申請の一覧（検索・絞り込み対応）。
      * 営業所ユーザーは自分の営業所の申請のみ、総務・管理者は全件表示。
@@ -84,22 +87,10 @@ class OrderController extends Controller
         }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);
     }
 
-    /**
-     * 検索条件の初期値。メニューから開いた初回表示のときだけ効く。
-     *
-     * フォームを送信すると各パラメータは空でも必ず送られてくるので、
-     * `has()` で「初回表示かどうか」を判定できる。
-     * つまり条件を空にして検索すれば、全期間・全ステータスも見られる。
-     */
+    /** 検索条件の初期値。メニューから開いた初回表示のときだけ効く */
     private function applyDefaultFilters(Request $request): void
     {
-        // 期間（申請日）の初期値は当月。全期間を既定にすると、データが増えたとき一覧が重くなる
-        if (! $request->has('date_from') && ! $request->has('date_to')) {
-            $request->merge([
-                'date_from' => now()->startOfMonth()->toDateString(),
-                'date_to' => now()->endOfMonth()->toDateString(),
-            ]);
-        }
+        $this->applyDefaultPeriod($request);
 
         // 総務は「自分が承認すべき申請」から見たいので、ステータスの初期値を総務承認待ちにする
         if (! $request->has('status') && $request->user()->isGeneralAffairs()) {
@@ -143,7 +134,7 @@ class OrderController extends Controller
         return [
             'offices' => $request->user()->isSales()
                 ? collect()
-                : Office::orderBy('name')->get(),
+                : Office::orderBy('sort_order')->get(),
             'suppliers' => Supplier::orderBy('name')->get(),
             'statuses' => Order::STATUS_LABELS,
             'filters' => $request->only(['status', 'office_id', 'supplier_id', 'keyword', 'date_from', 'date_to']),
@@ -174,13 +165,10 @@ class OrderController extends Controller
     /** 指定業者の有効な資材（カテゴリ順 → 品名順） */
     private function activeMaterialsOf(Supplier $supplier)
     {
-        // categories を join するため is_active はテーブル名で修飾する（categories 側にも同名カラムがある）
         return Material::with('category')
-            ->where('materials.is_active', true)
+            ->active()
             ->where('materials.supplier_id', $supplier->id)
-            ->leftJoin('categories', 'materials.category_id', '=', 'categories.id')
-            ->orderBy('categories.sort_order')->orderBy('categories.name')->orderBy('materials.name')
-            ->select('materials.*')
+            ->sortedByCategory()
             ->get();
     }
 
@@ -276,23 +264,9 @@ class OrderController extends Controller
                     continue; // 無効化された資材はスキップ
                 }
 
-                $order->items()->create([
-                    'material_id' => $material->id,
-                    'material_name' => $material->name,
-                    'category_id' => $material->category_id,
-                    'category_name' => $material->category?->name,
-                    'supplier_id' => $material->supplier_id,
-                    'supplier_name' => $material->supplier?->name,
-                    'unit' => $material->unit,
-                    'unit_price' => $material->unit_price,
-                    'quantity' => (int) $qty,
-                    // 発注書に印字する項目
-                    'length_mm' => $material->length_mm,
-                    'width_mm' => $material->width_mm,
-                    'height_mm' => $material->height_mm,
-                    'min_lot_qty' => $material->min_lot_qty,
-                    'min_lot_unit' => $material->min_lot_unit,
-                ]);
+                $order->items()->create(
+                    $material->toOrderItemSnapshot() + ['quantity' => (int) $qty],
+                );
             }
 
             return $order;

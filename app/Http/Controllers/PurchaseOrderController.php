@@ -24,7 +24,7 @@ class PurchaseOrderController extends Controller
         $user = $request->user();
 
         // 総務・管理者のみ
-        abort_unless($user->isGeneralAffairs() || $user->isAdmin(), 403, '発注書を出力できるのは総務・管理者のみです。');
+        abort_unless($user->canIssuePurchaseOrder(), 403, '発注書を出力できるのは総務・管理者のみです。');
 
         // 総務の承認が済んでいない申請の発注書は出せない
         abort_unless(

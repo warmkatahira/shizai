@@ -7,6 +7,7 @@ use App\Models\Office;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Supplier;
+use App\Http\Controllers\Concerns\FiltersByPeriod;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -20,6 +21,8 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
  */
 class ReportController extends Controller
 {
+    use FiltersByPeriod;
+
     /** 集計軸の定義。キー => [ラベル, 集計に使う列（明細のスナップショット）] */
     private const AXES = [
         'category' => ['カテゴリ別', 'order_items.category_name'],
@@ -81,26 +84,6 @@ class ReportController extends Controller
 
             fclose($out);
         }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);
-    }
-
-    /**
-     * 期間の初期値を「当月」にする。
-     * 全期間スキャンを既定にすると、データが増えたときに重くなるため。
-     *
-     * 日付パラメータが1つも無いとき（＝メニューから開いた初回表示）だけ当月を入れる。
-     * フォームを送信すると date_from / date_to は空でも必ず送られてくるので、
-     * 日付欄を空にして「集計する」を押せば全期間を集計できる。
-     */
-    private function applyDefaultPeriod(Request $request): void
-    {
-        if ($request->has('date_from') || $request->has('date_to')) {
-            return;
-        }
-
-        $request->merge([
-            'date_from' => now()->startOfMonth()->toDateString(),
-            'date_to' => now()->endOfMonth()->toDateString(),
-        ]);
     }
 
     /** リクエストの集計軸（不正な値は カテゴリ別 にフォールバック） */

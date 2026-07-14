@@ -15,11 +15,7 @@ class MaterialController extends Controller
     /** 資材一覧（カテゴリ順 → 品名順） */
     public function index(): View
     {
-        $materials = Material::with(['supplier', 'category'])
-            ->leftJoin('categories', 'materials.category_id', '=', 'categories.id')
-            ->orderBy('categories.sort_order')->orderBy('categories.name')->orderBy('materials.name')
-            ->select('materials.*')
-            ->get();
+        $materials = Material::with(['supplier', 'category'])->sortedByCategory()->get();
 
         return view('admin.materials.index', compact('materials'));
     }

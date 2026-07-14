@@ -125,14 +125,25 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
 第1・第2以外の所長は**実名が未確定のため仮名**（`UserSeeder::MANAGERS` に定義）。実名が分かったらここを差し替える。
 **メールを持つのは管理者・総務・第1/第2の所長だけ**。申請用アカウントと仮名の所長はメールなし（通知が飛ばない）。
 
+## 共通化した処理（重複させないこと）
+- `Material::toOrderItemSnapshot()` … 資材 → 発注明細のスナップショット。申請もシーダーもこれを使う（数量だけ足す）
+- `Material::scopeSortedByCategory()` / `scopeActive()` … 資材一覧の並び順・有効判定。3画面で共有
+- `App\Models\Concerns\DescribesMaterial` … 寸法・最低ロットの表示整形。Material と OrderItem が同じ列を持つため共有
+- `App\Http\Controllers\Concerns\FiltersByPeriod` … 検索期間の初期値（当月）。発注一覧と集計で共有
+- `App\Support\Money::yen()` … 金額表示（小数がある時だけ小数を出す）
+- `App\Support\OrderNotifier` … 通知先の振り分け
+- 権限判定は `User` のメソッドに寄せる（`canManageMasters()` / `canIssuePurchaseOrder()` / `isManager()` など）。
+  ビューやコントローラで `isAdmin() || isGeneralAffairs()` のように書かない
+- 営業所の並び順はどこでも `sort_order`
+
 ## コード規約メモ
 - Laravel 13 では fillable/hidden を **PHP属性** `#[Fillable([...])]` `#[Hidden([...])]` で書く（`$fillable` 配列ではない）。
 - 権限チェックは `role` ミドルウェア（`bootstrap/app.php` でエイリアス登録、例：`->middleware('role:admin')`）。
 - 画面文言・コメントは日本語。フォームは `_form.blade.php` パーシャルで共通化。
 - リソースルートで `create` を `{model}` より先に定義する（"create" がIDと誤解釈されるのを防ぐ）。
+- Blade で `@php(...)` の短縮形と `@php ... @endphp` ブロックを**同じファイルで併用しない**（コンパイルが壊れて "Undefined variable" になる）。ブロック形に統一する。
 - シーダーは**テーブルごとに1ファイル**（`OfficeSeeder` `UserSeeder` `CategorySeeder` `SupplierSeeder` `MaterialSeeder`）。`DatabaseSeeder` は外部キーの依存順に `call()` するだけ。
 
 ## 進捗
-Phase 1（認証）〜 Phase 5（一覧・検索・CSV）＋業者マスタまで完成・実機確認済み。
-資材マスタを社内の「資材発注 詳細確認リスト」の項目に合わせて拡張済み（カテゴリマスタ化・担当者/連絡先/発注方法・寸法・最低ロット・名入れ・備考、単価の小数対応）。
-今後の候補：カテゴリ別/業者別の発注集計、発注書PDF出力、自動テスト整備。
+認証・マスタ管理・発注申請・承認フロー・発注集計・発注書PDFまで完成、実機確認済み。
+今後の候補：自動テスト整備。

@@ -19,17 +19,14 @@ class MaterialCatalogController extends Controller
     public function index(Request $request): View
     {
         $materials = Material::with(['category', 'supplier'])
-            ->where('materials.is_active', true)
+            ->active()
             ->when($request->filled('supplier_id'),
                 fn ($q) => $q->where('materials.supplier_id', $request->input('supplier_id')))
             ->when($request->filled('category_id'),
                 fn ($q) => $q->where('materials.category_id', $request->input('category_id')))
             ->when($request->filled('keyword'),
                 fn ($q) => $q->where('materials.name', 'like', '%' . $request->input('keyword') . '%'))
-            // カテゴリ順 → 品名順
-            ->leftJoin('categories', 'materials.category_id', '=', 'categories.id')
-            ->orderBy('categories.sort_order')->orderBy('categories.name')->orderBy('materials.name')
-            ->select('materials.*')
+            ->sortedByCategory()
             ->get();
 
         return view('materials.index', [

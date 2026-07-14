@@ -27,7 +27,7 @@ class UserController extends Controller
     {
         return view('admin.users.create', [
             'user' => new User(['role' => User::ROLE_SALES]),
-            'offices' => Office::orderBy('name')->get(),
+            'offices' => Office::orderBy('sort_order')->get(),
         ]);
     }
 
@@ -47,7 +47,7 @@ class UserController extends Controller
     {
         return view('admin.users.edit', [
             'user' => $user,
-            'offices' => Office::orderBy('name')->get(),
+            'offices' => Office::orderBy('sort_order')->get(),
         ]);
     }
 

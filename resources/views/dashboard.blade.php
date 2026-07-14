@@ -3,7 +3,35 @@
 @section('title', 'ホーム | 資材発注システム')
 
 @section('content')
-    @php($user = auth()->user())
+    @php
+        $user = auth()->user();
+
+        // 権限に応じた入口。ヘッダーのナビと同じ判定を使う
+        $cards = [];
+
+        if ($user->isSales()) {
+            $cards[] = ['orders.create', '資材を発注する', '業者を選び、必要な資材の数量を入力して申請します。'];
+        }
+
+        $cards[] = $user->isGeneralAffairs()
+            ? ['orders.index', '発注申請を確認する', '営業所からの申請を承認・却下します。']
+            : ['orders.index', '発注申請を見る', '発注申請の状態を確認します。'];
+
+        $cards[] = ['reports.index', '発注を集計する', 'カテゴリ別・業者別・営業所別に発注実績を集計します。'];
+
+        if ($user->canManageMasters()) {
+            $cards[] = ['admin.materials.index', '資材マスタ', '発注できる資材を登録・編集します。'];
+            $cards[] = ['admin.suppliers.index', '業者マスタ', '仕入先の業者と発注方法を登録・編集します。'];
+            $cards[] = ['admin.categories.index', 'カテゴリマスタ', '資材のカテゴリを登録・編集します。'];
+            $cards[] = ['admin.offices.index', '営業所マスタ', '営業所（拠点）を登録・編集します。'];
+        } else {
+            $cards[] = ['materials.index', '資材を調べる', 'どの業者にどの資材がいくらであるかを確認します。'];
+        }
+
+        if ($user->isAdmin()) {
+            $cards[] = ['admin.users.index', 'ユーザー管理', '利用者と権限を登録・編集します。'];
+        }
+    @endphp
 
     <h1 class="text-xl font-bold mb-2">こんにちは、{{ $user->name }} さん</h1>
     @if ($user->office)
@@ -11,44 +39,11 @@
     @endif
 
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {{-- 営業所ユーザー向け --}}
-        @if ($user->isSales())
-            <a href="{{ route('orders.create') }}" class="block bg-white rounded-lg shadow p-5 hover:ring-2 hover:ring-accent">
-                <h2 class="font-semibold mb-1">資材を発注する</h2>
-                <p class="text-sm text-gray-500">必要な資材を選んで発注申請します。</p>
+        @foreach ($cards as [$route, $title, $description])
+            <a href="{{ route($route) }}" class="block bg-white rounded-lg shadow p-5 hover:ring-2 hover:ring-accent">
+                <h2 class="font-semibold mb-1">{{ $title }}</h2>
+                <p class="text-sm text-gray-500">{{ $description }}</p>
             </a>
-            <a href="{{ route('orders.index') }}" class="block bg-white rounded-lg shadow p-5 hover:ring-2 hover:ring-accent">
-                <h2 class="font-semibold mb-1">申請履歴を見る</h2>
-                <p class="text-sm text-gray-500">自分の営業所の発注申請と状態を確認します。</p>
-            </a>
-        @endif
-
-        {{-- 総務向け --}}
-        @if ($user->isGeneralAffairs())
-            <a href="{{ route('orders.index') }}" class="block bg-white rounded-lg shadow p-5 hover:ring-2 hover:ring-accent">
-                <h2 class="font-semibold mb-1">発注申請を確認する</h2>
-                <p class="text-sm text-gray-500">営業所からの申請を確認します。<span class="text-xs text-gray-400">（承認・却下は Phase 4）</span></p>
-            </a>
-        @endif
-
-        {{-- 管理者向け --}}
-        @if ($user->isAdmin())
-            <a href="{{ route('admin.offices.index') }}" class="block bg-white rounded-lg shadow p-5 hover:ring-2 hover:ring-accent">
-                <h2 class="font-semibold mb-1">営業所管理</h2>
-                <p class="text-sm text-gray-500">営業所を登録・編集します。</p>
-            </a>
-            <a href="{{ route('admin.users.index') }}" class="block bg-white rounded-lg shadow p-5 hover:ring-2 hover:ring-accent">
-                <h2 class="font-semibold mb-1">ユーザー管理</h2>
-                <p class="text-sm text-gray-500">利用者を登録・編集します。</p>
-            </a>
-            <a href="{{ route('admin.suppliers.index') }}" class="block bg-white rounded-lg shadow p-5 hover:ring-2 hover:ring-accent">
-                <h2 class="font-semibold mb-1">業者マスタ管理</h2>
-                <p class="text-sm text-gray-500">資材の仕入先業者を登録・編集します。</p>
-            </a>
-            <a href="{{ route('admin.materials.index') }}" class="block bg-white rounded-lg shadow p-5 hover:ring-2 hover:ring-accent">
-                <h2 class="font-semibold mb-1">資材マスタ管理</h2>
-                <p class="text-sm text-gray-500">発注できる資材を登録・編集します。</p>
-            </a>
-        @endif
+        @endforeach
     </div>
 @endsection

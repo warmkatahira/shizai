@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\DescribesMaterial;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,6 +17,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 ])]
 class OrderItem extends Model
 {
+    use DescribesMaterial;
+
     protected function casts(): array
     {
         return [
@@ -51,26 +54,5 @@ class OrderItem extends Model
     public function subtotal(): float
     {
         return (float) $this->unit_price * $this->quantity;
-    }
-
-    /** 発注書に印字する寸法（縦×横×高）。入力がある値だけを × でつなぐ */
-    public function sizeText(): ?string
-    {
-        $parts = array_filter(
-            [$this->length_mm, $this->width_mm, $this->height_mm],
-            fn (?int $mm) => $mm !== null,
-        );
-
-        return $parts === [] ? null : implode('×', $parts);
-    }
-
-    /** 発注書に印字する最低ロット（例：2,700枚）。数量が無ければ null */
-    public function minLotText(): ?string
-    {
-        if ($this->min_lot_qty === null) {
-            return null;
-        }
-
-        return number_format($this->min_lot_qty) . ($this->min_lot_unit ?? '');
     }
 }

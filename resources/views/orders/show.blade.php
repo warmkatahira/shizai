@@ -109,7 +109,7 @@
     </div>
 
     {{-- 発注書PDF（発注待ち・発注済のみ・総務/管理者）。出すと「発注済」に進むのでPOST --}}
-    @if (($order->isPendingOrder() || $order->isOrdered()) && (auth()->user()->isGeneralAffairs() || auth()->user()->isAdmin()))
+    @if (($order->isPendingOrder() || $order->isOrdered()) && auth()->user()->canIssuePurchaseOrder())
         <div class="bg-white shadow rounded-lg p-6 mb-6 border-l-4 border-emerald-400">
             <h2 class="font-semibold mb-1">発注書</h2>
             <p class="text-xs text-gray-500 mb-4">

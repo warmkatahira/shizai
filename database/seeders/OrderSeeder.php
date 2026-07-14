@@ -56,7 +56,7 @@ class OrderSeeder extends Seeder
             $reviewer = $affairs[$i % $affairs->count()];
 
             // その業者の資材を2〜3件選ぶ
-            $materials = Material::with('category')
+            $materials = Material::with(['category', 'supplier'])
                 ->where('supplier_id', $supplier->id)
                 ->where('is_active', true)
                 ->orderBy('id')
@@ -98,22 +98,10 @@ class OrderSeeder extends Seeder
                 $lot = $material->min_lot_qty;
                 $quantity = $lot ? $lot * ($n + 1) : 100 * ($n + 1);
 
-                $order->items()->create([
-                    'material_id' => $material->id,
-                    'material_name' => $material->name,
-                    'category_id' => $material->category_id,
-                    'category_name' => $material->category?->name,
-                    'supplier_id' => $supplier->id,
-                    'supplier_name' => $supplier->name,
-                    'unit' => $material->unit,
-                    'unit_price' => $material->unit_price,
-                    'quantity' => $quantity,
-                    'length_mm' => $material->length_mm,
-                    'width_mm' => $material->width_mm,
-                    'height_mm' => $material->height_mm,
-                    'min_lot_qty' => $material->min_lot_qty,
-                    'min_lot_unit' => $material->min_lot_unit,
-                ]);
+                // 実際の申請と同じスナップショットの作り方をする
+                $order->items()->create(
+                    $material->toOrderItemSnapshot() + ['quantity' => $quantity],
+                );
             }
         }
     }

@@ -46,8 +46,14 @@
         </div>
 
         <div class="flex items-center gap-3 mt-4">
-            <button type="submit" class="bg-accent hover:bg-accent-dark text-ink text-sm px-5 py-2 rounded-md">検索</button>
-            <a href="{{ route('materials.index') }}" class="text-sm text-gray-500 hover:underline">条件クリア</a>
+            {{-- 条件を変えると自動で検索される。ボタンはJSが動かないときの保険 --}}
+            <noscript>
+                <button type="submit" class="bg-accent hover:bg-accent-dark text-ink text-sm px-5 py-2 rounded-md">検索</button>
+            </noscript>
+            <a href="{{ route('materials.index') }}"
+               class="inline-flex items-center gap-1 bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-700 text-sm px-4 py-2 rounded-md">
+                <span aria-hidden="true">✕</span> 条件クリア
+            </a>
             <span class="ml-auto text-sm text-gray-500">{{ number_format($materials->count()) }} 件</span>
         </div>
     </form>
