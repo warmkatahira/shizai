@@ -249,5 +249,6 @@
         </table>
     </div>
 
-    <a href="{{ route('orders.index') }}" class="text-sm text-gray-500 hover:underline">← 一覧に戻る</a>
+    {{-- 直前に見ていた検索結果へ戻る（OrderController がセッションに条件を覚えている） --}}
+    <a href="{{ $backUrl }}" class="text-sm text-gray-500 hover:underline">← 一覧に戻る</a>
 @endsection

@@ -21,6 +21,9 @@ class OrderController extends Controller
 {
     use FiltersByPeriod;
 
+    /** 直前の検索条件をセッションに覚えておくキー（詳細から一覧に戻るときに使う） */
+    private const LAST_SEARCH_KEY = 'orders.last_search';
+
     /**
      * 発注申請の一覧（検索・絞り込み対応）。
      * 営業所ユーザーは自分の営業所の申請のみ、総務・管理者は全件表示。
@@ -28,6 +31,10 @@ class OrderController extends Controller
     public function index(Request $request): View
     {
         $this->applyDefaultFilters($request);
+
+        // 詳細から「一覧に戻る」で同じ検索結果に戻れるよう、検索条件を覚えておく。
+        // applyDefaultFilters で入れた既定値も含まれるので、初回表示の状態も復元できる。
+        $request->session()->put(self::LAST_SEARCH_KEY, $request->query());
 
         $orders = $this->filteredOrders($request)
             ->with(['office', 'supplier', 'requester'])
@@ -332,7 +339,10 @@ class OrderController extends Controller
                 || ($order->isPendingAffairs() && $user->isGeneralAffairs()),
         ];
 
-        return view('orders.show', compact('order', 'actions'));
+        // 「一覧に戻る」は直前の検索結果へ戻す（メールのリンクなどから直接来た場合は素の一覧）
+        $backUrl = route('orders.index', $request->session()->get(self::LAST_SEARCH_KEY, []));
+
+        return view('orders.show', compact('order', 'actions', 'backUrl'));
     }
 
     /** 営業所ユーザーは自分の営業所の申請しか見られない */
