@@ -25,7 +25,7 @@ class OrderController extends Controller
     public function index(Request $request): View
     {
         $orders = $this->filteredOrders($request)
-            ->with(['office', 'requester'])
+            ->with(['office', 'supplier', 'requester'])
             ->withCount('items')
             ->latest()
             ->get();
@@ -40,7 +40,7 @@ class OrderController extends Controller
     public function export(Request $request): StreamedResponse
     {
         $orders = $this->filteredOrders($request)
-            ->with(['office', 'requester', 'items'])
+            ->with(['office', 'supplier', 'requester', 'items'])
             ->latest()
             ->get();
 
@@ -52,8 +52,8 @@ class OrderController extends Controller
             fwrite($out, "\xEF\xBB\xBF");
 
             fputcsv($out, [
-                '申請番号', '申請日', '営業所', '申請者', 'ステータス',
-                '品名', '業者', '単位', '参考単価', '数量', '小計',
+                '申請番号', '申請日', '営業所', '発注業者', '発注者', 'アカウント', 'ステータス',
+                '品名', 'カテゴリ', '単位', '参考単価', '数量', '小計',
             ]);
 
             foreach ($orders as $order) {
@@ -62,10 +62,12 @@ class OrderController extends Controller
                         $order->id,
                         $order->created_at->format('Y/m/d H:i'),
                         $order->office->name,
+                        $order->supplier?->name ?? '',
+                        $order->requester_name ?? '',
                         $order->requester->name,
                         $order->statusLabel(),
                         $item->material_name,
-                        $item->supplier_name ?? '',
+                        $item->category_name ?? '',
                         $item->unit,
                         $item->unit_price,
                         $item->quantity,
@@ -94,10 +96,9 @@ class OrderController extends Controller
                 fn ($q) => $q->where('office_id', $request->input('office_id')))
             ->when($request->filled('status'),
                 fn ($q) => $q->where('status', $request->input('status')))
-            // 業者で絞り込み（その業者の明細を含む申請）
+            // 業者で絞り込み（1申請＝1業者なのでヘッダーを直接見る）
             ->when($request->filled('supplier_id'),
-                fn ($q) => $q->whereHas('items',
-                    fn ($iq) => $iq->where('supplier_id', $request->input('supplier_id'))))
+                fn ($q) => $q->where('supplier_id', $request->input('supplier_id')))
             // 品名キーワード
             ->when($request->filled('keyword'),
                 fn ($q) => $q->whereHas('items',
@@ -122,17 +123,38 @@ class OrderController extends Controller
         ];
     }
 
-    /** 新規発注申請フォーム（営業所ユーザーのみ） */
-    public function create(): View
+    /**
+     * 新規発注申請フォーム（営業所ユーザーのみ）。
+     * 1申請＝1業者。業者を選ぶとその業者の資材だけが並ぶ。
+     */
+    public function create(Request $request): View
+    {
+        // 有効な資材を1つ以上持つ業者だけを選択肢にする
+        $suppliers = Supplier::where('is_active', true)
+            ->whereHas('materials', fn ($q) => $q->where('is_active', true))
+            ->orderBy('name')->get();
+
+        $supplierId = $request->input('supplier_id');
+        $supplier = $supplierId ? $suppliers->firstWhere('id', (int) $supplierId) : null;
+
+        $materials = $supplier
+            ? $this->activeMaterialsOf($supplier)
+            : collect();
+
+        return view('orders.create', compact('suppliers', 'supplier', 'materials'));
+    }
+
+    /** 指定業者の有効な資材（カテゴリ順 → 品名順） */
+    private function activeMaterialsOf(Supplier $supplier)
     {
         // categories を join するため is_active はテーブル名で修飾する（categories 側にも同名カラムがある）
-        $materials = Material::with(['supplier', 'category'])->where('materials.is_active', true)
+        return Material::with('category')
+            ->where('materials.is_active', true)
+            ->where('materials.supplier_id', $supplier->id)
             ->leftJoin('categories', 'materials.category_id', '=', 'categories.id')
             ->orderBy('categories.sort_order')->orderBy('categories.name')->orderBy('materials.name')
             ->select('materials.*')
             ->get();
-
-        return view('orders.create', compact('materials'));
     }
 
     /** 発注申請を登録 */
@@ -141,11 +163,19 @@ class OrderController extends Controller
         $user = $request->user();
 
         $validated = $request->validate([
+            'supplier_id' => ['required', 'exists:suppliers,id'],
+            'requester_name' => ['required', 'string', 'max:50'],
             'note' => ['nullable', 'string', 'max:1000'],
+            'supplier_note' => ['nullable', 'string', 'max:1000'],
+            'desired_delivery_date' => ['nullable', 'date'],
             'quantities' => ['array'],
             'quantities.*' => ['nullable', 'integer', 'min:0', 'max:9999'],
         ], [], [
+            'supplier_id' => '発注業者',
+            'requester_name' => '発注者の氏名',
             'note' => '備考',
+            'supplier_note' => '業者への連絡事項',
+            'desired_delivery_date' => '納入希望日',
         ]);
 
         // 数量が1以上の資材だけを対象にする
@@ -158,12 +188,20 @@ class OrderController extends Controller
             ]);
         }
 
-        // 選ばれた資材を取得（有効なもののみ、業者も読み込む）
-        $materials = Material::with('supplier')
+        // 選ばれた資材を取得。1申請＝1業者なので、選んだ業者の資材だけに限定する
+        // （フォームを細工して他業者の資材を混ぜられないように、ここでも絞る）
+        $materials = Material::with(['supplier', 'category'])
             ->whereIn('id', $selected->keys())
             ->where('is_active', true)
+            ->where('supplier_id', $validated['supplier_id'])
             ->get()
             ->keyBy('id');
+
+        if ($materials->isEmpty()) {
+            throw ValidationException::withMessages([
+                'quantities' => '選択された資材が、指定の業者の資材ではありません。',
+            ]);
+        }
 
         // 申請者が所長なら所長承認を飛ばして総務へ、そうでなければ所長承認待ち
         $initialStatus = $user->isManager()
@@ -174,9 +212,13 @@ class OrderController extends Controller
         $order = DB::transaction(function () use ($user, $validated, $selected, $materials, $initialStatus) {
             $order = Order::create([
                 'office_id' => $user->office_id,
+                'supplier_id' => $validated['supplier_id'],
                 'requested_by' => $user->id,
+                'requester_name' => $validated['requester_name'],
                 'status' => $initialStatus,
                 'note' => $validated['note'] ?? null,
+                'supplier_note' => $validated['supplier_note'] ?? null,
+                'desired_delivery_date' => $validated['desired_delivery_date'] ?? null,
             ]);
 
             foreach ($selected as $materialId => $qty) {
@@ -188,11 +230,19 @@ class OrderController extends Controller
                 $order->items()->create([
                     'material_id' => $material->id,
                     'material_name' => $material->name,
+                    'category_id' => $material->category_id,
+                    'category_name' => $material->category?->name,
                     'supplier_id' => $material->supplier_id,
                     'supplier_name' => $material->supplier?->name,
                     'unit' => $material->unit,
                     'unit_price' => $material->unit_price,
                     'quantity' => (int) $qty,
+                    // 発注書に印字する項目
+                    'length_mm' => $material->length_mm,
+                    'width_mm' => $material->width_mm,
+                    'height_mm' => $material->height_mm,
+                    'min_lot_qty' => $material->min_lot_qty,
+                    'min_lot_unit' => $material->min_lot_unit,
                 ]);
             }
 
@@ -214,7 +264,7 @@ class OrderController extends Controller
     {
         $this->authorizeView($request, $order);
 
-        $order->load(['office', 'requester', 'managerApprover', 'reviewer', 'rejectedBy', 'items']);
+        $order->load(['office', 'supplier', 'requester', 'managerApprover', 'reviewer', 'rejectedBy', 'items']);
 
         $user = $request->user();
         $isOfficeManager = $user->isManager() && $user->office_id === $order->office_id;

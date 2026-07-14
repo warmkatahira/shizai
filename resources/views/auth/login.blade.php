@@ -4,11 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>ログイン | 資材発注システム</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen bg-gray-100 flex items-center justify-center px-4">
     <div class="w-full max-w-sm">
-        <h1 class="text-center text-2xl font-bold text-indigo-700 mb-6">資材発注システム</h1>
+        <h1 class="text-center text-2xl font-bold text-accent-strong mb-6">資材発注システム</h1>
 
         <div class="bg-white shadow rounded-lg p-6">
             {{-- エラー表示 --}}
@@ -18,28 +19,34 @@
                 </div>
             @endif
 
+            @php
+                // 開発中のログインを省くための初期値。本番（local 以外）では空になる。
+                $devEmail = app()->isLocal() ? 't.katahira@warm.co.jp' : '';
+                $devPassword = app()->isLocal() ? 'katahira134' : '';
+            @endphp
+
             <form method="POST" action="{{ route('login') }}" class="space-y-4">
                 @csrf
 
                 <div>
                     <label for="email" class="block text-sm font-medium text-gray-700 mb-1">メールアドレス</label>
-                    <input id="email" name="email" type="email" value="{{ old('email') }}" required autofocus
-                        class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
+                    <input autocomplete="off" id="email" name="email" type="email" value="{{ old('email', $devEmail) }}" required autofocus
+                        class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
                 </div>
 
                 <div>
                     <label for="password" class="block text-sm font-medium text-gray-700 mb-1">パスワード</label>
-                    <input id="password" name="password" type="password" required
-                        class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
+                    <input autocomplete="off" id="password" name="password" type="password" value="{{ old('password', $devPassword) }}" required
+                        class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
                 </div>
 
                 <label class="flex items-center gap-2 text-sm text-gray-600">
-                    <input type="checkbox" name="remember" class="rounded border-gray-300">
+                    <input autocomplete="off" type="checkbox" name="remember" class="rounded border-gray-300">
                     ログイン状態を保持する
                 </label>
 
                 <button type="submit"
-                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 rounded-md transition">
+                    class="w-full bg-accent hover:bg-accent-dark text-ink font-medium py-2 rounded-md transition">
                     ログイン
                 </button>
             </form>

@@ -43,7 +43,7 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
 - メール通知：申請時→次の承認者へ / 所長承認時→総務へ / 発注・却下時→申請者へ。
 
 ## データモデル
-- `offices`（営業所・拠点） … name/code/short_name/postal_code/address/tel/fax/sort_order/is_active。社内の拠点マスタ（BaseSeeder）の9拠点を投入
+- `offices`（営業所・拠点） … name/code/postal_code/address/tel/fax/sort_order/is_active。社内の拠点マスタ（BaseSeeder）の9拠点を投入
 - `users`（role・office_id・is_manager を保持）
 - `suppliers`（業者マスタ） … `materials.supplier_id` で参照
 - `categories`（商品カテゴリマスタ） … name/sort_order/is_active。`materials.category_id` で参照
@@ -54,7 +54,10 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
   - unit（単位） / unit_price（単価） / min_lot_qty ＋ min_lot_unit（最低ロット。「2700枚」を数量と単位に分けて保持）
   - has_imprint（名入れフラグ） / note（備考） / is_active
 - `orders`（発注ヘッダー） + `order_items`（明細）
-  - **明細は申請時点の情報をスナップショット保存**（material_name / supplier_name / unit / unit_price）。マスタが後で変わっても過去の申請は不変。
+  - **明細は申請時点の情報をスナップショット保存**（material_name / category_name / supplier_name / unit / unit_price / 寸法 / 最低ロット）。マスタが後で変わっても過去の申請・集計・発注書は不変。
+  - `orders.supplier_id`＝発注先の業者（1申請＝1業者）／`orders.requester_name`＝発注者の氏名（手入力）
+  - 備考は2種類。`note`＝**社内メモ**（所長・総務向け。発注書には出ない） / `supplier_note`＝**業者への連絡事項**（発注書の備考欄に印字）
+  - `desired_delivery_date`＝納入希望日（申請時に入力し、発注書に印字）
 
 ### 金額の扱い
 単価は **`decimal(10,2)`**。実データに 34.5円 / 6.07円 のような小数が存在するため整数では持てない。
@@ -63,9 +66,28 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
 ## 主な画面
 - `/orders` 発注一覧（検索：ステータス/営業所/業者/品名/期間、CSVダウンロード付き）
 - `/orders/create` 発注申請（営業所ユーザーのみ）
-- `/orders/{order}` 詳細＋承認/却下アクション
+  - **1申請＝1業者**。発注業者をプルダウンで選ぶと、その業者の有効な資材だけが並ぶ（`onchange` で GET 再読込。JSフレームワークは使わない）
+  - 数量を入れた資材だけが申請される。他業者の資材を混ぜられないよう `store` 側でも業者で絞って検証する
+  - **発注者の氏名は手入力**（`orders.requester_name`）。営業所のアカウントは共通で使い回すため、ログインアカウント（`requested_by`）とは別に持つ
+  - 納入希望日（`desired_delivery_date`）は発注単位で1つ。全品目に適用され、発注書の「希望納期」列に印字される
+- `/orders/{order}` 詳細＋承認/却下アクション＋**発注書PDF**のボタン
+- `/orders/{order}/purchase-order` 発注書PDF（`PurchaseOrderController`）
+  - **1申請＝1業者なので、発注書は1申請1枚**
+  - 出せるのは**発注済（ordered）のみ・総務/管理者のみ**。担当者名はボタンを押した本人の氏名が入る
+  - 発注NO＝`orders.id`（`Order::purchaseOrderNo()`）／発注日＝`reviewed_at`／自社の連絡先＝`config/company.php`（本社）
+  - 納入先＝発注元の営業所。備考欄＝`orders.supplier_note`（**業者向け**。社内メモの `orders.note` は印字しない）
+  - PDFは **mPDF**。日本語フォントは `storage/fonts/ipaexg.ttf`（IPAexゴシック / IPAフォントライセンス）をリポジトリに同梱し、サブセット埋め込みしている
+- `/reports` 発注集計（`ReportController`）
+  - 集計軸をプルダウンで切替：カテゴリ別／業者別／営業所別／資材別
+  - 絞り込み：期間（**発注日** = `orders.reviewed_at`）／営業所／カテゴリ／業者。CSVダウンロード付き
+  - **期間の初期値は当月**（全期間スキャンを既定にしない）。日付を空にして送信すれば全期間。
+    日付パラメータが1つも無いときだけ当月を入れる（`applyDefaultPeriod`）ので、フォーム送信時は空欄が尊重される
+  - `orders` に `(status, reviewed_at)` の複合インデックスを張っている（集計の絞り込みがこの2列のため）
+  - **対象は `ordered`（発注済）のみ**。承認待ち・却下は実績ではないので含めない
+  - グループ化は明細のスナップショット列（`category_name` など）で行う。マスタを改名・削除しても過去の集計は動かない
+  - 合計の「発注件数」は `COUNT(DISTINCT orders.id)`。1件の発注が複数カテゴリにまたがると各行で数えられるため、**行の合算では出せない**
 - `/admin/{offices,users,suppliers,categories,materials}` マスタ管理（管理者のみ）
-- CSVは `OrderController@export`（BOM付きUTF-8、明細1行ずつ、Excel対応）
+- CSVは `OrderController@export` / `ReportController@export`（BOM付きUTF-8、Excel対応）
 
 ## テスト用アカウント（パスワードは管理者以外すべて `password`）
 | メール | 役割 |

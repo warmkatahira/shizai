@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('name')->comment('営業所名');
             $table->string('code')->nullable()->unique()->comment('営業所コード');
-            $table->string('short_name', 20)->nullable()->comment('略称（第1, ロジS など）');
             $table->string('postal_code', 8)->nullable()->comment('郵便番号');
             $table->string('address')->nullable()->comment('住所');
             $table->string('tel', 20)->nullable()->comment('電話番号');

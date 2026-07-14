@@ -25,3 +25,6 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# mPDF が生成するフォントキャッシュ・一時ファイル
+/storage/app/mpdf

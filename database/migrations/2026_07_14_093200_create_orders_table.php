@@ -9,20 +9,27 @@ return new class extends Migration
     /**
      * 発注申請テーブル（ヘッダー）。2段階承認（所長→総務）と総務の特例承認に対応。
      * status: pending_manager=所長承認待ち / pending_affairs=総務承認待ち / ordered=発注済 / rejected=却下
+     *
+     * 1申請＝1業者。業者を選び、その業者の資材だけを申請する（発注書も1申請1枚）。
      */
     public function up(): void
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('office_id')->constrained('offices')->comment('発注元の営業所');
-            $table->foreignId('requested_by')->constrained('users')->comment('申請者');
+            $table->foreignId('supplier_id')->nullable()->constrained('suppliers')->nullOnDelete()->comment('発注先の業者');
+            $table->foreignId('requested_by')->constrained('users')->comment('申請したログインアカウント');
+            // 営業所のアカウントは共通で使い回すため、実際の申請者の氏名を別に持つ
+            $table->string('requester_name')->nullable()->comment('発注者の氏名（手入力）');
             $table->string('status')->default('pending_manager')->comment('状態: pending_manager/pending_affairs/ordered/rejected');
 
             // 所長承認
             $table->foreignId('manager_approved_by')->nullable()->constrained('users')->nullOnDelete()->comment('所長承認者');
             $table->timestamp('manager_approved_at')->nullable()->comment('所長承認日時');
 
-            $table->text('note')->nullable()->comment('申請者メモ');
+            $table->text('note')->nullable()->comment('申請者メモ（社内用。発注書には印字しない）');
+            $table->text('supplier_note')->nullable()->comment('業者への連絡事項（発注書の備考欄に印字する）');
+            $table->date('desired_delivery_date')->nullable()->comment('希望納期（発注書に印字）');
 
             // 総務の確認・発注
             $table->foreignId('reviewed_by')->nullable()->constrained('users')->nullOnDelete()->comment('総務の確認者');
@@ -37,6 +44,9 @@ return new class extends Migration
             $table->foreignId('rejected_by')->nullable()->constrained('users')->nullOnDelete()->comment('却下者（所長・総務のどちらか）');
 
             $table->timestamps();
+
+            // 集計（/reports）は「発注済 × 発注日の期間」で絞るので、その複合インデックス
+            $table->index(['status', 'reviewed_at']);
         });
     }
 

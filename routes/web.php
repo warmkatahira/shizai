@@ -9,6 +9,8 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrderApprovalController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PurchaseOrderController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 
 // 未ログインならログイン画面、ログイン済みならダッシュボードへ
@@ -37,6 +39,14 @@ Route::middleware('auth')->group(function () {
         Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
     });
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+
+    // 発注書PDF（発注済のみ・総務/管理者）。1申請＝1業者なので1申請1枚
+    Route::get('/orders/{order}/purchase-order', [PurchaseOrderController::class, 'show'])
+        ->name('orders.purchaseOrder');
+
+    // ----- 発注集計（カテゴリ別・業者別・営業所別・資材別） -----
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports-export', [ReportController::class, 'export'])->name('reports.export');
 
     // ----- 承認・却下アクション -----
     Route::post('/orders/{order}/manager-approve', [OrderApprovalController::class, 'managerApprove'])->name('orders.managerApprove');

@@ -65,7 +65,6 @@ class OfficeController extends Controller
         return $request->validate([
             'name' => ['required', 'string', 'max:100'],
             'code' => ['nullable', 'string', 'max:20', 'unique:offices,code' . ($office ? ",{$office->id}" : '')],
-            'short_name' => ['nullable', 'string', 'max:20'],
             'postal_code' => ['nullable', 'string', 'max:8'],
             'address' => ['nullable', 'string', 'max:255'],
             'tel' => ['nullable', 'string', 'max:20'],
@@ -75,7 +74,6 @@ class OfficeController extends Controller
         ], [], [
             'name' => '営業所名',
             'code' => '営業所コード',
-            'short_name' => '略称',
             'postal_code' => '郵便番号',
             'address' => '住所',
             'tel' => '電話番号',

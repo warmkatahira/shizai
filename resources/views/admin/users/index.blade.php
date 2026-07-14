@@ -6,7 +6,7 @@
     <div class="flex items-center justify-between mb-6">
         <h1 class="text-xl font-bold">ユーザー管理</h1>
         <a href="{{ route('admin.users.create') }}"
-           class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm px-4 py-2 rounded-md">＋ 新規ユーザー</a>
+           class="bg-accent hover:bg-accent-dark text-ink text-sm px-4 py-2 rounded-md">＋ 新規ユーザー</a>
     </div>
 
     <div class="bg-white shadow rounded-lg overflow-hidden">
@@ -29,7 +29,7 @@
                         <td class="px-4 py-3">
                             {{ $user->roleLabel() }}
                             @if ($user->is_manager)
-                                <span class="ml-1 inline-block px-1.5 py-0.5 rounded text-xs bg-indigo-100 text-indigo-700">所長</span>
+                                <span class="ml-1 inline-block px-1.5 py-0.5 rounded text-xs bg-accent-light text-accent-strong">所長</span>
                             @endif
                         </td>
                         <td class="px-4 py-3">{{ $user->office?->name ?? '—' }}</td>
@@ -37,7 +37,7 @@
                             @include('admin.partials.status-badge', ['active' => $user->is_active])
                         </td>
                         <td class="px-4 py-3 text-right whitespace-nowrap">
-                            <a href="{{ route('admin.users.edit', $user) }}" class="text-indigo-600 hover:underline">編集</a>
+                            <a href="{{ route('admin.users.edit', $user) }}" class="text-accent-strong hover:underline">編集</a>
                             @if ($user->id !== auth()->id())
                                 <form method="POST" action="{{ route('admin.users.destroy', $user) }}" class="inline"
                                       onsubmit="return confirm('「{{ $user->name }}」を削除しますか？')">

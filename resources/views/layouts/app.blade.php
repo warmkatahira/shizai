@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', '資材発注システム')</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen bg-gray-100 text-gray-800">
@@ -13,17 +14,18 @@
         <header class="bg-white shadow-sm">
             <div class="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
                 <div class="flex items-center gap-6">
-                    <a href="{{ route('dashboard') }}" class="font-bold text-lg text-indigo-700">
+                    <a href="{{ route('dashboard') }}" class="font-bold text-lg text-accent-strong">
                         資材発注システム
                     </a>
                     <nav class="hidden sm:flex items-center gap-4 text-sm text-gray-600">
-                        <a href="{{ route('orders.index') }}" class="hover:text-indigo-700">発注申請</a>
+                        <a href="{{ route('orders.index') }}" class="hover:text-accent-strong">発注申請</a>
+                        <a href="{{ route('reports.index') }}" class="hover:text-accent-strong">集計</a>
                         @if (auth()->user()->isAdmin())
-                            <a href="{{ route('admin.offices.index') }}" class="hover:text-indigo-700">営業所</a>
-                            <a href="{{ route('admin.users.index') }}" class="hover:text-indigo-700">ユーザー</a>
-                            <a href="{{ route('admin.suppliers.index') }}" class="hover:text-indigo-700">業者</a>
-                            <a href="{{ route('admin.categories.index') }}" class="hover:text-indigo-700">カテゴリ</a>
-                            <a href="{{ route('admin.materials.index') }}" class="hover:text-indigo-700">資材</a>
+                            <a href="{{ route('admin.offices.index') }}" class="hover:text-accent-strong">営業所</a>
+                            <a href="{{ route('admin.users.index') }}" class="hover:text-accent-strong">ユーザー</a>
+                            <a href="{{ route('admin.suppliers.index') }}" class="hover:text-accent-strong">業者</a>
+                            <a href="{{ route('admin.categories.index') }}" class="hover:text-accent-strong">カテゴリ</a>
+                            <a href="{{ route('admin.materials.index') }}" class="hover:text-accent-strong">資材</a>
                         @endif
                     </nav>
                 </div>

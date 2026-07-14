@@ -33,8 +33,15 @@
                 <dd class="font-medium">{{ $order->office->name }}</dd>
             </div>
             <div>
-                <dt class="text-gray-500">申請者</dt>
-                <dd class="font-medium">{{ $order->requester->name }}</dd>
+                <dt class="text-gray-500">発注業者</dt>
+                <dd class="font-medium">{{ $order->supplier?->name ?? '—' }}</dd>
+            </div>
+            <div>
+                <dt class="text-gray-500">発注者</dt>
+                <dd class="font-medium">
+                    {{ $order->requester_name ?? '—' }}
+                    <span class="block text-xs text-gray-400 font-normal">アカウント：{{ $order->requester->name }}</span>
+                </dd>
             </div>
             <div>
                 <dt class="text-gray-500">申請日時</dt>
@@ -66,17 +73,49 @@
             </div>
         </dl>
 
-        @if ($order->note)
-            <div class="mt-4 pt-4 border-t border-gray-100 text-sm">
-                <dt class="text-gray-500 mb-1">備考</dt>
-                <dd class="whitespace-pre-wrap">{{ $order->note }}</dd>
+        @if ($order->desired_delivery_date || $order->note || $order->supplier_note)
+            <div class="mt-4 pt-4 border-t border-gray-100 text-sm space-y-3">
+                @if ($order->desired_delivery_date)
+                    <div>
+                        <dt class="text-gray-500 mb-1">希望納期</dt>
+                        <dd>{{ $order->desired_delivery_date->format('Y/m/d') }}</dd>
+                    </div>
+                @endif
+                @if ($order->note)
+                    <div>
+                        <dt class="text-gray-500 mb-1">備考（社内向け）</dt>
+                        <dd class="whitespace-pre-wrap">{{ $order->note }}</dd>
+                    </div>
+                @endif
+                @if ($order->supplier_note)
+                    <div>
+                        <dt class="text-gray-500 mb-1">業者への連絡事項（発注書に印字）</dt>
+                        <dd class="whitespace-pre-wrap">{{ $order->supplier_note }}</dd>
+                    </div>
+                @endif
             </div>
         @endif
     </div>
 
+    {{-- 発注書PDF（発注済のみ・総務/管理者）。1申請＝1業者なので1枚 --}}
+    @if ($order->isOrdered() && (auth()->user()->isGeneralAffairs() || auth()->user()->isAdmin()))
+        <div class="bg-white shadow rounded-lg p-6 mb-6 border-l-4 border-emerald-400">
+            <h2 class="font-semibold mb-1">発注書</h2>
+            <p class="text-xs text-gray-500 mb-4">担当者名には、いま操作しているあなたの氏名（{{ auth()->user()->name }}）が入ります。</p>
+            @if ($order->supplier)
+                <a href="{{ route('orders.purchaseOrder', $order) }}"
+                   class="inline-block bg-emerald-600 hover:bg-emerald-700 text-white text-sm px-4 py-2 rounded-md">
+                    発注書をPDFでダウンロード（{{ $order->supplier->name }}）
+                </a>
+            @else
+                <p class="text-sm text-gray-400">業者が設定されていないため、発注書を作成できません。</p>
+            @endif
+        </div>
+    @endif
+
     {{-- 承認アクション --}}
     @if ($actions['managerApprove'] || $actions['affairsApprove'] || $actions['specialApprove'] || $actions['reject'])
-        <div class="bg-white shadow rounded-lg p-6 mb-6 border-l-4 border-indigo-400">
+        <div class="bg-white shadow rounded-lg p-6 mb-6 border-l-4 border-accent-dark">
             <h2 class="font-semibold mb-4">この申請への対応</h2>
 
             @include('admin.partials.errors')
@@ -87,7 +126,7 @@
                     <form method="POST" action="{{ route('orders.managerApprove', $order) }}"
                           onsubmit="return confirm('この申請を承認して総務へ回しますか？')">
                         @csrf
-                        <button class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm px-5 py-2 rounded-md">
+                        <button class="bg-accent hover:bg-accent-dark text-ink text-sm px-5 py-2 rounded-md">
                             承認する（総務へ）
                         </button>
                     </form>

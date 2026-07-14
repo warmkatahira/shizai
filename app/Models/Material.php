@@ -37,16 +37,15 @@ class Material extends Model
         return $this->belongsTo(Supplier::class);
     }
 
-    /** 縦×横×高（mm）。1つも入力がなければ null */
+    /** 縦×横×高（mm）。入力がある値だけを × でつなぐ */
     public function sizeText(): ?string
     {
-        if ($this->length_mm === null && $this->width_mm === null && $this->height_mm === null) {
-            return null;
-        }
+        $parts = array_filter(
+            [$this->length_mm, $this->width_mm, $this->height_mm],
+            fn (?int $mm) => $mm !== null,
+        );
 
-        $part = fn (?int $mm) => $mm === null ? '—' : (string) $mm;
-
-        return $part($this->length_mm) . '×' . $part($this->width_mm) . '×' . $part($this->height_mm);
+        return $parts === [] ? null : implode('×', $parts);
     }
 
     /** 最低ロット（例：2,700枚）。数量が無ければ null */

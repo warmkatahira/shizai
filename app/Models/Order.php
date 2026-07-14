@@ -11,7 +11,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * 発注申請（ヘッダー）モデル。
  */
 #[Fillable([
-    'office_id', 'requested_by', 'status', 'note',
+    'office_id', 'supplier_id', 'requested_by', 'requester_name', 'status',
+    'note', 'supplier_note', 'desired_delivery_date',
     'manager_approved_by', 'manager_approved_at',
     'reviewed_by', 'reviewed_at', 'is_special_approval', 'special_reason',
     'reject_reason', 'rejected_by',
@@ -37,8 +38,21 @@ class Order extends Model
         return [
             'manager_approved_at' => 'datetime',
             'reviewed_at' => 'datetime',
+            'desired_delivery_date' => 'date',
             'is_special_approval' => 'boolean',
         ];
+    }
+
+    /** 発注書に印字する発注NO（orders の連番） */
+    public function purchaseOrderNo(): string
+    {
+        return (string) $this->id;
+    }
+
+    /** 発注先の業者（1申請＝1業者） */
+    public function supplier(): BelongsTo
+    {
+        return $this->belongsTo(Supplier::class);
     }
 
     /** 発注元の営業所 */

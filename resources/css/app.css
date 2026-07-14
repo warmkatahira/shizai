@@ -3,7 +3,72 @@
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 
+/**
+ * カラーパレット
+ *
+ * 指定された3色をベースに全体を組み立てている。
+ *   アクセント #D5BDAE ／ ベース #EBE9EA ／ テキスト #34251F
+ *
+ * - ニュートラル（gray-*）は、ベース色とテキスト色を両端にした「暖色寄りのグレー」に差し替え。
+ *   既存の text-gray-500 などのクラスがそのまま新しい色になる。
+ * - アクセントは accent / accent-dark / accent-strong の3段で持つ。
+ *   #D5BDAE は明るいので、その上に白文字は載せられない（コントラスト 1.7:1）。
+ *   ボタンは「ベージュ地 ＋ 濃い文字（text-ink）」で 7.4:1 を確保している。
+ *   白地に置く文字・リンクには accent-strong（濃いブラウン）を使う。
+ * - 却下＝赤 / 発注済＝緑 / 特例承認＝オレンジ の意味は残しつつ、彩度を落として地に馴染ませている。
+ */
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+
+    /* アクセント（指定色とその派生） */
+    --color-accent: #d5bdae;        /* ボタン・バッジの地 */
+    --color-accent-dark: #c2a38f;   /* ホバー・フォーカス枠 */
+    --color-accent-strong: #8f6a50; /* 白地に置く文字・リンク（コントラスト 4.8:1） */
+    --color-accent-light: #f0e7e0;  /* 薄い塗り */
+
+    /* テキスト（指定色） */
+    --color-ink: #34251f;
+
+    /* ニュートラル：ベース #EBE9EA とテキスト #34251F を両端にした暖色グレー */
+    --color-gray-50: #f6f5f4;
+    --color-gray-100: #ebe9ea;      /* ベース色。ページ背景 */
+    --color-gray-200: #ded9d7;
+    --color-gray-300: #cbc4c0;      /* 枠線 */
+    --color-gray-400: #8c8280;      /* 補足テキスト */
+    --color-gray-500: #6f6360;      /* 二次テキスト */
+    --color-gray-600: #5b4e4a;
+    --color-gray-700: #473933;      /* ラベル */
+    --color-gray-800: #34251f;      /* 本文（テキスト色） */
+    --color-gray-900: #241812;
+
+    /* ステータス：発注済・承認（緑） */
+    --color-green-50: #eef2ec;
+    --color-green-100: #e2ebde;
+    --color-green-200: #cbd9c4;
+    --color-green-600: #55704d;
+    --color-green-700: #445a3e;
+    --color-green-800: #3a4d35;
+    --color-emerald-400: #8aa37f;
+    --color-emerald-600: #55704d;
+    --color-emerald-700: #445a3e;
+
+    /* ステータス：却下（赤） */
+    --color-red-50: #faeeec;
+    --color-red-100: #f3ddd9;
+    --color-red-200: #e8cfc9;
+    --color-red-300: #dcb4ab;
+    --color-red-500: #b9584a;
+    --color-red-600: #a8483b;
+    --color-red-700: #8d3b30;
+
+    /* ステータス：特例承認（オレンジ） */
+    --color-amber-50: #f7f1e5;
+    --color-amber-100: #f0e5cf;
+    --color-amber-200: #e3d2b2;
+    --color-amber-400: #c39a5c;
+    --color-amber-500: #a9762b;
+    --color-amber-600: #8c6122;
+    --color-amber-700: #714e1b;
+    --color-amber-800: #5c3f16;
 }

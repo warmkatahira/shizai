@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('code')->nullable()->unique()->comment('業者コード');
             $table->string('contact_person')->nullable()->comment('担当者名');
             $table->string('phone')->nullable()->comment('電話番号');
+            $table->string('fax')->nullable()->comment('FAX番号（発注書に印字）');
             $table->string('email')->nullable()->comment('メールアドレス');
             $table->boolean('is_active')->default(true)->comment('有効フラグ');
             $table->timestamps();

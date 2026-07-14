@@ -6,7 +6,7 @@
     <div class="flex items-center justify-between mb-6">
         <h1 class="text-xl font-bold">資材マスタ管理</h1>
         <a href="{{ route('admin.materials.create') }}"
-           class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm px-4 py-2 rounded-md">＋ 新規資材</a>
+           class="bg-accent hover:bg-accent-dark text-ink text-sm px-4 py-2 rounded-md">＋ 新規資材</a>
     </div>
 
     <div class="bg-white shadow rounded-lg overflow-x-auto">
@@ -49,7 +49,7 @@
                             @include('admin.partials.status-badge', ['active' => $material->is_active])
                         </td>
                         <td class="px-4 py-3 text-right">
-                            <a href="{{ route('admin.materials.edit', $material) }}" class="text-indigo-600 hover:underline">編集</a>
+                            <a href="{{ route('admin.materials.edit', $material) }}" class="text-accent-strong hover:underline">編集</a>
                             <form method="POST" action="{{ route('admin.materials.destroy', $material) }}" class="inline"
                                   onsubmit="return confirm('「{{ $material->name }}」を削除しますか？')">
                                 @csrf @method('DELETE')

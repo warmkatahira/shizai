@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * 業者（仕入先）マスタモデル。
  */
-#[Fillable(['name', 'code', 'contact_person', 'phone', 'email', 'is_active'])]
+#[Fillable(['name', 'code', 'contact_person', 'phone', 'fax', 'email', 'is_active'])]
 class Supplier extends Model
 {
     protected function casts(): array

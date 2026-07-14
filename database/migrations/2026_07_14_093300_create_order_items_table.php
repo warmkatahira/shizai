@@ -18,12 +18,21 @@ return new class extends Migration
             $table->foreignId('order_id')->constrained('orders')->cascadeOnDelete()->comment('発注申請');
             $table->foreignId('material_id')->nullable()->constrained('materials')->nullOnDelete()->comment('資材（参照用）');
             $table->string('material_name')->comment('申請時の品名');
+            $table->foreignId('category_id')->nullable()->constrained('categories')->nullOnDelete()->comment('申請時のカテゴリ（参照用）');
+            $table->string('category_name')->nullable()->comment('申請時のカテゴリ名');
             $table->foreignId('supplier_id')->nullable()->constrained('suppliers')->nullOnDelete()->comment('申請時の業者（参照用）');
             $table->string('supplier_name')->nullable()->comment('申請時の業者名');
             $table->string('unit')->comment('申請時の単位');
             // 資材マスタの単価に合わせて decimal（整数だと 34.5 円が 34 円になってしまう）
             $table->decimal('unit_price', 10, 2)->nullable()->comment('申請時の参考単価');
             $table->unsignedInteger('quantity')->comment('数量');
+
+            // 発注書に印字する項目。マスタが変わっても発注書を再発行できるようスナップショットする
+            $table->unsignedInteger('length_mm')->nullable()->comment('申請時の縦（mm）');
+            $table->unsignedInteger('width_mm')->nullable()->comment('申請時の横（mm）');
+            $table->unsignedInteger('height_mm')->nullable()->comment('申請時の高さ（mm）');
+            $table->unsignedInteger('min_lot_qty')->nullable()->comment('申請時の最低ロット数量');
+            $table->string('min_lot_unit', 20)->nullable()->comment('申請時の最低ロットの単位');
             $table->timestamps();
         });
     }
