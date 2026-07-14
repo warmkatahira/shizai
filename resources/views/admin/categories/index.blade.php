@@ -9,9 +9,10 @@
            class="bg-accent hover:bg-accent-dark text-ink text-sm px-4 py-2 rounded-md">＋ 新規カテゴリ</a>
     </div>
 
-    <div class="bg-white shadow rounded-lg overflow-hidden">
+    <div class="bg-white shadow rounded-lg overflow-auto max-h-[70vh]">
         <table class="w-full text-sm">
-            <thead class="bg-gray-50 text-gray-500 text-left">
+            {{-- スクロールしても列名が見えるようヘッダー行を固定する --}}
+            <thead class="bg-gray-50 text-gray-500 text-left sticky top-0 z-10 shadow-[0_1px_0_0_var(--color-gray-200)]">
                 <tr>
                     <th class="px-4 py-3">カテゴリ名</th>
                     <th class="px-4 py-3 text-right">表示順</th>

@@ -55,6 +55,8 @@ return new class extends Migration
 
             // 集計（/reports）は「発注済 × 発注日の期間」で絞るので、その複合インデックス
             $table->index(['status', 'ordered_at']);
+            // 発注申請一覧（/orders）は「営業所 × 申請日の期間」で絞り、申請日の新しい順に並べる
+            $table->index(['office_id', 'created_at']);
         });
     }
 

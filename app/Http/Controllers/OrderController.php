@@ -24,6 +24,9 @@ class OrderController extends Controller
     /** 直前の検索条件をセッションに覚えておくキー（詳細から一覧に戻るときに使う） */
     private const LAST_SEARCH_KEY = 'orders.last_search';
 
+    /** 一覧の1ページあたりの件数 */
+    private const PER_PAGE = 50;
+
     /**
      * 発注申請の一覧（検索・絞り込み対応）。
      * 営業所ユーザーは自分の営業所の申請のみ、総務・管理者は全件表示。
@@ -39,11 +42,15 @@ class OrderController extends Controller
         // 既定値（当月・総務承認待ち）が再適用されてしまうため。
         $request->session()->put(self::LAST_SEARCH_KEY, $request->getQueryString());
 
+        // 件数が増えても重くならないようページ送りにする。
+        // withQueryString() で検索条件をページリンクに引き継ぐ。
+        // CSVは export 側で全件出すので、ここでの分割はダウンロードに影響しない。
         $orders = $this->filteredOrders($request)
             ->with(['office', 'supplier', 'requester'])
             ->withCount('items')
             ->latest()
-            ->get();
+            ->paginate(self::PER_PAGE)
+            ->withQueryString();
 
         return view('orders.index', array_merge(
             compact('orders'),

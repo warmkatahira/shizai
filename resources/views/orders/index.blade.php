@@ -86,9 +86,10 @@
         </div>
     </form>
 
-    <div class="bg-white shadow rounded-lg overflow-hidden">
+    <div class="bg-white shadow rounded-lg">
         <table class="w-full text-sm">
-            <thead class="bg-gray-50 text-gray-500 text-left">
+            {{-- スクロールしても列名が見えるようヘッダー行を固定する --}}
+            <thead class="bg-gray-50 text-gray-500 text-left sticky top-0 z-10 shadow-[0_1px_0_0_var(--color-gray-200)]">
                 <tr>
                     <th class="px-4 py-3">申請番号</th>
                     <th class="px-4 py-3">申請日</th>
@@ -124,4 +125,15 @@
             </tbody>
         </table>
     </div>
+
+    @if ($orders->total() > 0)
+        <div class="mt-4 flex items-center justify-between gap-4 text-sm text-gray-500">
+            <span>
+                全 {{ number_format($orders->total()) }} 件中
+                {{ number_format($orders->firstItem()) }}〜{{ number_format($orders->lastItem()) }} 件を表示
+            </span>
+            {{-- 検索条件はページリンクに引き継がれる（withQueryString） --}}
+            <div>{{ $orders->links() }}</div>
+        </div>
+    @endif
 @endsection
