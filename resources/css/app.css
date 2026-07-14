@@ -62,6 +62,23 @@
     --color-red-600: #a8483b;
     --color-red-700: #8d3b30;
 
+    /* ステータス：総務承認待ち（青）。既定のTailwind青は浮くので、暖色に馴染むくすんだ青にする */
+    --color-blue-50: #eef1f5;
+    --color-blue-100: #e1e6ee;
+    --color-blue-200: #ccd4e0;
+    --color-blue-600: #58687f;
+    --color-blue-700: #47566b;
+
+    /* ステータス：差し戻し（テラコッタ）。特例承認の amber（金色）と区別できる赤寄りのオレンジ */
+    --color-orange-50: #faf0e9;
+    --color-orange-100: #f4e1d5;
+    --color-orange-200: #e8c8b3;
+    --color-orange-300: #d8ab8f;
+    --color-orange-500: #b97545;
+    --color-orange-600: #a3612f;
+    --color-orange-700: #855027;
+    --color-orange-800: #6b4120;
+
     /* ステータス：特例承認（オレンジ） */
     --color-amber-50: #f7f1e5;
     --color-amber-100: #f0e5cf;

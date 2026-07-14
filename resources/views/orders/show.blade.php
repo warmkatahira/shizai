@@ -18,6 +18,32 @@
         </div>
     @endif
 
+    {{-- 差し戻しの表示。申請者はここから修正して再申請する --}}
+    @if ($order->isReturned())
+        <div class="mb-6 rounded-md bg-orange-50 border border-orange-200 px-4 py-3 text-sm text-orange-800">
+            <p>
+                <span class="font-medium">差し戻し：</span>{{ $order->return_reason }}
+                @if ($order->returnedBy)
+                    <span class="text-orange-600">（{{ $order->returnedBy->name }} / {{ $order->returned_at?->format('Y/m/d H:i') }}）</span>
+                @endif
+            </p>
+            @if ($actions['edit'])
+                <p class="mt-2 text-orange-700">
+                    内容を修正して再申請してください。再申請すると承認は最初からやり直しになります。
+                </p>
+            @endif
+        </div>
+    @elseif ($order->return_reason && ! $order->isRejected())
+        {{-- 一度差し戻され、修正して再申請されたもの。承認者が経緯を追えるように残す --}}
+        <div class="mb-6 rounded-md bg-gray-50 border border-gray-200 px-4 py-3 text-sm text-gray-600">
+            <span class="font-medium">差し戻し後に再申請された申請です。</span>
+            差し戻しの理由：{{ $order->return_reason }}
+            @if ($order->returnedBy)
+                <span class="text-gray-400">（{{ $order->returnedBy->name }} / {{ $order->returned_at?->format('Y/m/d H:i') }}）</span>
+            @endif
+        </div>
+    @endif
+
     {{-- 特例承認の表示 --}}
     @if ($order->is_special_approval && ! $order->isRejected())
         <div class="mb-6 rounded-md bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-800">
@@ -140,8 +166,41 @@
         </div>
     @endif
 
+    {{-- 申請者側の対応（差し戻し中の修正・再申請／不要になった申請の削除） --}}
+    @if ($actions['edit'] || $actions['delete'])
+        <div class="bg-white shadow rounded-lg p-6 mb-6 border-l-4 border-orange-300">
+            <h2 class="font-semibold mb-1">この申請の取り扱い</h2>
+            <p class="text-xs text-gray-500 mb-4">
+                @if ($actions['edit'])
+                    修正して再申請できます。この申請が不要になった場合は削除してください。
+                @else
+                    この申請は削除できます（削除すると一覧・CSVから完全になくなります）。
+                @endif
+            </p>
+            <div class="flex flex-wrap items-center gap-3">
+                @if ($actions['edit'])
+                    <a href="{{ route('orders.edit', $order) }}"
+                       class="bg-accent hover:bg-accent-dark text-ink text-sm px-5 py-2 rounded-md">
+                        修正して再申請する
+                    </a>
+                @endif
+
+                @if ($actions['delete'])
+                    <form method="POST" action="{{ route('orders.destroy', $order) }}"
+                          onsubmit="return confirm('この発注申請を削除します。元に戻せません。よろしいですか？')">
+                        @csrf
+                        @method('DELETE')
+                        <button class="bg-white border border-red-300 text-red-600 hover:bg-red-50 text-sm px-5 py-2 rounded-md">
+                            この申請を削除する
+                        </button>
+                    </form>
+                @endif
+            </div>
+        </div>
+    @endif
+
     {{-- 承認アクション --}}
-    @if ($actions['managerApprove'] || $actions['affairsApprove'] || $actions['specialApprove'] || $actions['reject'])
+    @if ($actions['managerApprove'] || $actions['affairsApprove'] || $actions['specialApprove'] || $actions['return'] || $actions['reject'])
         <div class="bg-white shadow rounded-lg p-6 mb-6 border-l-4 border-accent-dark">
             <h2 class="font-semibold mb-4">この申請への対応</h2>
 
@@ -192,13 +251,41 @@
                 </div>
             @endif
 
-            {{-- 却下（理由必須） --}}
+            {{-- 差し戻し（理由必須）。却下と違い、申請者が修正して再申請できる --}}
+            @if ($actions['return'])
+                <div class="mt-5 pt-5 border-t border-gray-100">
+                    <form method="POST" action="{{ route('orders.return', $order) }}"
+                          onsubmit="return confirm('この申請を申請者に差し戻しますか？申請者が内容を修正して再申請できます。')">
+                        @csrf
+                        <label class="block text-sm text-gray-600 mb-1">
+                            <span class="font-medium text-orange-700">差し戻し</span>：申請者に戻して直してもらう場合は理由を入力してください
+                            @if ($order->isPendingOrder())
+                                <span class="block text-xs text-gray-400 mt-0.5">
+                                    まだ発注書を出していないので、この申請は取り消して申請者に戻せます。
+                                </span>
+                            @endif
+                        </label>
+                        <textarea name="return_reason" rows="2" required
+                                  class="w-full max-w-xl rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none"
+                                  placeholder="差し戻しの理由（必須）例：数量が多すぎます。3,000枚に直して再申請してください。">{{ old('return_reason') }}</textarea>
+                        <div class="mt-2">
+                            <button class="bg-white border border-orange-300 text-orange-700 hover:bg-orange-50 text-sm px-5 py-2 rounded-md">
+                                差し戻す
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            @endif
+
+            {{-- 却下（理由必須）。却下するとそこで終了（再申請はできない） --}}
             @if ($actions['reject'])
                 <div class="mt-5 pt-5 border-t border-gray-100">
                     <form method="POST" action="{{ route('orders.reject', $order) }}"
-                          onsubmit="return confirm('この申請を却下しますか？')">
+                          onsubmit="return confirm('この申請を却下しますか？却下するとこの申請は終了し、再申請はできません。')">
                         @csrf
-                        <label class="block text-sm text-gray-600 mb-1">却下する場合は理由を入力してください</label>
+                        <label class="block text-sm text-gray-600 mb-1">
+                            <span class="font-medium text-red-700">却下</span>：この申請を終了させる場合は理由を入力してください（再申請はできません）
+                        </label>
                         <textarea name="reject_reason" rows="2" required
                                   class="w-full max-w-xl rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none"
                                   placeholder="却下理由（必須）">{{ old('reject_reason') }}</textarea>

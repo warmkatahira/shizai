@@ -30,6 +30,49 @@ class Material extends Model
     }
 
     /**
+     * 資材1件の入力チェック。編集フォーム（Admin\MaterialController）と
+     * CSV取り込み（App\Support\MaterialCsv）で同じものを使う。
+     */
+    public static function validationRules(): array
+    {
+        return [
+            'name' => ['required', 'string', 'max:100'],
+            'category_id' => ['nullable', 'exists:categories,id'],
+            'supplier_id' => ['nullable', 'exists:suppliers,id'],
+            'length_mm' => ['nullable', 'integer', 'min:0', 'max:99999'],
+            'width_mm' => ['nullable', 'integer', 'min:0', 'max:99999'],
+            'height_mm' => ['nullable', 'integer', 'min:0', 'max:99999'],
+            'unit' => ['required', 'string', 'max:20'],
+            'unit_price' => ['nullable', 'numeric', 'min:0', 'max:99999999'],
+            'min_lot_qty' => ['nullable', 'integer', 'min:0', 'max:9999999'],
+            'min_lot_unit' => ['nullable', 'string', 'max:20'],
+            'note' => ['nullable', 'string', 'max:1000'],
+            'has_imprint' => ['boolean'],
+            'is_active' => ['boolean'],
+        ];
+    }
+
+    /** エラーメッセージに出す項目名（日本語） */
+    public static function attributeNames(): array
+    {
+        return [
+            'name' => '品名',
+            'category_id' => '商品カテゴリ',
+            'supplier_id' => '発注業者',
+            'length_mm' => '縦',
+            'width_mm' => '横',
+            'height_mm' => '高さ',
+            'unit' => '単位',
+            'unit_price' => '単価',
+            'min_lot_qty' => '最低ロット数量',
+            'min_lot_unit' => '最低ロットの単位',
+            'note' => '備考',
+            'has_imprint' => '名入れ',
+            'is_active' => '有効',
+        ];
+    }
+
+    /**
      * 資材の一覧はどこでも「カテゴリ順 → 品名順」で並べる。
      * categories を join するので、この後に条件を足すときは
      * is_active のような同名カラムをテーブル名で修飾すること。

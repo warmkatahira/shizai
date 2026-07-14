@@ -8,25 +8,26 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 /**
- * 発注申請の承認・却下を扱うコントローラー。
+ * 発注申請の承認・差し戻し・却下を扱うコントローラー。
  *
  * フロー:
- *   所長承認待ち --[所長 承認]--> 総務承認待ち --[総務 発注]--> 発注済
- *   所長承認待ち --[総務 特例承認]------------------------> 発注済
- *   （各段階で 却下 が可能）
+ *   所長承認待ち --[所長 承認]--> 総務承認待ち --[総務 承認]--> 発注待ち --[発注書の作成]--> 発注済
+ *   所長承認待ち --[総務 特例承認]-------------------------> 発注待ち
+ *   各段階で 却下（終了）／差し戻し（申請者に戻して修正・再申請）ができる
+ *
+ * 誰が何をできるかの判定は Order のメソッド（canBe〜By）に集約している。
  */
 class OrderApprovalController extends Controller
 {
     /** 所長による一次承認：所長承認待ち → 総務承認待ち */
     public function managerApprove(Request $request, Order $order): RedirectResponse
     {
-        $this->ensureOfficeManager($request, $order);
-
-        abort_unless($order->isPendingManager(), 409, 'この申請は所長承認待ちではありません。');
+        $user = $request->user();
+        abort_unless($order->canBeManagerApprovedBy($user), 403, 'この申請を承認する権限がありません。');
 
         $order->update([
             'status' => Order::STATUS_PENDING_AFFAIRS,
-            'manager_approved_by' => $request->user()->id,
+            'manager_approved_by' => $user->id,
             'manager_approved_at' => now(),
         ]);
 
@@ -43,13 +44,12 @@ class OrderApprovalController extends Controller
      */
     public function affairsApprove(Request $request, Order $order): RedirectResponse
     {
-        $this->ensureGeneralAffairs($request);
-
-        abort_unless($order->isPendingAffairs(), 409, 'この申請は総務承認待ちではありません。');
+        $user = $request->user();
+        abort_unless($order->canBeAffairsApprovedBy($user), 403, 'この申請を承認する権限がありません。');
 
         $order->update([
             'status' => Order::STATUS_PENDING_ORDER,
-            'reviewed_by' => $request->user()->id,
+            'reviewed_by' => $user->id,
             'reviewed_at' => now(),
         ]);
 
@@ -63,9 +63,8 @@ class OrderApprovalController extends Controller
     /** 総務による特例承認：所長承認待ち → 発注待ち（所長を飛ばす。理由必須） */
     public function specialApprove(Request $request, Order $order): RedirectResponse
     {
-        $this->ensureGeneralAffairs($request);
-
-        abort_unless($order->isPendingManager(), 409, '特例承認は所長承認待ちの申請にのみ行えます。');
+        $user = $request->user();
+        abort_unless($order->canBeSpecialApprovedBy($user), 403, '特例承認を行う権限がありません。');
 
         $validated = $request->validate([
             'special_reason' => ['required', 'string', 'max:1000'],
@@ -73,7 +72,7 @@ class OrderApprovalController extends Controller
 
         $order->update([
             'status' => Order::STATUS_PENDING_ORDER,
-            'reviewed_by' => $request->user()->id,
+            'reviewed_by' => $user->id,
             'reviewed_at' => now(),
             'is_special_approval' => true,
             'special_reason' => $validated['special_reason'],
@@ -86,10 +85,41 @@ class OrderApprovalController extends Controller
         return back()->with('status', '特例承認しました。発注書を作成すると「発注済」になります。');
     }
 
-    /** 却下（所長・総務のいずれか。理由必須） */
+    /**
+     * 差し戻し（所長・総務のいずれか。理由必須）。
+     *
+     * 却下と違い、ここで終わりではない。申請者が内容を修正して再申請できる状態にする。
+     * 発注書をまだ出していない「発注待ち」も、総務なら差し戻せる。
+     * 承認履歴（所長承認・総務承認・特例承認）は再申請時にクリアされる（OrderController::update）。
+     */
+    public function returnToRequester(Request $request, Order $order): RedirectResponse
+    {
+        $user = $request->user();
+        abort_unless($order->canBeReturnedBy($user), 403, 'この申請を差し戻す権限がありません。');
+
+        $validated = $request->validate([
+            'return_reason' => ['required', 'string', 'max:1000'],
+        ], [], ['return_reason' => '差し戻しの理由']);
+
+        $order->update([
+            'status' => Order::STATUS_RETURNED,
+            'return_reason' => $validated['return_reason'],
+            'returned_by' => $user->id,
+            'returned_at' => now(),
+        ]);
+
+        // 申請者（＋その営業所の所長）へ通知
+        $order->load(['office', 'requester', 'items']);
+        OrderNotifier::notifyApplicant($order);
+
+        return back()->with('status', '申請を差し戻しました。申請者が内容を修正して再申請できます。');
+    }
+
+    /** 却下（所長・総務のいずれか。理由必須）。却下されたらそこで終了 */
     public function reject(Request $request, Order $order): RedirectResponse
     {
-        $this->ensureCanReject($request, $order);
+        $user = $request->user();
+        abort_unless($order->canBeRejectedBy($user), 403, 'この申請を却下する権限がありません。');
 
         $validated = $request->validate([
             'reject_reason' => ['required', 'string', 'max:1000'],
@@ -98,53 +128,13 @@ class OrderApprovalController extends Controller
         $order->update([
             'status' => Order::STATUS_REJECTED,
             'reject_reason' => $validated['reject_reason'],
-            'rejected_by' => $request->user()->id,
+            'rejected_by' => $user->id,
         ]);
 
         // 申請者へ通知
-        $order->load(['requester', 'items']);
+        $order->load(['office', 'requester', 'items']);
         OrderNotifier::notifyApplicant($order);
 
         return back()->with('status', '申請を却下しました。');
-    }
-
-    // ---- 権限チェック ----
-
-    /** 同じ営業所の所長であることを確認 */
-    private function ensureOfficeManager(Request $request, Order $order): void
-    {
-        $user = $request->user();
-        abort_unless(
-            $user->isManager() && $user->office_id === $order->office_id,
-            403,
-            'この申請を承認する権限がありません。'
-        );
-    }
-
-    /** 総務であることを確認 */
-    private function ensureGeneralAffairs(Request $request): void
-    {
-        abort_unless($request->user()->isGeneralAffairs(), 403, '総務のみ実行できます。');
-    }
-
-    /**
-     * 却下できるのは：
-     * - 所長承認待ち：その営業所の所長、または総務
-     * - 総務承認待ち：総務
-     */
-    private function ensureCanReject(Request $request, Order $order): void
-    {
-        $user = $request->user();
-
-        if ($order->isPendingManager()) {
-            $ok = ($user->isManager() && $user->office_id === $order->office_id)
-                || $user->isGeneralAffairs();
-        } elseif ($order->isPendingAffairs()) {
-            $ok = $user->isGeneralAffairs();
-        } else {
-            $ok = false; // すでに確定・却下済みのものは却下不可
-        }
-
-        abort_unless($ok, 403, 'この申請を却下する権限がありません。');
     }
 }

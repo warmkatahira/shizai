@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Material;
 use App\Models\Supplier;
+use App\Support\MaterialCsv;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class MaterialController extends Controller
 {
@@ -69,37 +71,59 @@ class MaterialController extends Controller
         ];
     }
 
-    /** バリデーション */
+    /** バリデーション（規則は Material に集約。CSV取り込みと同じものを使う） */
     private function validateData(Request $request): array
     {
-        return $request->validate([
-            'name' => ['required', 'string', 'max:100'],
-            'category_id' => ['nullable', 'exists:categories,id'],
-            'supplier_id' => ['nullable', 'exists:suppliers,id'],
-            'length_mm' => ['nullable', 'integer', 'min:0', 'max:99999'],
-            'width_mm' => ['nullable', 'integer', 'min:0', 'max:99999'],
-            'height_mm' => ['nullable', 'integer', 'min:0', 'max:99999'],
-            'unit' => ['required', 'string', 'max:20'],
-            'unit_price' => ['nullable', 'numeric', 'min:0', 'max:99999999'],
-            'min_lot_qty' => ['nullable', 'integer', 'min:0', 'max:9999999'],
-            'min_lot_unit' => ['nullable', 'string', 'max:20'],
-            'note' => ['nullable', 'string', 'max:1000'],
-            'is_active' => ['boolean'],
-        ], [], [
-            'name' => '品名',
-            'category_id' => '商品カテゴリ',
-            'supplier_id' => '発注業者',
-            'length_mm' => '縦',
-            'width_mm' => '横',
-            'height_mm' => '高さ',
-            'unit' => '単位',
-            'unit_price' => '単価',
-            'min_lot_qty' => '最低ロット数量',
-            'min_lot_unit' => '最低ロットの単位',
-            'note' => '備考',
-        ]) + [
+        // チェックボックスは未チェックだとキーごと送られてこないので、先に埋める
+        $request->merge([
             'has_imprint' => $request->boolean('has_imprint'),
             'is_active' => $request->boolean('is_active'),
-        ];
+        ]);
+
+        return $request->validate(
+            Material::validationRules(),
+            [],
+            Material::attributeNames(),
+        );
+    }
+
+    /** 資材マスタをCSVでダウンロード（Excel対応のBOM付きUTF-8） */
+    public function export(): StreamedResponse
+    {
+        $materials = Material::with(['supplier', 'category'])->sortedByCategory()->get();
+
+        $filename = 'materials_' . now()->format('Ymd_His') . '.csv';
+
+        return response()->streamDownload(function () use ($materials) {
+            $out = fopen('php://output', 'w');
+            // ExcelでUTF-8を正しく開くためのBOM
+            fwrite($out, "\xEF\xBB\xBF");
+
+            fputcsv($out, MaterialCsv::HEADERS);
+
+            foreach ($materials as $material) {
+                fputcsv($out, MaterialCsv::row($material));
+            }
+
+            fclose($out);
+        }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
+    /**
+     * CSVを取り込んで資材を追加・更新する。
+     * IDが入っている行は更新、空の行は新規追加。1行でもエラーがあれば何も取り込まない。
+     */
+    public function import(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'file' => ['required', 'file', 'max:5120'],
+        ], [], ['file' => 'CSVファイル']);
+
+        $result = MaterialCsv::import($request->file('file')->getRealPath());
+
+        return redirect()->route('admin.materials.index')->with(
+            'status',
+            "CSVを取り込みました（新規 {$result['created']} 件 / 更新 {$result['updated']} 件）。",
+        );
     }
 }

@@ -10,41 +10,7 @@
 </head>
 <body class="min-h-screen bg-gray-100 text-gray-800">
     <div class="min-h-screen flex flex-col">
-        {{-- ヘッダー --}}
-        <header class="bg-white shadow-sm">
-            <div class="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
-                <div class="flex items-center gap-6">
-                    <a href="{{ route('dashboard') }}" class="font-bold text-lg text-accent-strong">
-                        資材発注システム
-                    </a>
-                    <nav class="hidden sm:flex items-center gap-4 text-sm text-gray-600">
-                        <a href="{{ route('orders.index') }}" class="hover:text-accent-strong">発注申請</a>
-                        <a href="{{ route('reports.index') }}" class="hover:text-accent-strong">集計</a>
-                        @unless (auth()->user()->canManageMasters())
-                            {{-- マスタを編集できる人はマスタ管理の「資材」から見られるので、こちらは出さない --}}
-                            <a href="{{ route('materials.index') }}" class="hover:text-accent-strong">資材一覧</a>
-                        @endunless
-                        @if (auth()->user()->canManageMasters())
-                            <a href="{{ route('admin.offices.index') }}" class="hover:text-accent-strong">営業所</a>
-                            @if (auth()->user()->isAdmin())
-                                {{-- ユーザー管理は権限の付与ができるので管理者のみ --}}
-                                <a href="{{ route('admin.users.index') }}" class="hover:text-accent-strong">ユーザー</a>
-                            @endif
-                            <a href="{{ route('admin.suppliers.index') }}" class="hover:text-accent-strong">業者</a>
-                            <a href="{{ route('admin.categories.index') }}" class="hover:text-accent-strong">カテゴリ</a>
-                            <a href="{{ route('admin.materials.index') }}" class="hover:text-accent-strong">資材</a>
-                        @endif
-                    </nav>
-                </div>
-                <div class="flex items-center gap-4 text-sm">
-                    <span class="text-gray-600">{{ auth()->user()->name }}</span>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="text-gray-500 hover:text-red-600">ログアウト</button>
-                    </form>
-                </div>
-            </div>
-        </header>
+        @include('layouts.partials.header')
 
         {{-- 本文 --}}
         <main class="flex-1">
@@ -76,6 +42,39 @@
             form.addEventListener('change', () => {
                 form.setAttribute('aria-busy', 'true');
                 form.submit();
+            });
+        });
+
+        // ヘッダーのメニュー（<details data-menu>）は、外側をクリックするか Esc で閉じる。
+        // details のままだと開きっぱなしになり、他のメニューと重なって見えるため。
+        const menus = document.querySelectorAll('details[data-menu]');
+
+        document.addEventListener('click', (e) => {
+            menus.forEach((menu) => {
+                if (menu.open && ! menu.contains(e.target)) {
+                    menu.open = false;
+                }
+            });
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                menus.forEach((menu) => (menu.open = false));
+            }
+        });
+
+        // メニューを開いたら、他の開いているメニューは閉じる
+        menus.forEach((menu) => {
+            menu.addEventListener('toggle', () => {
+                if (! menu.open) {
+                    return;
+                }
+
+                menus.forEach((other) => {
+                    if (other !== menu) {
+                        other.open = false;
+                    }
+                });
             });
         });
     </script>

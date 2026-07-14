@@ -76,6 +76,12 @@ class User extends Authenticatable
         return $this->isAdmin() || $this->isGeneralAffairs();
     }
 
+    /** 全営業所の申請を扱う側か（総務・管理者）。営業所ユーザーは自分の営業所だけ */
+    public function isBackOffice(): bool
+    {
+        return $this->isAdmin() || $this->isGeneralAffairs();
+    }
+
     /** 発注書を作成・再発行できるか（＝業者へ発注する立場か） */
     public function canIssuePurchaseOrder(): bool
     {

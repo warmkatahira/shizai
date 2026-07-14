@@ -38,8 +38,13 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:sales')->group(function () {
         Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');
         Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+        // 差し戻された申請を修正して再申請する（自営業所のもののみ。判定は Order::canBeEditedBy）
+        Route::get('/orders/{order}/edit', [OrderController::class, 'edit'])->name('orders.edit');
+        Route::put('/orders/{order}', [OrderController::class, 'update'])->name('orders.update');
     });
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    // 削除（差し戻し中・却下のみ。営業所ユーザー・総務・管理者。判定は Order::canBeDeletedBy）
+    Route::delete('/orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
 
     // 発注書PDF（発注待ち・発注済のみ・総務/管理者）。1申請＝1業者なので1申請1枚。
     // 出力すると「発注済」に進む（＝実際に業者へ発注した）ので、GETではなくPOSTで受ける
@@ -53,10 +58,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
     Route::get('/reports-export', [ReportController::class, 'export'])->name('reports.export');
 
-    // ----- 承認・却下アクション -----
+    // ----- 承認・差し戻し・却下アクション -----
     Route::post('/orders/{order}/manager-approve', [OrderApprovalController::class, 'managerApprove'])->name('orders.managerApprove');
     Route::post('/orders/{order}/affairs-approve', [OrderApprovalController::class, 'affairsApprove'])->name('orders.affairsApprove');
     Route::post('/orders/{order}/special-approve', [OrderApprovalController::class, 'specialApprove'])->name('orders.specialApprove');
+    // 差し戻し＝申請者に戻して修正・再申請させる（却下と違って終わりではない）
+    Route::post('/orders/{order}/return', [OrderApprovalController::class, 'returnToRequester'])->name('orders.return');
     Route::post('/orders/{order}/reject', [OrderApprovalController::class, 'reject'])->name('orders.reject');
 
     // ----- マスタ管理 -----
@@ -66,6 +73,9 @@ Route::middleware('auth')->group(function () {
             Route::resource('offices', OfficeController::class)->except('show');
             Route::resource('suppliers', SupplierController::class)->except('show');
             Route::resource('categories', CategoryController::class)->except('show');
+            // 資材マスタのCSV出力・取り込み（取り込みはIDで突合。詳細は App\Support\MaterialCsv）
+            Route::get('materials-export', [MaterialController::class, 'export'])->name('materials.export');
+            Route::post('materials-import', [MaterialController::class, 'import'])->name('materials.import');
             Route::resource('materials', MaterialController::class)->except('show');
         });
 

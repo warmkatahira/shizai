@@ -10,14 +10,14 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 
 /**
- * 動作確認用の発注申請データ（10件）。
+ * 動作確認用の発注申請データ（12件）。
  *
  * 実際の申請と同じルールで作る：
  * - 1申請＝1業者。明細はその業者の資材だけ
  * - 数量は最低ロットの倍数
  * - 明細は申請時点の資材情報をスナップショット保存
  *
- * ステータスは所長承認待ち・総務承認待ち・発注済・却下を混ぜてあり、
+ * ステータスは6種類（所長承認待ち・総務承認待ち・発注待ち・発注済・差し戻し・却下）を網羅し、
  * 発注済は当月と先月に散らしてあるので集計画面の動作も確認できる。
  *
  * OfficeSeeder / UserSeeder / MaterialSeeder より後に実行すること。
@@ -40,6 +40,7 @@ class OrderSeeder extends Seeder
         ['2nd', 'セッツカートン', '佐藤 美咲', Order::STATUS_PENDING_MANAGER, null, null],
         ['IMP', 'アイセカンド', '高橋 一郎', Order::STATUS_PENDING_MANAGER, null, '午前中の納品でお願いします。'],
         ['LC', 'フレックス', '小林 慎', Order::STATUS_REJECTED, 5, null],
+        ['LS', 'フレックス', '大森 幸子', Order::STATUS_RETURNED, null, null],
     ];
 
     public function run(): void
@@ -88,9 +89,14 @@ class OrderSeeder extends Seeder
                 'ordered_by' => $status === Order::STATUS_ORDERED ? $reviewer->id : null,
                 'ordered_at' => $status === Order::STATUS_ORDERED ? $orderedAt : null,
 
-                // 却下は総務が理由付きで却下したことにする
+                // 却下は総務が理由付きで却下したことにする（却下されたらそこで終了）
                 'rejected_by' => $status === Order::STATUS_REJECTED ? $reviewer->id : null,
                 'reject_reason' => $status === Order::STATUS_REJECTED ? '在庫がまだ残っているため、次月にまとめて発注してください。' : null,
+
+                // 差し戻しは総務が理由付きで申請者に戻したことにする（申請者が修正して再申請できる）
+                'returned_by' => $status === Order::STATUS_RETURNED ? $reviewer->id : null,
+                'returned_at' => $status === Order::STATUS_RETURNED ? now()->subDay() : null,
+                'return_reason' => $status === Order::STATUS_RETURNED ? '数量が前回の倍になっています。必要数を確認して直してから再申請してください。' : null,
             ]);
 
             foreach ($materials as $n => $material) {
