@@ -18,7 +18,8 @@ return [
          * The name of this application. You can use this name to monitor
          * the backups.
          */
-        'name' => env('APP_NAME', 'laravel-backup'),
+        // 保存先フォルダ名（システム名）。/var/backup/{この名前}/ に保存される
+        'name' => env('BACKUP_NAME', 'shizai'),
 
         'source' => [
             'files' => [
@@ -164,7 +165,7 @@ return [
              * The disk names on which the backups will be stored.
              */
             'disks' => [
-                'local',
+                'backups',
             ],
 
             /*
@@ -298,8 +299,8 @@ return [
      */
     'monitor_backups' => [
         [
-            'name' => env('APP_NAME', 'laravel-backup'),
-            'disks' => ['local'],
+            'name' => env('BACKUP_NAME', 'shizai'),
+            'disks' => ['backups'],
             'health_checks' => [
                 MaximumAgeInDays::class => 1,
                 MaximumStorageInMegabytes::class => 5000,

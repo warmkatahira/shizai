@@ -47,6 +47,14 @@ return [
             'report' => false,
         ],
 
+        // DBバックアップの保存先。/var/backup 配下（本番用。要ディレクトリ作成＋書き込み権限）
+        'backups' => [
+            'driver' => 'local',
+            'root' => env('BACKUP_ROOT', '/var/backup'),
+            'throw' => false,
+            'report' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
