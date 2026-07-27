@@ -36,7 +36,6 @@
         }
     @endphp
 
-    <h1 class="text-xl font-bold mb-2">こんにちは、{{ $user->name }} さん</h1>
     @if ($user->office)
         <p class="text-gray-600 mb-6">所属: {{ $user->office->name }}</p>
     @endif
