@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Material;
 use App\Models\Supplier;
+use App\Support\ActivityLogger;
 use App\Support\MaterialCsv;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
@@ -59,7 +60,8 @@ class MaterialController extends Controller
     /** 登録 */
     public function store(Request $request): RedirectResponse
     {
-        Material::create($this->validateData($request));
+        $material = Material::create($this->validateData($request));
+        ActivityLogger::log('master.material_created', "資材「{$material->name}」を登録しました", $material);
 
         return redirect()->route('admin.materials.index')->with('status', '資材を登録しました。');
     }
@@ -76,6 +78,7 @@ class MaterialController extends Controller
     public function update(Request $request, Material $material): RedirectResponse
     {
         $material->update($this->validateData($request));
+        ActivityLogger::log('master.material_updated', "資材「{$material->name}」を更新しました", $material);
 
         return redirect()->route('admin.materials.index')->with('status', '資材を更新しました。');
     }
@@ -83,7 +86,9 @@ class MaterialController extends Controller
     /** 削除 */
     public function destroy(Material $material): RedirectResponse
     {
+        $name = $material->name;
         $material->delete();
+        ActivityLogger::log('master.material_deleted', "資材「{$name}」を削除しました");
 
         return redirect()->route('admin.materials.index')->with('status', '資材を削除しました。');
     }
@@ -149,6 +154,8 @@ class MaterialController extends Controller
         ], [], ['file' => 'CSVファイル']);
 
         $result = MaterialCsv::import($request->file('file')->getRealPath());
+
+        ActivityLogger::log('master.material_imported', "資材CSVを取り込みました（新規 {$result['created']} 件 / 更新 {$result['updated']} 件）");
 
         return redirect()->route('admin.materials.index')->with(
             'status',

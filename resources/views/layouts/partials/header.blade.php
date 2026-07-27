@@ -21,6 +21,7 @@
         ['label' => '業者', 'route' => 'admin.suppliers.index'],
         ['label' => '営業所', 'route' => 'admin.offices.index'],
         ['label' => 'ユーザー', 'route' => 'admin.users.index', 'adminOnly' => true],
+        ['label' => '操作ログ', 'route' => 'admin.logs.index', 'adminOnly' => true],
     ])->reject(fn ($item) => ($item['adminOnly'] ?? false) && ! $user->isAdmin());
 @endphp
 

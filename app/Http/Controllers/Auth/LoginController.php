@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Support\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -38,12 +39,15 @@ class LoginController extends Controller
 
         // 有効なユーザーのみログイン可能
         if (! Auth::attempt([...$credentials, 'is_active' => true], $request->boolean('remember'))) {
+            ActivityLogger::log('auth.login_failed', "ログインに失敗しました（ID：{$credentials['login_id']}）");
+
             throw ValidationException::withMessages([
                 'login_id' => 'ログインIDまたはパスワードが正しくありません。',
             ]);
         }
 
         $request->session()->regenerate();
+        ActivityLogger::log('auth.login', 'ログインしました');
 
         return redirect()->intended(route('dashboard'));
     }
@@ -51,6 +55,9 @@ class LoginController extends Controller
     /** ログアウト処理 */
     public function logout(Request $request): RedirectResponse
     {
+        // ログアウトすると操作者が分からなくなるので、先に記録する
+        ActivityLogger::log('auth.logout', 'ログアウトしました');
+
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

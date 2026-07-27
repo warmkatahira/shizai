@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\MaterialController;
 use App\Http\Controllers\Admin\OfficeController;
@@ -83,9 +84,11 @@ Route::middleware('auth')->group(function () {
             Route::resource('materials', MaterialController::class)->except('show');
         });
 
-        // ユーザー管理は権限の付与・パスワード変更ができるので管理者のみ
+        // ユーザー管理は権限の付与・パスワード変更ができるので管理者のみ。
+        // 操作ログ（誰が何をしたかの記録）も管理者だけが見られる
         Route::middleware('role:admin')->group(function () {
             Route::resource('users', UserController::class)->except('show');
+            Route::get('logs', [ActivityLogController::class, 'index'])->name('logs.index');
         });
     });
 });

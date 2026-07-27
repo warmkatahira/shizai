@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Office;
 use App\Models\User;
+use App\Support\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -37,7 +38,8 @@ class UserController extends Controller
         $data = $this->validateData($request);
         $data['password'] = Hash::make($request->input('password'));
 
-        User::create($data);
+        $user = User::create($data);
+        ActivityLogger::log('user.created', "ユーザー「{$user->name}（{$user->login_id}）」を登録しました", $user);
 
         return redirect()->route('admin.users.index')->with('status', 'ユーザーを登録しました。');
     }
@@ -57,11 +59,16 @@ class UserController extends Controller
         $data = $this->validateData($request, $user);
 
         // パスワードは入力があったときだけ更新
-        if ($request->filled('password')) {
+        $passwordChanged = $request->filled('password');
+        if ($passwordChanged) {
             $data['password'] = Hash::make($request->input('password'));
         }
 
         $user->update($data);
+
+        // パスワード自体は残さない（変更の有無だけ記録する）
+        $suffix = $passwordChanged ? '（パスワードを変更）' : '';
+        ActivityLogger::log('user.updated', "ユーザー「{$user->name}（{$user->login_id}）」を更新しました{$suffix}", $user);
 
         return redirect()->route('admin.users.index')->with('status', 'ユーザーを更新しました。');
     }
@@ -73,7 +80,9 @@ class UserController extends Controller
             return back()->with('status', '自分自身は削除できません。');
         }
 
+        $label = "{$user->name}（{$user->login_id}）";
         $user->delete();
+        ActivityLogger::log('user.deleted', "ユーザー「{$label}」を削除しました");
 
         return redirect()->route('admin.users.index')->with('status', 'ユーザーを削除しました。');
     }

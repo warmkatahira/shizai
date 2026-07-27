@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Supplier;
+use App\Support\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -28,7 +29,8 @@ class SupplierController extends Controller
     /** 登録 */
     public function store(Request $request): RedirectResponse
     {
-        Supplier::create($this->validateData($request));
+        $supplier = Supplier::create($this->validateData($request));
+        ActivityLogger::log('master.supplier_created', "業者「{$supplier->name}」を登録しました", $supplier);
 
         return redirect()->route('admin.suppliers.index')->with('status', '業者を登録しました。');
     }
@@ -43,6 +45,7 @@ class SupplierController extends Controller
     public function update(Request $request, Supplier $supplier): RedirectResponse
     {
         $supplier->update($this->validateData($request, $supplier));
+        ActivityLogger::log('master.supplier_updated', "業者「{$supplier->name}」を更新しました", $supplier);
 
         return redirect()->route('admin.suppliers.index')->with('status', '業者を更新しました。');
     }
@@ -54,7 +57,9 @@ class SupplierController extends Controller
             return back()->with('status', 'この業者を仕入先とする資材があるため削除できません。無効化してください。');
         }
 
+        $name = $supplier->name;
         $supplier->delete();
+        ActivityLogger::log('master.supplier_deleted', "業者「{$name}」を削除しました");
 
         return redirect()->route('admin.suppliers.index')->with('status', '業者を削除しました。');
     }

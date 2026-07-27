@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Support\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -29,7 +30,8 @@ class CategoryController extends Controller
     /** 登録 */
     public function store(Request $request): RedirectResponse
     {
-        Category::create($this->validateData($request));
+        $category = Category::create($this->validateData($request));
+        ActivityLogger::log('master.category_created', "カテゴリ「{$category->name}」を登録しました", $category);
 
         return redirect()->route('admin.categories.index')->with('status', 'カテゴリを登録しました。');
     }
@@ -44,6 +46,7 @@ class CategoryController extends Controller
     public function update(Request $request, Category $category): RedirectResponse
     {
         $category->update($this->validateData($request, $category));
+        ActivityLogger::log('master.category_updated', "カテゴリ「{$category->name}」を更新しました", $category);
 
         return redirect()->route('admin.categories.index')->with('status', 'カテゴリを更新しました。');
     }
@@ -54,7 +57,9 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category): RedirectResponse
     {
+        $name = $category->name;
         $category->delete();
+        ActivityLogger::log('master.category_deleted', "カテゴリ「{$name}」を削除しました");
 
         return redirect()->route('admin.categories.index')->with('status', 'カテゴリを削除しました。');
     }
