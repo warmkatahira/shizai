@@ -37,12 +37,28 @@ class ActivityLogController extends Controller
         return view('admin.logs.index', [
             'logs' => $logs,
             'categories' => ActivityLog::CATEGORIES,
-            // 操作者プルダウンは有効な全ユーザー（まだログが無い人でも選べる）。
-            // 権限ごとにグループ分けするので role で束ねる（各グループ内は氏名順）
-            'usersByRole' => User::where('is_active', true)->orderBy('name')->get()->groupBy('role'),
-            'roleLabels' => User::ROLE_LABELS,
+            // 操作者プルダウンの選択肢（有効な全ユーザー。まだログが無い人でも選べる）
+            'userGroups' => $this->userGroups(),
             'filters' => $request->only(['category', 'user_id', 'keyword', 'date_from', 'date_to']),
         ]);
+    }
+
+    /**
+     * 操作者プルダウン用に、有効なユーザーを権限ごとにグループ分けする。
+     * 営業所は所長とそれ以外で分ける（管理者 → 総務 → 営業所(所長) → 営業所 の順・各グループ氏名順）。
+     *
+     * @return \Illuminate\Support\Collection<int, array{label: string, users: \Illuminate\Support\Collection}>
+     */
+    private function userGroups(): \Illuminate\Support\Collection
+    {
+        $active = User::where('is_active', true)->orderBy('name')->get();
+
+        return collect([
+            ['label' => '管理者', 'users' => $active->where('role', User::ROLE_ADMIN)->values()],
+            ['label' => '総務', 'users' => $active->where('role', User::ROLE_GENERAL_AFFAIRS)->values()],
+            ['label' => '営業所（所長）', 'users' => $active->where('role', User::ROLE_SALES)->where('is_manager', true)->values()],
+            ['label' => '営業所', 'users' => $active->where('role', User::ROLE_SALES)->where('is_manager', false)->values()],
+        ])->filter(fn ($group) => $group['users']->isNotEmpty())->values();
     }
 
     /**
