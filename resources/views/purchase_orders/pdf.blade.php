@@ -8,7 +8,7 @@
     .header .right { width: 45%; text-align: right; }
     .header .label { color: #333; }
 
-    .supplier-name { font-size: 13pt; padding-bottom: 4px; }
+    .supplier-name { padding-bottom: 4px; }
 
     .items { margin-top: 24px; }
     .items th, .items td { border: 0.6pt solid #000; padding: 4px 5px; }
