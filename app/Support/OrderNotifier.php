@@ -6,8 +6,11 @@ use App\Models\Order;
 use App\Models\User;
 use App\Notifications\OrderPendingApprovalNotification;
 use App\Notifications\OrderResultNotification;
+use Illuminate\Notifications\Notification as BaseNotification;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
+use Throwable;
 
 /**
  * 発注申請の状態に応じて、適切な相手にメール通知を送るヘルパー。
@@ -26,7 +29,7 @@ class OrderNotifier
     {
         if ($order->isPendingManager()) {
             $managers = self::withEmail($order->office->managers()->get());
-            Notification::send($managers, new OrderPendingApprovalNotification($order, 'manager'));
+            self::dispatch($managers, new OrderPendingApprovalNotification($order, 'manager'), $order);
 
             return;
         }
@@ -35,7 +38,7 @@ class OrderNotifier
             $affairs = self::withEmail(
                 User::where('role', User::ROLE_GENERAL_AFFAIRS)->where('is_active', true)->get()
             );
-            Notification::send($affairs, new OrderPendingApprovalNotification($order, 'affairs'));
+            self::dispatch($affairs, new OrderPendingApprovalNotification($order, 'affairs'), $order);
         }
     }
 
@@ -51,12 +54,35 @@ class OrderNotifier
             $order->office->managers()->get()->push($order->requester)
         )->unique('id');
 
-        Notification::send($recipients, new OrderResultNotification($order));
+        self::dispatch($recipients, new OrderResultNotification($order), $order);
     }
 
     /** 通知先メールアドレスを持つユーザーだけに絞る */
     private static function withEmail(Collection $users): Collection
     {
         return $users->filter(fn (User $user) => filled($user->email))->values();
+    }
+
+    /**
+     * 通知を送る。メール送信は同期実行なので、宛先が存在しない・SMTPが落ちている等で
+     * 例外が飛ぶと承認・申請の操作そのものがエラーになってしまう（DBは既にコミット済み）。
+     * 送信失敗は業務を止めずログに残すだけにして、画面はエラーにしない。
+     */
+    private static function dispatch(Collection $recipients, BaseNotification $notification, Order $order): void
+    {
+        if ($recipients->isEmpty()) {
+            return;
+        }
+
+        try {
+            Notification::send($recipients, $notification);
+        } catch (Throwable $e) {
+            Log::error('発注通知メールの送信に失敗しました', [
+                'order_id' => $order->id,
+                'notification' => $notification::class,
+                'recipients' => $recipients->pluck('email')->all(),
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 }
