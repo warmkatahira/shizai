@@ -1,0 +1,997 @@
+{
+  "_fonts-BM__donQ.css": {
+    "file": "assets/fonts-BM__donQ.css",
+    "src": "_fonts-BM__donQ.css"
+  },
+  "_kosugi-maru-400-normal-1qZXNwU_.woff2": {
+    "file": "assets/kosugi-maru-400-normal-1qZXNwU_.woff2",
+    "src": "_kosugi-maru-400-normal-1qZXNwU_.woff2"
+  },
+  "_kosugi-maru-400-normal-21jgSKOX.woff2": {
+    "file": "assets/kosugi-maru-400-normal-21jgSKOX.woff2",
+    "src": "_kosugi-maru-400-normal-21jgSKOX.woff2"
+  },
+  "_kosugi-maru-400-normal-2V7exZBN.woff2": {
+    "file": "assets/kosugi-maru-400-normal-2V7exZBN.woff2",
+    "src": "_kosugi-maru-400-normal-2V7exZBN.woff2"
+  },
+  "_kosugi-maru-400-normal-33omCwAi.woff2": {
+    "file": "assets/kosugi-maru-400-normal-33omCwAi.woff2",
+    "src": "_kosugi-maru-400-normal-33omCwAi.woff2"
+  },
+  "_kosugi-maru-400-normal-3bKqGQeP.woff2": {
+    "file": "assets/kosugi-maru-400-normal-3bKqGQeP.woff2",
+    "src": "_kosugi-maru-400-normal-3bKqGQeP.woff2"
+  },
+  "_kosugi-maru-400-normal-48GA0YkJ.woff2": {
+    "file": "assets/kosugi-maru-400-normal-48GA0YkJ.woff2",
+    "src": "_kosugi-maru-400-normal-48GA0YkJ.woff2"
+  },
+  "_kosugi-maru-400-normal-4cftKE97.woff2": {
+    "file": "assets/kosugi-maru-400-normal-4cftKE97.woff2",
+    "src": "_kosugi-maru-400-normal-4cftKE97.woff2"
+  },
+  "_kosugi-maru-400-normal-54AQx2P4.woff2": {
+    "file": "assets/kosugi-maru-400-normal-54AQx2P4.woff2",
+    "src": "_kosugi-maru-400-normal-54AQx2P4.woff2"
+  },
+  "_kosugi-maru-400-normal-5yrcqgAO.woff2": {
+    "file": "assets/kosugi-maru-400-normal-5yrcqgAO.woff2",
+    "src": "_kosugi-maru-400-normal-5yrcqgAO.woff2"
+  },
+  "_kosugi-maru-400-normal-6rbPgYD5.woff2": {
+    "file": "assets/kosugi-maru-400-normal-6rbPgYD5.woff2",
+    "src": "_kosugi-maru-400-normal-6rbPgYD5.woff2"
+  },
+  "_kosugi-maru-400-normal-7F_F-bY8.woff2": {
+    "file": "assets/kosugi-maru-400-normal-7F_F-bY8.woff2",
+    "src": "_kosugi-maru-400-normal-7F_F-bY8.woff2"
+  },
+  "_kosugi-maru-400-normal-7MkPzNbd.woff2": {
+    "file": "assets/kosugi-maru-400-normal-7MkPzNbd.woff2",
+    "src": "_kosugi-maru-400-normal-7MkPzNbd.woff2"
+  },
+  "_kosugi-maru-400-normal-7zzoc8BF.woff2": {
+    "file": "assets/kosugi-maru-400-normal-7zzoc8BF.woff2",
+    "src": "_kosugi-maru-400-normal-7zzoc8BF.woff2"
+  },
+  "_kosugi-maru-400-normal-AlKbELlX.woff": {
+    "file": "assets/kosugi-maru-400-normal-AlKbELlX.woff",
+    "src": "_kosugi-maru-400-normal-AlKbELlX.woff"
+  },
+  "_kosugi-maru-400-normal-B0p006y5.woff2": {
+    "file": "assets/kosugi-maru-400-normal-B0p006y5.woff2",
+    "src": "_kosugi-maru-400-normal-B0p006y5.woff2"
+  },
+  "_kosugi-maru-400-normal-B6tPYFds.woff": {
+    "file": "assets/kosugi-maru-400-normal-B6tPYFds.woff",
+    "src": "_kosugi-maru-400-normal-B6tPYFds.woff"
+  },
+  "_kosugi-maru-400-normal-B7SqvkTS.woff": {
+    "file": "assets/kosugi-maru-400-normal-B7SqvkTS.woff",
+    "src": "_kosugi-maru-400-normal-B7SqvkTS.woff"
+  },
+  "_kosugi-maru-400-normal-B8wV9Ptb.woff": {
+    "file": "assets/kosugi-maru-400-normal-B8wV9Ptb.woff",
+    "src": "_kosugi-maru-400-normal-B8wV9Ptb.woff"
+  },
+  "_kosugi-maru-400-normal-B90B6ffr.woff": {
+    "file": "assets/kosugi-maru-400-normal-B90B6ffr.woff",
+    "src": "_kosugi-maru-400-normal-B90B6ffr.woff"
+  },
+  "_kosugi-maru-400-normal-BAD2vwnx.woff": {
+    "file": "assets/kosugi-maru-400-normal-BAD2vwnx.woff",
+    "src": "_kosugi-maru-400-normal-BAD2vwnx.woff"
+  },
+  "_kosugi-maru-400-normal-BALkxAUG.woff": {
+    "file": "assets/kosugi-maru-400-normal-BALkxAUG.woff",
+    "src": "_kosugi-maru-400-normal-BALkxAUG.woff"
+  },
+  "_kosugi-maru-400-normal-BAnMAZrm.woff": {
+    "file": "assets/kosugi-maru-400-normal-BAnMAZrm.woff",
+    "src": "_kosugi-maru-400-normal-BAnMAZrm.woff"
+  },
+  "_kosugi-maru-400-normal-BCdGxzPj.woff2": {
+    "file": "assets/kosugi-maru-400-normal-BCdGxzPj.woff2",
+    "src": "_kosugi-maru-400-normal-BCdGxzPj.woff2"
+  },
+  "_kosugi-maru-400-normal-BCot_cIz.woff2": {
+    "file": "assets/kosugi-maru-400-normal-BCot_cIz.woff2",
+    "src": "_kosugi-maru-400-normal-BCot_cIz.woff2"
+  },
+  "_kosugi-maru-400-normal-BDhouRIu.woff": {
+    "file": "assets/kosugi-maru-400-normal-BDhouRIu.woff",
+    "src": "_kosugi-maru-400-normal-BDhouRIu.woff"
+  },
+  "_kosugi-maru-400-normal-BF57-Mc3.woff": {
+    "file": "assets/kosugi-maru-400-normal-BF57-Mc3.woff",
+    "src": "_kosugi-maru-400-normal-BF57-Mc3.woff"
+  },
+  "_kosugi-maru-400-normal-BF7vbeK1.woff": {
+    "file": "assets/kosugi-maru-400-normal-BF7vbeK1.woff",
+    "src": "_kosugi-maru-400-normal-BF7vbeK1.woff"
+  },
+  "_kosugi-maru-400-normal-BFTyl58m.woff": {
+    "file": "assets/kosugi-maru-400-normal-BFTyl58m.woff",
+    "src": "_kosugi-maru-400-normal-BFTyl58m.woff"
+  },
+  "_kosugi-maru-400-normal-BJcu2a_P.woff": {
+    "file": "assets/kosugi-maru-400-normal-BJcu2a_P.woff",
+    "src": "_kosugi-maru-400-normal-BJcu2a_P.woff"
+  },
+  "_kosugi-maru-400-normal-BJs-gSo4.woff2": {
+    "file": "assets/kosugi-maru-400-normal-BJs-gSo4.woff2",
+    "src": "_kosugi-maru-400-normal-BJs-gSo4.woff2"
+  },
+  "_kosugi-maru-400-normal-BKfZ2KGw.woff2": {
+    "file": "assets/kosugi-maru-400-normal-BKfZ2KGw.woff2",
+    "src": "_kosugi-maru-400-normal-BKfZ2KGw.woff2"
+  },
+  "_kosugi-maru-400-normal-BNGxPunN.woff": {
+    "file": "assets/kosugi-maru-400-normal-BNGxPunN.woff",
+    "src": "_kosugi-maru-400-normal-BNGxPunN.woff"
+  },
+  "_kosugi-maru-400-normal-BNtHHnwg.woff2": {
+    "file": "assets/kosugi-maru-400-normal-BNtHHnwg.woff2",
+    "src": "_kosugi-maru-400-normal-BNtHHnwg.woff2"
+  },
+  "_kosugi-maru-400-normal-BOi0HaFX.woff2": {
+    "file": "assets/kosugi-maru-400-normal-BOi0HaFX.woff2",
+    "src": "_kosugi-maru-400-normal-BOi0HaFX.woff2"
+  },
+  "_kosugi-maru-400-normal-BQOuHtxx.woff2": {
+    "file": "assets/kosugi-maru-400-normal-BQOuHtxx.woff2",
+    "src": "_kosugi-maru-400-normal-BQOuHtxx.woff2"
+  },
+  "_kosugi-maru-400-normal-BSE8tp96.woff2": {
+    "file": "assets/kosugi-maru-400-normal-BSE8tp96.woff2",
+    "src": "_kosugi-maru-400-normal-BSE8tp96.woff2"
+  },
+  "_kosugi-maru-400-normal-BSlES6lM.woff2": {
+    "file": "assets/kosugi-maru-400-normal-BSlES6lM.woff2",
+    "src": "_kosugi-maru-400-normal-BSlES6lM.woff2"
+  },
+  "_kosugi-maru-400-normal-BU8eMtnr.woff2": {
+    "file": "assets/kosugi-maru-400-normal-BU8eMtnr.woff2",
+    "src": "_kosugi-maru-400-normal-BU8eMtnr.woff2"
+  },
+  "_kosugi-maru-400-normal-BVNfj4fn.woff": {
+    "file": "assets/kosugi-maru-400-normal-BVNfj4fn.woff",
+    "src": "_kosugi-maru-400-normal-BVNfj4fn.woff"
+  },
+  "_kosugi-maru-400-normal-BVakWEt4.woff2": {
+    "file": "assets/kosugi-maru-400-normal-BVakWEt4.woff2",
+    "src": "_kosugi-maru-400-normal-BVakWEt4.woff2"
+  },
+  "_kosugi-maru-400-normal-BW0GxpGm.woff": {
+    "file": "assets/kosugi-maru-400-normal-BW0GxpGm.woff",
+    "src": "_kosugi-maru-400-normal-BW0GxpGm.woff"
+  },
+  "_kosugi-maru-400-normal-BWhBPIBW.woff": {
+    "file": "assets/kosugi-maru-400-normal-BWhBPIBW.woff",
+    "src": "_kosugi-maru-400-normal-BWhBPIBW.woff"
+  },
+  "_kosugi-maru-400-normal-BWitzzOY.woff2": {
+    "file": "assets/kosugi-maru-400-normal-BWitzzOY.woff2",
+    "src": "_kosugi-maru-400-normal-BWitzzOY.woff2"
+  },
+  "_kosugi-maru-400-normal-BY2azmYX.woff2": {
+    "file": "assets/kosugi-maru-400-normal-BY2azmYX.woff2",
+    "src": "_kosugi-maru-400-normal-BY2azmYX.woff2"
+  },
+  "_kosugi-maru-400-normal-BZKuTKYr.woff2": {
+    "file": "assets/kosugi-maru-400-normal-BZKuTKYr.woff2",
+    "src": "_kosugi-maru-400-normal-BZKuTKYr.woff2"
+  },
+  "_kosugi-maru-400-normal-BZvIqt1A.woff": {
+    "file": "assets/kosugi-maru-400-normal-BZvIqt1A.woff",
+    "src": "_kosugi-maru-400-normal-BZvIqt1A.woff"
+  },
+  "_kosugi-maru-400-normal-BZwNFLUG.woff2": {
+    "file": "assets/kosugi-maru-400-normal-BZwNFLUG.woff2",
+    "src": "_kosugi-maru-400-normal-BZwNFLUG.woff2"
+  },
+  "_kosugi-maru-400-normal-BZylMpvg.woff2": {
+    "file": "assets/kosugi-maru-400-normal-BZylMpvg.woff2",
+    "src": "_kosugi-maru-400-normal-BZylMpvg.woff2"
+  },
+  "_kosugi-maru-400-normal-BdIHX4l6.woff2": {
+    "file": "assets/kosugi-maru-400-normal-BdIHX4l6.woff2",
+    "src": "_kosugi-maru-400-normal-BdIHX4l6.woff2"
+  },
+  "_kosugi-maru-400-normal-BdfLOAdx.woff2": {
+    "file": "assets/kosugi-maru-400-normal-BdfLOAdx.woff2",
+    "src": "_kosugi-maru-400-normal-BdfLOAdx.woff2"
+  },
+  "_kosugi-maru-400-normal-Bdsj4WGN.woff": {
+    "file": "assets/kosugi-maru-400-normal-Bdsj4WGN.woff",
+    "src": "_kosugi-maru-400-normal-Bdsj4WGN.woff"
+  },
+  "_kosugi-maru-400-normal-Bep_aZsH.woff": {
+    "file": "assets/kosugi-maru-400-normal-Bep_aZsH.woff",
+    "src": "_kosugi-maru-400-normal-Bep_aZsH.woff"
+  },
+  "_kosugi-maru-400-normal-Bf-XqcFY.woff2": {
+    "file": "assets/kosugi-maru-400-normal-Bf-XqcFY.woff2",
+    "src": "_kosugi-maru-400-normal-Bf-XqcFY.woff2"
+  },
+  "_kosugi-maru-400-normal-Bgrk8HOV.woff2": {
+    "file": "assets/kosugi-maru-400-normal-Bgrk8HOV.woff2",
+    "src": "_kosugi-maru-400-normal-Bgrk8HOV.woff2"
+  },
+  "_kosugi-maru-400-normal-BhGMSmQj.woff": {
+    "file": "assets/kosugi-maru-400-normal-BhGMSmQj.woff",
+    "src": "_kosugi-maru-400-normal-BhGMSmQj.woff"
+  },
+  "_kosugi-maru-400-normal-BjpV_UgK.woff": {
+    "file": "assets/kosugi-maru-400-normal-BjpV_UgK.woff",
+    "src": "_kosugi-maru-400-normal-BjpV_UgK.woff"
+  },
+  "_kosugi-maru-400-normal-BkR0QYwB.woff": {
+    "file": "assets/kosugi-maru-400-normal-BkR0QYwB.woff",
+    "src": "_kosugi-maru-400-normal-BkR0QYwB.woff"
+  },
+  "_kosugi-maru-400-normal-Bm746BJQ.woff2": {
+    "file": "assets/kosugi-maru-400-normal-Bm746BJQ.woff2",
+    "src": "_kosugi-maru-400-normal-Bm746BJQ.woff2"
+  },
+  "_kosugi-maru-400-normal-BnQcI5Xw.woff": {
+    "file": "assets/kosugi-maru-400-normal-BnQcI5Xw.woff",
+    "src": "_kosugi-maru-400-normal-BnQcI5Xw.woff"
+  },
+  "_kosugi-maru-400-normal-BnSmk1gM.woff2": {
+    "file": "assets/kosugi-maru-400-normal-BnSmk1gM.woff2",
+    "src": "_kosugi-maru-400-normal-BnSmk1gM.woff2"
+  },
+  "_kosugi-maru-400-normal-Bo9sdN8B.woff2": {
+    "file": "assets/kosugi-maru-400-normal-Bo9sdN8B.woff2",
+    "src": "_kosugi-maru-400-normal-Bo9sdN8B.woff2"
+  },
+  "_kosugi-maru-400-normal-Bo_jeBkc.woff": {
+    "file": "assets/kosugi-maru-400-normal-Bo_jeBkc.woff",
+    "src": "_kosugi-maru-400-normal-Bo_jeBkc.woff"
+  },
+  "_kosugi-maru-400-normal-BoimN2_e.woff2": {
+    "file": "assets/kosugi-maru-400-normal-BoimN2_e.woff2",
+    "src": "_kosugi-maru-400-normal-BoimN2_e.woff2"
+  },
+  "_kosugi-maru-400-normal-Bp7rEOvz.woff": {
+    "file": "assets/kosugi-maru-400-normal-Bp7rEOvz.woff",
+    "src": "_kosugi-maru-400-normal-Bp7rEOvz.woff"
+  },
+  "_kosugi-maru-400-normal-BqLyKEfw.woff2": {
+    "file": "assets/kosugi-maru-400-normal-BqLyKEfw.woff2",
+    "src": "_kosugi-maru-400-normal-BqLyKEfw.woff2"
+  },
+  "_kosugi-maru-400-normal-BsZq9mgW.woff2": {
+    "file": "assets/kosugi-maru-400-normal-BsZq9mgW.woff2",
+    "src": "_kosugi-maru-400-normal-BsZq9mgW.woff2"
+  },
+  "_kosugi-maru-400-normal-Bspi7-BW.woff": {
+    "file": "assets/kosugi-maru-400-normal-Bspi7-BW.woff",
+    "src": "_kosugi-maru-400-normal-Bspi7-BW.woff"
+  },
+  "_kosugi-maru-400-normal-BtG7Nj2y.woff2": {
+    "file": "assets/kosugi-maru-400-normal-BtG7Nj2y.woff2",
+    "src": "_kosugi-maru-400-normal-BtG7Nj2y.woff2"
+  },
+  "_kosugi-maru-400-normal-BtL5y1dk.woff2": {
+    "file": "assets/kosugi-maru-400-normal-BtL5y1dk.woff2",
+    "src": "_kosugi-maru-400-normal-BtL5y1dk.woff2"
+  },
+  "_kosugi-maru-400-normal-Bu46vbnU.woff2": {
+    "file": "assets/kosugi-maru-400-normal-Bu46vbnU.woff2",
+    "src": "_kosugi-maru-400-normal-Bu46vbnU.woff2"
+  },
+  "_kosugi-maru-400-normal-BuLsx4lc.woff": {
+    "file": "assets/kosugi-maru-400-normal-BuLsx4lc.woff",
+    "src": "_kosugi-maru-400-normal-BuLsx4lc.woff"
+  },
+  "_kosugi-maru-400-normal-BwauVPxy.woff": {
+    "file": "assets/kosugi-maru-400-normal-BwauVPxy.woff",
+    "src": "_kosugi-maru-400-normal-BwauVPxy.woff"
+  },
+  "_kosugi-maru-400-normal-BwnByB3w.woff": {
+    "file": "assets/kosugi-maru-400-normal-BwnByB3w.woff",
+    "src": "_kosugi-maru-400-normal-BwnByB3w.woff"
+  },
+  "_kosugi-maru-400-normal-Bx6AJR5c.woff2": {
+    "file": "assets/kosugi-maru-400-normal-Bx6AJR5c.woff2",
+    "src": "_kosugi-maru-400-normal-Bx6AJR5c.woff2"
+  },
+  "_kosugi-maru-400-normal-ByKyxiwU.woff2": {
+    "file": "assets/kosugi-maru-400-normal-ByKyxiwU.woff2",
+    "src": "_kosugi-maru-400-normal-ByKyxiwU.woff2"
+  },
+  "_kosugi-maru-400-normal-BzSXUZfe.woff": {
+    "file": "assets/kosugi-maru-400-normal-BzSXUZfe.woff",
+    "src": "_kosugi-maru-400-normal-BzSXUZfe.woff"
+  },
+  "_kosugi-maru-400-normal-C-ShoyKM.woff2": {
+    "file": "assets/kosugi-maru-400-normal-C-ShoyKM.woff2",
+    "src": "_kosugi-maru-400-normal-C-ShoyKM.woff2"
+  },
+  "_kosugi-maru-400-normal-C03VS5gF.woff": {
+    "file": "assets/kosugi-maru-400-normal-C03VS5gF.woff",
+    "src": "_kosugi-maru-400-normal-C03VS5gF.woff"
+  },
+  "_kosugi-maru-400-normal-C0MAG-y2.woff2": {
+    "file": "assets/kosugi-maru-400-normal-C0MAG-y2.woff2",
+    "src": "_kosugi-maru-400-normal-C0MAG-y2.woff2"
+  },
+  "_kosugi-maru-400-normal-C1205eWT.woff": {
+    "file": "assets/kosugi-maru-400-normal-C1205eWT.woff",
+    "src": "_kosugi-maru-400-normal-C1205eWT.woff"
+  },
+  "_kosugi-maru-400-normal-C1olvEaX.woff2": {
+    "file": "assets/kosugi-maru-400-normal-C1olvEaX.woff2",
+    "src": "_kosugi-maru-400-normal-C1olvEaX.woff2"
+  },
+  "_kosugi-maru-400-normal-C233UZ4n.woff": {
+    "file": "assets/kosugi-maru-400-normal-C233UZ4n.woff",
+    "src": "_kosugi-maru-400-normal-C233UZ4n.woff"
+  },
+  "_kosugi-maru-400-normal-C370kGfB.woff2": {
+    "file": "assets/kosugi-maru-400-normal-C370kGfB.woff2",
+    "src": "_kosugi-maru-400-normal-C370kGfB.woff2"
+  },
+  "_kosugi-maru-400-normal-C3kLB3CD.woff": {
+    "file": "assets/kosugi-maru-400-normal-C3kLB3CD.woff",
+    "src": "_kosugi-maru-400-normal-C3kLB3CD.woff"
+  },
+  "_kosugi-maru-400-normal-C8SOR_9Z.woff": {
+    "file": "assets/kosugi-maru-400-normal-C8SOR_9Z.woff",
+    "src": "_kosugi-maru-400-normal-C8SOR_9Z.woff"
+  },
+  "_kosugi-maru-400-normal-C8cPLRap.woff2": {
+    "file": "assets/kosugi-maru-400-normal-C8cPLRap.woff2",
+    "src": "_kosugi-maru-400-normal-C8cPLRap.woff2"
+  },
+  "_kosugi-maru-400-normal-C8ccW7wE.woff": {
+    "file": "assets/kosugi-maru-400-normal-C8ccW7wE.woff",
+    "src": "_kosugi-maru-400-normal-C8ccW7wE.woff"
+  },
+  "_kosugi-maru-400-normal-C8lrmDoQ.woff2": {
+    "file": "assets/kosugi-maru-400-normal-C8lrmDoQ.woff2",
+    "src": "_kosugi-maru-400-normal-C8lrmDoQ.woff2"
+  },
+  "_kosugi-maru-400-normal-C9D2_tN4.woff2": {
+    "file": "assets/kosugi-maru-400-normal-C9D2_tN4.woff2",
+    "src": "_kosugi-maru-400-normal-C9D2_tN4.woff2"
+  },
+  "_kosugi-maru-400-normal-CAwsk-KV.woff": {
+    "file": "assets/kosugi-maru-400-normal-CAwsk-KV.woff",
+    "src": "_kosugi-maru-400-normal-CAwsk-KV.woff"
+  },
+  "_kosugi-maru-400-normal-CBYeDY9W.woff2": {
+    "file": "assets/kosugi-maru-400-normal-CBYeDY9W.woff2",
+    "src": "_kosugi-maru-400-normal-CBYeDY9W.woff2"
+  },
+  "_kosugi-maru-400-normal-CBlr3A1c.woff2": {
+    "file": "assets/kosugi-maru-400-normal-CBlr3A1c.woff2",
+    "src": "_kosugi-maru-400-normal-CBlr3A1c.woff2"
+  },
+  "_kosugi-maru-400-normal-CCOqThTT.woff": {
+    "file": "assets/kosugi-maru-400-normal-CCOqThTT.woff",
+    "src": "_kosugi-maru-400-normal-CCOqThTT.woff"
+  },
+  "_kosugi-maru-400-normal-CCYz0-J7.woff2": {
+    "file": "assets/kosugi-maru-400-normal-CCYz0-J7.woff2",
+    "src": "_kosugi-maru-400-normal-CCYz0-J7.woff2"
+  },
+  "_kosugi-maru-400-normal-CD7-ejpa.woff": {
+    "file": "assets/kosugi-maru-400-normal-CD7-ejpa.woff",
+    "src": "_kosugi-maru-400-normal-CD7-ejpa.woff"
+  },
+  "_kosugi-maru-400-normal-CDqVBpN-.woff": {
+    "file": "assets/kosugi-maru-400-normal-CDqVBpN-.woff",
+    "src": "_kosugi-maru-400-normal-CDqVBpN-.woff"
+  },
+  "_kosugi-maru-400-normal-CElCgKZh.woff": {
+    "file": "assets/kosugi-maru-400-normal-CElCgKZh.woff",
+    "src": "_kosugi-maru-400-normal-CElCgKZh.woff"
+  },
+  "_kosugi-maru-400-normal-CEtOUVgV.woff2": {
+    "file": "assets/kosugi-maru-400-normal-CEtOUVgV.woff2",
+    "src": "_kosugi-maru-400-normal-CEtOUVgV.woff2"
+  },
+  "_kosugi-maru-400-normal-CFi9XD7j.woff2": {
+    "file": "assets/kosugi-maru-400-normal-CFi9XD7j.woff2",
+    "src": "_kosugi-maru-400-normal-CFi9XD7j.woff2"
+  },
+  "_kosugi-maru-400-normal-CG49pP13.woff": {
+    "file": "assets/kosugi-maru-400-normal-CG49pP13.woff",
+    "src": "_kosugi-maru-400-normal-CG49pP13.woff"
+  },
+  "_kosugi-maru-400-normal-CJ5QBs3z.woff2": {
+    "file": "assets/kosugi-maru-400-normal-CJ5QBs3z.woff2",
+    "src": "_kosugi-maru-400-normal-CJ5QBs3z.woff2"
+  },
+  "_kosugi-maru-400-normal-CJTvUCLI.woff": {
+    "file": "assets/kosugi-maru-400-normal-CJTvUCLI.woff",
+    "src": "_kosugi-maru-400-normal-CJTvUCLI.woff"
+  },
+  "_kosugi-maru-400-normal-CN7_uCst.woff2": {
+    "file": "assets/kosugi-maru-400-normal-CN7_uCst.woff2",
+    "src": "_kosugi-maru-400-normal-CN7_uCst.woff2"
+  },
+  "_kosugi-maru-400-normal-CO2FCstC.woff": {
+    "file": "assets/kosugi-maru-400-normal-CO2FCstC.woff",
+    "src": "_kosugi-maru-400-normal-CO2FCstC.woff"
+  },
+  "_kosugi-maru-400-normal-CO9yuHTW.woff2": {
+    "file": "assets/kosugi-maru-400-normal-CO9yuHTW.woff2",
+    "src": "_kosugi-maru-400-normal-CO9yuHTW.woff2"
+  },
+  "_kosugi-maru-400-normal-COk1nuPU.woff": {
+    "file": "assets/kosugi-maru-400-normal-COk1nuPU.woff",
+    "src": "_kosugi-maru-400-normal-COk1nuPU.woff"
+  },
+  "_kosugi-maru-400-normal-CRUrrb2i.woff": {
+    "file": "assets/kosugi-maru-400-normal-CRUrrb2i.woff",
+    "src": "_kosugi-maru-400-normal-CRUrrb2i.woff"
+  },
+  "_kosugi-maru-400-normal-CSKuQfoZ.woff2": {
+    "file": "assets/kosugi-maru-400-normal-CSKuQfoZ.woff2",
+    "src": "_kosugi-maru-400-normal-CSKuQfoZ.woff2"
+  },
+  "_kosugi-maru-400-normal-CSNB9-Mf.woff": {
+    "file": "assets/kosugi-maru-400-normal-CSNB9-Mf.woff",
+    "src": "_kosugi-maru-400-normal-CSNB9-Mf.woff"
+  },
+  "_kosugi-maru-400-normal-CSkOdirV.woff": {
+    "file": "assets/kosugi-maru-400-normal-CSkOdirV.woff",
+    "src": "_kosugi-maru-400-normal-CSkOdirV.woff"
+  },
+  "_kosugi-maru-400-normal-CV5S0Rt9.woff": {
+    "file": "assets/kosugi-maru-400-normal-CV5S0Rt9.woff",
+    "src": "_kosugi-maru-400-normal-CV5S0Rt9.woff"
+  },
+  "_kosugi-maru-400-normal-CVvgZftB.woff": {
+    "file": "assets/kosugi-maru-400-normal-CVvgZftB.woff",
+    "src": "_kosugi-maru-400-normal-CVvgZftB.woff"
+  },
+  "_kosugi-maru-400-normal-CYFNWTZM.woff": {
+    "file": "assets/kosugi-maru-400-normal-CYFNWTZM.woff",
+    "src": "_kosugi-maru-400-normal-CYFNWTZM.woff"
+  },
+  "_kosugi-maru-400-normal-CZlS6QLt.woff2": {
+    "file": "assets/kosugi-maru-400-normal-CZlS6QLt.woff2",
+    "src": "_kosugi-maru-400-normal-CZlS6QLt.woff2"
+  },
+  "_kosugi-maru-400-normal-C_8x6Jns.woff": {
+    "file": "assets/kosugi-maru-400-normal-C_8x6Jns.woff",
+    "src": "_kosugi-maru-400-normal-C_8x6Jns.woff"
+  },
+  "_kosugi-maru-400-normal-CbHFSigC.woff2": {
+    "file": "assets/kosugi-maru-400-normal-CbHFSigC.woff2",
+    "src": "_kosugi-maru-400-normal-CbHFSigC.woff2"
+  },
+  "_kosugi-maru-400-normal-CbXX0yzf.woff2": {
+    "file": "assets/kosugi-maru-400-normal-CbXX0yzf.woff2",
+    "src": "_kosugi-maru-400-normal-CbXX0yzf.woff2"
+  },
+  "_kosugi-maru-400-normal-CenbTvuV.woff2": {
+    "file": "assets/kosugi-maru-400-normal-CenbTvuV.woff2",
+    "src": "_kosugi-maru-400-normal-CenbTvuV.woff2"
+  },
+  "_kosugi-maru-400-normal-CfBVo8DB.woff2": {
+    "file": "assets/kosugi-maru-400-normal-CfBVo8DB.woff2",
+    "src": "_kosugi-maru-400-normal-CfBVo8DB.woff2"
+  },
+  "_kosugi-maru-400-normal-CfEwhYot.woff2": {
+    "file": "assets/kosugi-maru-400-normal-CfEwhYot.woff2",
+    "src": "_kosugi-maru-400-normal-CfEwhYot.woff2"
+  },
+  "_kosugi-maru-400-normal-CfppB5nP.woff": {
+    "file": "assets/kosugi-maru-400-normal-CfppB5nP.woff",
+    "src": "_kosugi-maru-400-normal-CfppB5nP.woff"
+  },
+  "_kosugi-maru-400-normal-ChmjJ-Tt.woff": {
+    "file": "assets/kosugi-maru-400-normal-ChmjJ-Tt.woff",
+    "src": "_kosugi-maru-400-normal-ChmjJ-Tt.woff"
+  },
+  "_kosugi-maru-400-normal-ChurVnOx.woff": {
+    "file": "assets/kosugi-maru-400-normal-ChurVnOx.woff",
+    "src": "_kosugi-maru-400-normal-ChurVnOx.woff"
+  },
+  "_kosugi-maru-400-normal-CiRx5Vir.woff": {
+    "file": "assets/kosugi-maru-400-normal-CiRx5Vir.woff",
+    "src": "_kosugi-maru-400-normal-CiRx5Vir.woff"
+  },
+  "_kosugi-maru-400-normal-CifHt_cX.woff": {
+    "file": "assets/kosugi-maru-400-normal-CifHt_cX.woff",
+    "src": "_kosugi-maru-400-normal-CifHt_cX.woff"
+  },
+  "_kosugi-maru-400-normal-Cjvtm_xA.woff": {
+    "file": "assets/kosugi-maru-400-normal-Cjvtm_xA.woff",
+    "src": "_kosugi-maru-400-normal-Cjvtm_xA.woff"
+  },
+  "_kosugi-maru-400-normal-CmBADXj-.woff2": {
+    "file": "assets/kosugi-maru-400-normal-CmBADXj-.woff2",
+    "src": "_kosugi-maru-400-normal-CmBADXj-.woff2"
+  },
+  "_kosugi-maru-400-normal-CmKJUi_e.woff2": {
+    "file": "assets/kosugi-maru-400-normal-CmKJUi_e.woff2",
+    "src": "_kosugi-maru-400-normal-CmKJUi_e.woff2"
+  },
+  "_kosugi-maru-400-normal-Cm_ii0_F.woff2": {
+    "file": "assets/kosugi-maru-400-normal-Cm_ii0_F.woff2",
+    "src": "_kosugi-maru-400-normal-Cm_ii0_F.woff2"
+  },
+  "_kosugi-maru-400-normal-Cmc239Eb.woff2": {
+    "file": "assets/kosugi-maru-400-normal-Cmc239Eb.woff2",
+    "src": "_kosugi-maru-400-normal-Cmc239Eb.woff2"
+  },
+  "_kosugi-maru-400-normal-Cmtm0Bkm.woff2": {
+    "file": "assets/kosugi-maru-400-normal-Cmtm0Bkm.woff2",
+    "src": "_kosugi-maru-400-normal-Cmtm0Bkm.woff2"
+  },
+  "_kosugi-maru-400-normal-CnfvhYIT.woff2": {
+    "file": "assets/kosugi-maru-400-normal-CnfvhYIT.woff2",
+    "src": "_kosugi-maru-400-normal-CnfvhYIT.woff2"
+  },
+  "_kosugi-maru-400-normal-Cp-BZXgT.woff2": {
+    "file": "assets/kosugi-maru-400-normal-Cp-BZXgT.woff2",
+    "src": "_kosugi-maru-400-normal-Cp-BZXgT.woff2"
+  },
+  "_kosugi-maru-400-normal-CqpyZqQ7.woff": {
+    "file": "assets/kosugi-maru-400-normal-CqpyZqQ7.woff",
+    "src": "_kosugi-maru-400-normal-CqpyZqQ7.woff"
+  },
+  "_kosugi-maru-400-normal-Cr_i3u4v.woff2": {
+    "file": "assets/kosugi-maru-400-normal-Cr_i3u4v.woff2",
+    "src": "_kosugi-maru-400-normal-Cr_i3u4v.woff2"
+  },
+  "_kosugi-maru-400-normal-Cvva80Rt.woff": {
+    "file": "assets/kosugi-maru-400-normal-Cvva80Rt.woff",
+    "src": "_kosugi-maru-400-normal-Cvva80Rt.woff"
+  },
+  "_kosugi-maru-400-normal-CwwXIMHJ.woff": {
+    "file": "assets/kosugi-maru-400-normal-CwwXIMHJ.woff",
+    "src": "_kosugi-maru-400-normal-CwwXIMHJ.woff"
+  },
+  "_kosugi-maru-400-normal-Cx3oJEkh.woff2": {
+    "file": "assets/kosugi-maru-400-normal-Cx3oJEkh.woff2",
+    "src": "_kosugi-maru-400-normal-Cx3oJEkh.woff2"
+  },
+  "_kosugi-maru-400-normal-CxYO9cdJ.woff2": {
+    "file": "assets/kosugi-maru-400-normal-CxYO9cdJ.woff2",
+    "src": "_kosugi-maru-400-normal-CxYO9cdJ.woff2"
+  },
+  "_kosugi-maru-400-normal-CxYduB8z.woff": {
+    "file": "assets/kosugi-maru-400-normal-CxYduB8z.woff",
+    "src": "_kosugi-maru-400-normal-CxYduB8z.woff"
+  },
+  "_kosugi-maru-400-normal-CxZt8T41.woff": {
+    "file": "assets/kosugi-maru-400-normal-CxZt8T41.woff",
+    "src": "_kosugi-maru-400-normal-CxZt8T41.woff"
+  },
+  "_kosugi-maru-400-normal-CxhAm2dK.woff": {
+    "file": "assets/kosugi-maru-400-normal-CxhAm2dK.woff",
+    "src": "_kosugi-maru-400-normal-CxhAm2dK.woff"
+  },
+  "_kosugi-maru-400-normal-Cy8WNIvD.woff2": {
+    "file": "assets/kosugi-maru-400-normal-Cy8WNIvD.woff2",
+    "src": "_kosugi-maru-400-normal-Cy8WNIvD.woff2"
+  },
+  "_kosugi-maru-400-normal-CyDGW-BI.woff2": {
+    "file": "assets/kosugi-maru-400-normal-CyDGW-BI.woff2",
+    "src": "_kosugi-maru-400-normal-CyDGW-BI.woff2"
+  },
+  "_kosugi-maru-400-normal-D0cS1kTy.woff2": {
+    "file": "assets/kosugi-maru-400-normal-D0cS1kTy.woff2",
+    "src": "_kosugi-maru-400-normal-D0cS1kTy.woff2"
+  },
+  "_kosugi-maru-400-normal-D2NMKomz.woff2": {
+    "file": "assets/kosugi-maru-400-normal-D2NMKomz.woff2",
+    "src": "_kosugi-maru-400-normal-D2NMKomz.woff2"
+  },
+  "_kosugi-maru-400-normal-D5Zp0ta3.woff": {
+    "file": "assets/kosugi-maru-400-normal-D5Zp0ta3.woff",
+    "src": "_kosugi-maru-400-normal-D5Zp0ta3.woff"
+  },
+  "_kosugi-maru-400-normal-D6MDKqyk.woff2": {
+    "file": "assets/kosugi-maru-400-normal-D6MDKqyk.woff2",
+    "src": "_kosugi-maru-400-normal-D6MDKqyk.woff2"
+  },
+  "_kosugi-maru-400-normal-D6SoP9B3.woff": {
+    "file": "assets/kosugi-maru-400-normal-D6SoP9B3.woff",
+    "src": "_kosugi-maru-400-normal-D6SoP9B3.woff"
+  },
+  "_kosugi-maru-400-normal-D8v9EYQD.woff": {
+    "file": "assets/kosugi-maru-400-normal-D8v9EYQD.woff",
+    "src": "_kosugi-maru-400-normal-D8v9EYQD.woff"
+  },
+  "_kosugi-maru-400-normal-DB3QYNhE.woff2": {
+    "file": "assets/kosugi-maru-400-normal-DB3QYNhE.woff2",
+    "src": "_kosugi-maru-400-normal-DB3QYNhE.woff2"
+  },
+  "_kosugi-maru-400-normal-DDoOZXUD.woff2": {
+    "file": "assets/kosugi-maru-400-normal-DDoOZXUD.woff2",
+    "src": "_kosugi-maru-400-normal-DDoOZXUD.woff2"
+  },
+  "_kosugi-maru-400-normal-DEeFWPcx.woff": {
+    "file": "assets/kosugi-maru-400-normal-DEeFWPcx.woff",
+    "src": "_kosugi-maru-400-normal-DEeFWPcx.woff"
+  },
+  "_kosugi-maru-400-normal-DF0LHUQz.woff": {
+    "file": "assets/kosugi-maru-400-normal-DF0LHUQz.woff",
+    "src": "_kosugi-maru-400-normal-DF0LHUQz.woff"
+  },
+  "_kosugi-maru-400-normal-DFv04w3x.woff": {
+    "file": "assets/kosugi-maru-400-normal-DFv04w3x.woff",
+    "src": "_kosugi-maru-400-normal-DFv04w3x.woff"
+  },
+  "_kosugi-maru-400-normal-DId0uxHp.woff": {
+    "file": "assets/kosugi-maru-400-normal-DId0uxHp.woff",
+    "src": "_kosugi-maru-400-normal-DId0uxHp.woff"
+  },
+  "_kosugi-maru-400-normal-DJVKqLRR.woff2": {
+    "file": "assets/kosugi-maru-400-normal-DJVKqLRR.woff2",
+    "src": "_kosugi-maru-400-normal-DJVKqLRR.woff2"
+  },
+  "_kosugi-maru-400-normal-DMy2A0xQ.woff": {
+    "file": "assets/kosugi-maru-400-normal-DMy2A0xQ.woff",
+    "src": "_kosugi-maru-400-normal-DMy2A0xQ.woff"
+  },
+  "_kosugi-maru-400-normal-DNQbL4gR.woff2": {
+    "file": "assets/kosugi-maru-400-normal-DNQbL4gR.woff2",
+    "src": "_kosugi-maru-400-normal-DNQbL4gR.woff2"
+  },
+  "_kosugi-maru-400-normal-DPJGC9za.woff2": {
+    "file": "assets/kosugi-maru-400-normal-DPJGC9za.woff2",
+    "src": "_kosugi-maru-400-normal-DPJGC9za.woff2"
+  },
+  "_kosugi-maru-400-normal-DQ1DoPpU.woff2": {
+    "file": "assets/kosugi-maru-400-normal-DQ1DoPpU.woff2",
+    "src": "_kosugi-maru-400-normal-DQ1DoPpU.woff2"
+  },
+  "_kosugi-maru-400-normal-DRAwHZYx.woff2": {
+    "file": "assets/kosugi-maru-400-normal-DRAwHZYx.woff2",
+    "src": "_kosugi-maru-400-normal-DRAwHZYx.woff2"
+  },
+  "_kosugi-maru-400-normal-DRPsHOfb.woff": {
+    "file": "assets/kosugi-maru-400-normal-DRPsHOfb.woff",
+    "src": "_kosugi-maru-400-normal-DRPsHOfb.woff"
+  },
+  "_kosugi-maru-400-normal-DRfcEqD-.woff2": {
+    "file": "assets/kosugi-maru-400-normal-DRfcEqD-.woff2",
+    "src": "_kosugi-maru-400-normal-DRfcEqD-.woff2"
+  },
+  "_kosugi-maru-400-normal-DRgjDGKg.woff2": {
+    "file": "assets/kosugi-maru-400-normal-DRgjDGKg.woff2",
+    "src": "_kosugi-maru-400-normal-DRgjDGKg.woff2"
+  },
+  "_kosugi-maru-400-normal-DSKf6Qw2.woff2": {
+    "file": "assets/kosugi-maru-400-normal-DSKf6Qw2.woff2",
+    "src": "_kosugi-maru-400-normal-DSKf6Qw2.woff2"
+  },
+  "_kosugi-maru-400-normal-DSd2wniJ.woff2": {
+    "file": "assets/kosugi-maru-400-normal-DSd2wniJ.woff2",
+    "src": "_kosugi-maru-400-normal-DSd2wniJ.woff2"
+  },
+  "_kosugi-maru-400-normal-DT56qg9h.woff": {
+    "file": "assets/kosugi-maru-400-normal-DT56qg9h.woff",
+    "src": "_kosugi-maru-400-normal-DT56qg9h.woff"
+  },
+  "_kosugi-maru-400-normal-DTt50gde.woff2": {
+    "file": "assets/kosugi-maru-400-normal-DTt50gde.woff2",
+    "src": "_kosugi-maru-400-normal-DTt50gde.woff2"
+  },
+  "_kosugi-maru-400-normal-DVj6XvHC.woff": {
+    "file": "assets/kosugi-maru-400-normal-DVj6XvHC.woff",
+    "src": "_kosugi-maru-400-normal-DVj6XvHC.woff"
+  },
+  "_kosugi-maru-400-normal-DYF2HkuP.woff2": {
+    "file": "assets/kosugi-maru-400-normal-DYF2HkuP.woff2",
+    "src": "_kosugi-maru-400-normal-DYF2HkuP.woff2"
+  },
+  "_kosugi-maru-400-normal-DZyW3yiA.woff": {
+    "file": "assets/kosugi-maru-400-normal-DZyW3yiA.woff",
+    "src": "_kosugi-maru-400-normal-DZyW3yiA.woff"
+  },
+  "_kosugi-maru-400-normal-DaJqZ4Ft.woff": {
+    "file": "assets/kosugi-maru-400-normal-DaJqZ4Ft.woff",
+    "src": "_kosugi-maru-400-normal-DaJqZ4Ft.woff"
+  },
+  "_kosugi-maru-400-normal-DaPqE6_z.woff2": {
+    "file": "assets/kosugi-maru-400-normal-DaPqE6_z.woff2",
+    "src": "_kosugi-maru-400-normal-DaPqE6_z.woff2"
+  },
+  "_kosugi-maru-400-normal-Da_VRUIN.woff": {
+    "file": "assets/kosugi-maru-400-normal-Da_VRUIN.woff",
+    "src": "_kosugi-maru-400-normal-Da_VRUIN.woff"
+  },
+  "_kosugi-maru-400-normal-Dazqm9MH.woff": {
+    "file": "assets/kosugi-maru-400-normal-Dazqm9MH.woff",
+    "src": "_kosugi-maru-400-normal-Dazqm9MH.woff"
+  },
+  "_kosugi-maru-400-normal-DdX3lt-z.woff2": {
+    "file": "assets/kosugi-maru-400-normal-DdX3lt-z.woff2",
+    "src": "_kosugi-maru-400-normal-DdX3lt-z.woff2"
+  },
+  "_kosugi-maru-400-normal-DegoJr3s.woff2": {
+    "file": "assets/kosugi-maru-400-normal-DegoJr3s.woff2",
+    "src": "_kosugi-maru-400-normal-DegoJr3s.woff2"
+  },
+  "_kosugi-maru-400-normal-Df4uHbnn.woff2": {
+    "file": "assets/kosugi-maru-400-normal-Df4uHbnn.woff2",
+    "src": "_kosugi-maru-400-normal-Df4uHbnn.woff2"
+  },
+  "_kosugi-maru-400-normal-Dgcmcncd.woff2": {
+    "file": "assets/kosugi-maru-400-normal-Dgcmcncd.woff2",
+    "src": "_kosugi-maru-400-normal-Dgcmcncd.woff2"
+  },
+  "_kosugi-maru-400-normal-DhOol3cz.woff": {
+    "file": "assets/kosugi-maru-400-normal-DhOol3cz.woff",
+    "src": "_kosugi-maru-400-normal-DhOol3cz.woff"
+  },
+  "_kosugi-maru-400-normal-DhRPtzY4.woff": {
+    "file": "assets/kosugi-maru-400-normal-DhRPtzY4.woff",
+    "src": "_kosugi-maru-400-normal-DhRPtzY4.woff"
+  },
+  "_kosugi-maru-400-normal-Dh__SxCC.woff2": {
+    "file": "assets/kosugi-maru-400-normal-Dh__SxCC.woff2",
+    "src": "_kosugi-maru-400-normal-Dh__SxCC.woff2"
+  },
+  "_kosugi-maru-400-normal-DiLrvNnu.woff2": {
+    "file": "assets/kosugi-maru-400-normal-DiLrvNnu.woff2",
+    "src": "_kosugi-maru-400-normal-DiLrvNnu.woff2"
+  },
+  "_kosugi-maru-400-normal-DimiUmuV.woff": {
+    "file": "assets/kosugi-maru-400-normal-DimiUmuV.woff",
+    "src": "_kosugi-maru-400-normal-DimiUmuV.woff"
+  },
+  "_kosugi-maru-400-normal-Djro2VLm.woff": {
+    "file": "assets/kosugi-maru-400-normal-Djro2VLm.woff",
+    "src": "_kosugi-maru-400-normal-Djro2VLm.woff"
+  },
+  "_kosugi-maru-400-normal-DkNh78FZ.woff2": {
+    "file": "assets/kosugi-maru-400-normal-DkNh78FZ.woff2",
+    "src": "_kosugi-maru-400-normal-DkNh78FZ.woff2"
+  },
+  "_kosugi-maru-400-normal-DkUz2UDj.woff2": {
+    "file": "assets/kosugi-maru-400-normal-DkUz2UDj.woff2",
+    "src": "_kosugi-maru-400-normal-DkUz2UDj.woff2"
+  },
+  "_kosugi-maru-400-normal-DleT3xET.woff": {
+    "file": "assets/kosugi-maru-400-normal-DleT3xET.woff",
+    "src": "_kosugi-maru-400-normal-DleT3xET.woff"
+  },
+  "_kosugi-maru-400-normal-Dlgoqy-w.woff2": {
+    "file": "assets/kosugi-maru-400-normal-Dlgoqy-w.woff2",
+    "src": "_kosugi-maru-400-normal-Dlgoqy-w.woff2"
+  },
+  "_kosugi-maru-400-normal-Dlh4kO9v.woff": {
+    "file": "assets/kosugi-maru-400-normal-Dlh4kO9v.woff",
+    "src": "_kosugi-maru-400-normal-Dlh4kO9v.woff"
+  },
+  "_kosugi-maru-400-normal-Dn-o2xKF.woff": {
+    "file": "assets/kosugi-maru-400-normal-Dn-o2xKF.woff",
+    "src": "_kosugi-maru-400-normal-Dn-o2xKF.woff"
+  },
+  "_kosugi-maru-400-normal-DnnC4gqM.woff": {
+    "file": "assets/kosugi-maru-400-normal-DnnC4gqM.woff",
+    "src": "_kosugi-maru-400-normal-DnnC4gqM.woff"
+  },
+  "_kosugi-maru-400-normal-DpPycQQR.woff2": {
+    "file": "assets/kosugi-maru-400-normal-DpPycQQR.woff2",
+    "src": "_kosugi-maru-400-normal-DpPycQQR.woff2"
+  },
+  "_kosugi-maru-400-normal-DpRt3iH5.woff": {
+    "file": "assets/kosugi-maru-400-normal-DpRt3iH5.woff",
+    "src": "_kosugi-maru-400-normal-DpRt3iH5.woff"
+  },
+  "_kosugi-maru-400-normal-DqaLbfB1.woff2": {
+    "file": "assets/kosugi-maru-400-normal-DqaLbfB1.woff2",
+    "src": "_kosugi-maru-400-normal-DqaLbfB1.woff2"
+  },
+  "_kosugi-maru-400-normal-DrRGSzsU.woff": {
+    "file": "assets/kosugi-maru-400-normal-DrRGSzsU.woff",
+    "src": "_kosugi-maru-400-normal-DrRGSzsU.woff"
+  },
+  "_kosugi-maru-400-normal-DrrXpoRf.woff": {
+    "file": "assets/kosugi-maru-400-normal-DrrXpoRf.woff",
+    "src": "_kosugi-maru-400-normal-DrrXpoRf.woff"
+  },
+  "_kosugi-maru-400-normal-DrsvW36z.woff2": {
+    "file": "assets/kosugi-maru-400-normal-DrsvW36z.woff2",
+    "src": "_kosugi-maru-400-normal-DrsvW36z.woff2"
+  },
+  "_kosugi-maru-400-normal-Du7wve66.woff": {
+    "file": "assets/kosugi-maru-400-normal-Du7wve66.woff",
+    "src": "_kosugi-maru-400-normal-Du7wve66.woff"
+  },
+  "_kosugi-maru-400-normal-DwvSF5J3.woff": {
+    "file": "assets/kosugi-maru-400-normal-DwvSF5J3.woff",
+    "src": "_kosugi-maru-400-normal-DwvSF5J3.woff"
+  },
+  "_kosugi-maru-400-normal-DycBHs5S.woff": {
+    "file": "assets/kosugi-maru-400-normal-DycBHs5S.woff",
+    "src": "_kosugi-maru-400-normal-DycBHs5S.woff"
+  },
+  "_kosugi-maru-400-normal-DzVQQtRA.woff": {
+    "file": "assets/kosugi-maru-400-normal-DzVQQtRA.woff",
+    "src": "_kosugi-maru-400-normal-DzVQQtRA.woff"
+  },
+  "_kosugi-maru-400-normal-FU9KxonW.woff": {
+    "file": "assets/kosugi-maru-400-normal-FU9KxonW.woff",
+    "src": "_kosugi-maru-400-normal-FU9KxonW.woff"
+  },
+  "_kosugi-maru-400-normal-HM9cZjhR.woff2": {
+    "file": "assets/kosugi-maru-400-normal-HM9cZjhR.woff2",
+    "src": "_kosugi-maru-400-normal-HM9cZjhR.woff2"
+  },
+  "_kosugi-maru-400-normal-ISqGua-n.woff": {
+    "file": "assets/kosugi-maru-400-normal-ISqGua-n.woff",
+    "src": "_kosugi-maru-400-normal-ISqGua-n.woff"
+  },
+  "_kosugi-maru-400-normal-Jb9eaKeI.woff": {
+    "file": "assets/kosugi-maru-400-normal-Jb9eaKeI.woff",
+    "src": "_kosugi-maru-400-normal-Jb9eaKeI.woff"
+  },
+  "_kosugi-maru-400-normal-KuFNCHy4.woff": {
+    "file": "assets/kosugi-maru-400-normal-KuFNCHy4.woff",
+    "src": "_kosugi-maru-400-normal-KuFNCHy4.woff"
+  },
+  "_kosugi-maru-400-normal-LgFozb_4.woff": {
+    "file": "assets/kosugi-maru-400-normal-LgFozb_4.woff",
+    "src": "_kosugi-maru-400-normal-LgFozb_4.woff"
+  },
+  "_kosugi-maru-400-normal-MaAl4onx.woff": {
+    "file": "assets/kosugi-maru-400-normal-MaAl4onx.woff",
+    "src": "_kosugi-maru-400-normal-MaAl4onx.woff"
+  },
+  "_kosugi-maru-400-normal-NfN8wb3u.woff": {
+    "file": "assets/kosugi-maru-400-normal-NfN8wb3u.woff",
+    "src": "_kosugi-maru-400-normal-NfN8wb3u.woff"
+  },
+  "_kosugi-maru-400-normal-RJwH6KGf.woff2": {
+    "file": "assets/kosugi-maru-400-normal-RJwH6KGf.woff2",
+    "src": "_kosugi-maru-400-normal-RJwH6KGf.woff2"
+  },
+  "_kosugi-maru-400-normal-RJwOdBki.woff": {
+    "file": "assets/kosugi-maru-400-normal-RJwOdBki.woff",
+    "src": "_kosugi-maru-400-normal-RJwOdBki.woff"
+  },
+  "_kosugi-maru-400-normal-SDMuG8mU.woff2": {
+    "file": "assets/kosugi-maru-400-normal-SDMuG8mU.woff2",
+    "src": "_kosugi-maru-400-normal-SDMuG8mU.woff2"
+  },
+  "_kosugi-maru-400-normal-TVhRgcPi.woff2": {
+    "file": "assets/kosugi-maru-400-normal-TVhRgcPi.woff2",
+    "src": "_kosugi-maru-400-normal-TVhRgcPi.woff2"
+  },
+  "_kosugi-maru-400-normal-UlDvWTul.woff": {
+    "file": "assets/kosugi-maru-400-normal-UlDvWTul.woff",
+    "src": "_kosugi-maru-400-normal-UlDvWTul.woff"
+  },
+  "_kosugi-maru-400-normal-WIUfq9ut.woff2": {
+    "file": "assets/kosugi-maru-400-normal-WIUfq9ut.woff2",
+    "src": "_kosugi-maru-400-normal-WIUfq9ut.woff2"
+  },
+  "_kosugi-maru-400-normal-Ykhg5wx7.woff": {
+    "file": "assets/kosugi-maru-400-normal-Ykhg5wx7.woff",
+    "src": "_kosugi-maru-400-normal-Ykhg5wx7.woff"
+  },
+  "_kosugi-maru-400-normal-Z2tkAq5r.woff": {
+    "file": "assets/kosugi-maru-400-normal-Z2tkAq5r.woff",
+    "src": "_kosugi-maru-400-normal-Z2tkAq5r.woff"
+  },
+  "_kosugi-maru-400-normal-Z63tOpsf.woff": {
+    "file": "assets/kosugi-maru-400-normal-Z63tOpsf.woff",
+    "src": "_kosugi-maru-400-normal-Z63tOpsf.woff"
+  },
+  "_kosugi-maru-400-normal-ZXyvm0EH.woff2": {
+    "file": "assets/kosugi-maru-400-normal-ZXyvm0EH.woff2",
+    "src": "_kosugi-maru-400-normal-ZXyvm0EH.woff2"
+  },
+  "_kosugi-maru-400-normal-_8hEx1TM.woff": {
+    "file": "assets/kosugi-maru-400-normal-_8hEx1TM.woff",
+    "src": "_kosugi-maru-400-normal-_8hEx1TM.woff"
+  },
+  "_kosugi-maru-400-normal-aubzsqTk.woff": {
+    "file": "assets/kosugi-maru-400-normal-aubzsqTk.woff",
+    "src": "_kosugi-maru-400-normal-aubzsqTk.woff"
+  },
+  "_kosugi-maru-400-normal-b4cSY6_x.woff": {
+    "file": "assets/kosugi-maru-400-normal-b4cSY6_x.woff",
+    "src": "_kosugi-maru-400-normal-b4cSY6_x.woff"
+  },
+  "_kosugi-maru-400-normal-eHd2k4sz.woff": {
+    "file": "assets/kosugi-maru-400-normal-eHd2k4sz.woff",
+    "src": "_kosugi-maru-400-normal-eHd2k4sz.woff"
+  },
+  "_kosugi-maru-400-normal-gaQUbPzZ.woff": {
+    "file": "assets/kosugi-maru-400-normal-gaQUbPzZ.woff",
+    "src": "_kosugi-maru-400-normal-gaQUbPzZ.woff"
+  },
+  "_kosugi-maru-400-normal-gs89Tm-w.woff": {
+    "file": "assets/kosugi-maru-400-normal-gs89Tm-w.woff",
+    "src": "_kosugi-maru-400-normal-gs89Tm-w.woff"
+  },
+  "_kosugi-maru-400-normal-ivchALHH.woff": {
+    "file": "assets/kosugi-maru-400-normal-ivchALHH.woff",
+    "src": "_kosugi-maru-400-normal-ivchALHH.woff"
+  },
+  "_kosugi-maru-400-normal-jZdkSHF3.woff": {
+    "file": "assets/kosugi-maru-400-normal-jZdkSHF3.woff",
+    "src": "_kosugi-maru-400-normal-jZdkSHF3.woff"
+  },
+  "_kosugi-maru-400-normal-kWU9iQN0.woff2": {
+    "file": "assets/kosugi-maru-400-normal-kWU9iQN0.woff2",
+    "src": "_kosugi-maru-400-normal-kWU9iQN0.woff2"
+  },
+  "_kosugi-maru-400-normal-kdGqFhSE.woff2": {
+    "file": "assets/kosugi-maru-400-normal-kdGqFhSE.woff2",
+    "src": "_kosugi-maru-400-normal-kdGqFhSE.woff2"
+  },
+  "_kosugi-maru-400-normal-mf0m28Fg.woff2": {
+    "file": "assets/kosugi-maru-400-normal-mf0m28Fg.woff2",
+    "src": "_kosugi-maru-400-normal-mf0m28Fg.woff2"
+  },
+  "_kosugi-maru-400-normal-n1NHEIow.woff": {
+    "file": "assets/kosugi-maru-400-normal-n1NHEIow.woff",
+    "src": "_kosugi-maru-400-normal-n1NHEIow.woff"
+  },
+  "_kosugi-maru-400-normal-pLnDRMNy.woff2": {
+    "file": "assets/kosugi-maru-400-normal-pLnDRMNy.woff2",
+    "src": "_kosugi-maru-400-normal-pLnDRMNy.woff2"
+  },
+  "_kosugi-maru-400-normal-pNjgoDWI.woff": {
+    "file": "assets/kosugi-maru-400-normal-pNjgoDWI.woff",
+    "src": "_kosugi-maru-400-normal-pNjgoDWI.woff"
+  },
+  "_kosugi-maru-400-normal-qTwu9qJi.woff": {
+    "file": "assets/kosugi-maru-400-normal-qTwu9qJi.woff",
+    "src": "_kosugi-maru-400-normal-qTwu9qJi.woff"
+  },
+  "_kosugi-maru-400-normal-tADqZypb.woff": {
+    "file": "assets/kosugi-maru-400-normal-tADqZypb.woff",
+    "src": "_kosugi-maru-400-normal-tADqZypb.woff"
+  },
+  "_kosugi-maru-400-normal-tBuucnaa.woff2": {
+    "file": "assets/kosugi-maru-400-normal-tBuucnaa.woff2",
+    "src": "_kosugi-maru-400-normal-tBuucnaa.woff2"
+  },
+  "_kosugi-maru-400-normal-u0JMV9w9.woff2": {
+    "file": "assets/kosugi-maru-400-normal-u0JMV9w9.woff2",
+    "src": "_kosugi-maru-400-normal-u0JMV9w9.woff2"
+  },
+  "_kosugi-maru-400-normal-w_lyt3CB.woff": {
+    "file": "assets/kosugi-maru-400-normal-w_lyt3CB.woff",
+    "src": "_kosugi-maru-400-normal-w_lyt3CB.woff"
+  },
+  "_kosugi-maru-400-normal-wqAsf64e.woff": {
+    "file": "assets/kosugi-maru-400-normal-wqAsf64e.woff",
+    "src": "_kosugi-maru-400-normal-wqAsf64e.woff"
+  },
+  "_kosugi-maru-400-normal-ws2tZsQv.woff": {
+    "file": "assets/kosugi-maru-400-normal-ws2tZsQv.woff",
+    "src": "_kosugi-maru-400-normal-ws2tZsQv.woff"
+  },
+  "_kosugi-maru-400-normal-wvgc2HL0.woff2": {
+    "file": "assets/kosugi-maru-400-normal-wvgc2HL0.woff2",
+    "src": "_kosugi-maru-400-normal-wvgc2HL0.woff2"
+  },
+  "_kosugi-maru-400-normal-yuVL4788.woff2": {
+    "file": "assets/kosugi-maru-400-normal-yuVL4788.woff2",
+    "src": "_kosugi-maru-400-normal-yuVL4788.woff2"
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-BjUKBieJ.css",
+    "name": "app",
+    "names": [
+      "app.css"
+    ],
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-BvRk9kiK.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  }
+}

@@ -1,0 +1,2229 @@
+{
+  "version": 1,
+  "style": {
+    "file": "assets/fonts-BM__donQ.css",
+    "familyStyles": {
+      "kosugi-maru": "@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-BZwNFLUG.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-BF57-Mc3.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-DpPycQQR.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-CElCgKZh.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-C8lrmDoQ.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-DFv04w3x.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-Df4uHbnn.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-BwnByB3w.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-CenbTvuV.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-DId0uxHp.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-BsZq9mgW.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-D5Zp0ta3.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-DTt50gde.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-Bp7rEOvz.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-21jgSKOX.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-CVvgZftB.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-SDMuG8mU.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-BAnMAZrm.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-Bgrk8HOV.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-C_8x6Jns.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-Cx3oJEkh.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-gaQUbPzZ.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-DYF2HkuP.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-BDhouRIu.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-D2NMKomz.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-BFTyl58m.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-Bf-XqcFY.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-Cjvtm_xA.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-pLnDRMNy.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-BAD2vwnx.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-BY2azmYX.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-BwauVPxy.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-Dlgoqy-w.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-CG49pP13.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-CBlr3A1c.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-BWhBPIBW.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-54AQx2P4.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-FU9KxonW.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-DJVKqLRR.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-BnQcI5Xw.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-CO9yuHTW.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-Du7wve66.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-1qZXNwU_.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-C8ccW7wE.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-BQOuHtxx.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-B90B6ffr.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-DNQbL4gR.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-eHd2k4sz.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-WIUfq9ut.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-wqAsf64e.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-DegoJr3s.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-BW0GxpGm.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-D0cS1kTy.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-BALkxAUG.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-DRfcEqD-.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-ws2tZsQv.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-4cftKE97.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-Dazqm9MH.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-DSd2wniJ.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-CiRx5Vir.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-7zzoc8BF.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-DhOol3cz.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-BoimN2_e.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-BzSXUZfe.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-DPJGC9za.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-ChmjJ-Tt.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-Bm746BJQ.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-Bspi7-BW.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-BZylMpvg.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-BkR0QYwB.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-BdIHX4l6.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-ISqGua-n.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-CN7_uCst.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-NfN8wb3u.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-BU8eMtnr.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-gs89Tm-w.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-Cp-BZXgT.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-Dlh4kO9v.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-TVhRgcPi.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-C8SOR_9Z.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-CCYz0-J7.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-B6tPYFds.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-DQ1DoPpU.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-DzVQQtRA.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-CyDGW-BI.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-CAwsk-KV.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-Bo9sdN8B.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-COk1nuPU.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-u0JMV9w9.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-RJwOdBki.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-yuVL4788.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-DleT3xET.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-7F_F-bY8.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-Cvva80Rt.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-Bx6AJR5c.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-DycBHs5S.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-2V7exZBN.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-DhRPtzY4.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-ByKyxiwU.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-Dn-o2xKF.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-CbXX0yzf.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-CSNB9-Mf.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-Cm_ii0_F.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-CxhAm2dK.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-3bKqGQeP.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-CDqVBpN-.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-HM9cZjhR.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-DrRGSzsU.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-DSKf6Qw2.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-B8wV9Ptb.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-Bu46vbnU.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-DF0LHUQz.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-5yrcqgAO.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-jZdkSHF3.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-BqLyKEfw.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-CxZt8T41.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-BnSmk1gM.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-Jb9eaKeI.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-DrsvW36z.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-DrrXpoRf.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-DDoOZXUD.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-DaJqZ4Ft.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-tBuucnaa.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-w_lyt3CB.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-48GA0YkJ.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-D8v9EYQD.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-BtL5y1dk.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-_8hEx1TM.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-CBYeDY9W.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-CO2FCstC.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-kdGqFhSE.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-CifHt_cX.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-BZKuTKYr.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-CqpyZqQ7.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-CFi9XD7j.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-C233UZ4n.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-DqaLbfB1.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-Djro2VLm.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-RJwH6KGf.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-Ykhg5wx7.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-Cmc239Eb.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-MaAl4onx.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-Dgcmcncd.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-UlDvWTul.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-B0p006y5.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-CYFNWTZM.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-wvgc2HL0.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-DnnC4gqM.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-7MkPzNbd.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-AlKbELlX.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-CmBADXj-.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-BVNfj4fn.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-CZlS6QLt.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-b4cSY6_x.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-DkUz2UDj.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-DMy2A0xQ.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-BKfZ2KGw.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-Z63tOpsf.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-C370kGfB.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-CCOqThTT.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-BWitzzOY.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-KuFNCHy4.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-BOi0HaFX.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-CRUrrb2i.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-DiLrvNnu.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-DEeFWPcx.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-BtG7Nj2y.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-C1205eWT.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-C-ShoyKM.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-qTwu9qJi.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-DkNh78FZ.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-Bdsj4WGN.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-mf0m28Fg.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-pNjgoDWI.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-DRgjDGKg.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-D6SoP9B3.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-CSKuQfoZ.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-LgFozb_4.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-C0MAG-y2.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-DZyW3yiA.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-BNtHHnwg.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-BZvIqt1A.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-BJs-gSo4.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-CD7-ejpa.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-33omCwAi.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-aubzsqTk.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-CEtOUVgV.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-B7SqvkTS.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-DRAwHZYx.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-Bo_jeBkc.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-CnfvhYIT.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-CV5S0Rt9.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-BSlES6lM.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-tADqZypb.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-C9D2_tN4.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-CwwXIMHJ.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-DaPqE6_z.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-Da_VRUIN.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-BSE8tp96.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-ivchALHH.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-DB3QYNhE.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-BhGMSmQj.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-Dh__SxCC.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-DT56qg9h.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-CfBVo8DB.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-DimiUmuV.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-CfEwhYot.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-ChurVnOx.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-CxYO9cdJ.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-BuLsx4lc.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-BCot_cIz.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-CJTvUCLI.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-Cr_i3u4v.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-Bep_aZsH.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-D6MDKqyk.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-Z2tkAq5r.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-BVakWEt4.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-BjpV_UgK.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-C1olvEaX.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-DwvSF5J3.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-kWU9iQN0.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-CfppB5nP.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-C8cPLRap.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-C03VS5gF.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-CbHFSigC.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-BNGxPunN.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-BCdGxzPj.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-CSkOdirV.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-BdfLOAdx.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-DpRt3iH5.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-6rbPgYD5.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-CxYduB8z.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-DdX3lt-z.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-C3kLB3CD.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-Cmtm0Bkm.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-BJcu2a_P.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-Cy8WNIvD.woff2\") format(\"woff2\");\n  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-DRPsHOfb.woff\") format(\"woff\");\n  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-CmKJUi_e.woff2\") format(\"woff2\");\n  unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-DVj6XvHC.woff\") format(\"woff\");\n  unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-ZXyvm0EH.woff2\") format(\"woff2\"),\n    url(\"/build/assets/kosugi-maru-400-normal-BF7vbeK1.woff\") format(\"woff\");\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-CJ5QBs3z.woff2\") format(\"woff2\");\n  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;\n}\n\n@font-face {\n  font-family: \"Kosugi Maru\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: url(\"/build/assets/kosugi-maru-400-normal-n1NHEIow.woff\") format(\"woff\");\n  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;\n}\n\n.font-kosugi-maru {\n  font-family: var(--font-kosugi-maru);\n}"
+    },
+    "variables": {
+      "kosugi-maru": "--font-kosugi-maru: \"Kosugi Maru\", \"Kosugi Maru fallback\";"
+    }
+  },
+  "preloads": [
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-BZwNFLUG.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-DpPycQQR.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-C8lrmDoQ.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-Df4uHbnn.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-CenbTvuV.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-BsZq9mgW.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-DTt50gde.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-21jgSKOX.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-SDMuG8mU.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-Bgrk8HOV.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-Cx3oJEkh.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-DYF2HkuP.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-D2NMKomz.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-Bf-XqcFY.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-pLnDRMNy.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-BY2azmYX.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-Dlgoqy-w.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-CBlr3A1c.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-54AQx2P4.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-DJVKqLRR.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-CO9yuHTW.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-1qZXNwU_.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-BQOuHtxx.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-DNQbL4gR.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-WIUfq9ut.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-DegoJr3s.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-D0cS1kTy.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-DRfcEqD-.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-4cftKE97.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-DSd2wniJ.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-7zzoc8BF.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-BoimN2_e.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-DPJGC9za.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-Bm746BJQ.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-BZylMpvg.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-BdIHX4l6.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-CN7_uCst.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-BU8eMtnr.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-Cp-BZXgT.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-TVhRgcPi.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-CCYz0-J7.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-DQ1DoPpU.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-CyDGW-BI.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-Bo9sdN8B.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-u0JMV9w9.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-yuVL4788.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-7F_F-bY8.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-Bx6AJR5c.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-2V7exZBN.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-ByKyxiwU.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-CbXX0yzf.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-Cm_ii0_F.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-3bKqGQeP.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-HM9cZjhR.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-DSKf6Qw2.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-Bu46vbnU.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-5yrcqgAO.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-BqLyKEfw.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-BnSmk1gM.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-DrsvW36z.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-DDoOZXUD.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-tBuucnaa.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-48GA0YkJ.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-BtL5y1dk.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-CBYeDY9W.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-kdGqFhSE.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-BZKuTKYr.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-CFi9XD7j.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-DqaLbfB1.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-RJwH6KGf.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-Cmc239Eb.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-Dgcmcncd.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-B0p006y5.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-wvgc2HL0.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-7MkPzNbd.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-CmBADXj-.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-CZlS6QLt.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-DkUz2UDj.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-BKfZ2KGw.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-C370kGfB.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-BWitzzOY.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-BOi0HaFX.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-DiLrvNnu.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-BtG7Nj2y.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-C-ShoyKM.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-DkNh78FZ.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-mf0m28Fg.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-DRgjDGKg.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-CSKuQfoZ.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-C0MAG-y2.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-BNtHHnwg.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-BJs-gSo4.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-33omCwAi.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-CEtOUVgV.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-DRAwHZYx.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-CnfvhYIT.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-BSlES6lM.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-C9D2_tN4.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-DaPqE6_z.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-BSE8tp96.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-DB3QYNhE.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-Dh__SxCC.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-CfBVo8DB.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-CfEwhYot.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-CxYO9cdJ.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-BCot_cIz.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-Cr_i3u4v.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-D6MDKqyk.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-BVakWEt4.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-C1olvEaX.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-kWU9iQN0.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-C8cPLRap.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-CbHFSigC.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-BCdGxzPj.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-BdfLOAdx.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-6rbPgYD5.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-DdX3lt-z.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-Cmtm0Bkm.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-Cy8WNIvD.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-CmKJUi_e.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-ZXyvm0EH.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    },
+    {
+      "alias": "kosugi-maru",
+      "family": "Kosugi Maru",
+      "weight": 400,
+      "style": "normal",
+      "file": "assets/kosugi-maru-400-normal-CJ5QBs3z.woff2",
+      "as": "font",
+      "type": "font/woff2",
+      "crossorigin": "anonymous"
+    }
+  ],
+  "families": {
+    "kosugi-maru": {
+      "family": "Kosugi Maru",
+      "variable": "--font-kosugi-maru",
+      "fallbackFamily": "Kosugi Maru fallback",
+      "variants": {
+        "400:normal": {
+          "files": [
+            {
+              "file": "assets/kosugi-maru-400-normal-BZwNFLUG.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BF57-Mc3.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DpPycQQR.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CElCgKZh.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-C8lrmDoQ.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DFv04w3x.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-Df4uHbnn.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BwnByB3w.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CenbTvuV.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DId0uxHp.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BsZq9mgW.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-D5Zp0ta3.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DTt50gde.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-Bp7rEOvz.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-21jgSKOX.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CVvgZftB.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-SDMuG8mU.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BAnMAZrm.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-Bgrk8HOV.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-C_8x6Jns.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-Cx3oJEkh.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-gaQUbPzZ.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DYF2HkuP.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BDhouRIu.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-D2NMKomz.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BFTyl58m.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-Bf-XqcFY.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-Cjvtm_xA.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-pLnDRMNy.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BAD2vwnx.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BY2azmYX.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BwauVPxy.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-Dlgoqy-w.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CG49pP13.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CBlr3A1c.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BWhBPIBW.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-54AQx2P4.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-FU9KxonW.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DJVKqLRR.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BnQcI5Xw.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CO9yuHTW.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-Du7wve66.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-1qZXNwU_.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-C8ccW7wE.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BQOuHtxx.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-B90B6ffr.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DNQbL4gR.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-eHd2k4sz.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-WIUfq9ut.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-wqAsf64e.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DegoJr3s.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BW0GxpGm.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-D0cS1kTy.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BALkxAUG.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DRfcEqD-.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-ws2tZsQv.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-4cftKE97.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-Dazqm9MH.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DSd2wniJ.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CiRx5Vir.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-7zzoc8BF.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DhOol3cz.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BoimN2_e.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BzSXUZfe.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DPJGC9za.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-ChmjJ-Tt.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-Bm746BJQ.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-Bspi7-BW.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BZylMpvg.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BkR0QYwB.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BdIHX4l6.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-ISqGua-n.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CN7_uCst.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-NfN8wb3u.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BU8eMtnr.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-gs89Tm-w.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-Cp-BZXgT.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-Dlh4kO9v.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-TVhRgcPi.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-C8SOR_9Z.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CCYz0-J7.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-B6tPYFds.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DQ1DoPpU.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DzVQQtRA.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CyDGW-BI.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CAwsk-KV.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-Bo9sdN8B.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-COk1nuPU.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-u0JMV9w9.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-RJwOdBki.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-yuVL4788.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DleT3xET.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-7F_F-bY8.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-Cvva80Rt.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-Bx6AJR5c.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DycBHs5S.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-2V7exZBN.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DhRPtzY4.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-ByKyxiwU.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-Dn-o2xKF.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CbXX0yzf.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CSNB9-Mf.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-Cm_ii0_F.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CxhAm2dK.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-3bKqGQeP.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CDqVBpN-.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-HM9cZjhR.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DrRGSzsU.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DSKf6Qw2.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-B8wV9Ptb.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-Bu46vbnU.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DF0LHUQz.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-5yrcqgAO.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-jZdkSHF3.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BqLyKEfw.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CxZt8T41.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BnSmk1gM.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-Jb9eaKeI.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DrsvW36z.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DrrXpoRf.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DDoOZXUD.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DaJqZ4Ft.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-tBuucnaa.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-w_lyt3CB.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-48GA0YkJ.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-D8v9EYQD.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BtL5y1dk.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-_8hEx1TM.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CBYeDY9W.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CO2FCstC.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-kdGqFhSE.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CifHt_cX.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BZKuTKYr.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CqpyZqQ7.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CFi9XD7j.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-C233UZ4n.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DqaLbfB1.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-Djro2VLm.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-RJwH6KGf.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-Ykhg5wx7.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-Cmc239Eb.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-MaAl4onx.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-Dgcmcncd.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-UlDvWTul.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-B0p006y5.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CYFNWTZM.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-wvgc2HL0.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DnnC4gqM.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-7MkPzNbd.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-AlKbELlX.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CmBADXj-.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BVNfj4fn.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CZlS6QLt.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-b4cSY6_x.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DkUz2UDj.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DMy2A0xQ.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BKfZ2KGw.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-Z63tOpsf.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-C370kGfB.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CCOqThTT.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BWitzzOY.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-KuFNCHy4.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BOi0HaFX.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CRUrrb2i.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DiLrvNnu.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DEeFWPcx.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BtG7Nj2y.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-C1205eWT.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-C-ShoyKM.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-qTwu9qJi.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DkNh78FZ.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-Bdsj4WGN.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-mf0m28Fg.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-pNjgoDWI.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DRgjDGKg.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-D6SoP9B3.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CSKuQfoZ.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-LgFozb_4.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-C0MAG-y2.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DZyW3yiA.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BNtHHnwg.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BZvIqt1A.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BJs-gSo4.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CD7-ejpa.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-33omCwAi.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-aubzsqTk.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CEtOUVgV.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-B7SqvkTS.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DRAwHZYx.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-Bo_jeBkc.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CnfvhYIT.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CV5S0Rt9.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BSlES6lM.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-tADqZypb.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-C9D2_tN4.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CwwXIMHJ.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DaPqE6_z.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-Da_VRUIN.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BSE8tp96.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-ivchALHH.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DB3QYNhE.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BhGMSmQj.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-Dh__SxCC.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DT56qg9h.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CfBVo8DB.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DimiUmuV.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CfEwhYot.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-ChurVnOx.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CxYO9cdJ.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BuLsx4lc.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BCot_cIz.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CJTvUCLI.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-Cr_i3u4v.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-Bep_aZsH.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-D6MDKqyk.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-Z2tkAq5r.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BVakWEt4.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BjpV_UgK.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-C1olvEaX.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DwvSF5J3.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-kWU9iQN0.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CfppB5nP.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-C8cPLRap.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-C03VS5gF.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CbHFSigC.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BNGxPunN.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BCdGxzPj.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CSkOdirV.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BdfLOAdx.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DpRt3iH5.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-6rbPgYD5.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CxYduB8z.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DdX3lt-z.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-C3kLB3CD.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-Cmtm0Bkm.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BJcu2a_P.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-Cy8WNIvD.woff2",
+              "format": "woff2",
+              "unicodeRange": "U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DRPsHOfb.woff",
+              "format": "woff",
+              "unicodeRange": "U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CmKJUi_e.woff2",
+              "format": "woff2",
+              "unicodeRange": "U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-DVj6XvHC.woff",
+              "format": "woff",
+              "unicodeRange": "U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-ZXyvm0EH.woff2",
+              "format": "woff2"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-BF7vbeK1.woff",
+              "format": "woff"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-CJ5QBs3z.woff2",
+              "format": "woff2",
+              "unicodeRange": "U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF"
+            },
+            {
+              "file": "assets/kosugi-maru-400-normal-n1NHEIow.woff",
+              "format": "woff",
+              "unicodeRange": "U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF"
+            }
+          ]
+        }
+      }
+    }
+  }
+}
