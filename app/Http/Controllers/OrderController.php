@@ -489,7 +489,7 @@ class OrderController extends Controller
     {
         $this->authorizeView($request, $order);
 
-        $order->load(['office', 'supplier', 'requester', 'managerApprover', 'reviewer', 'rejectedBy', 'returnedBy', 'orderedBy', 'postOrderNoteUpdatedBy', 'items']);
+        $order->load(['office', 'supplier', 'requester', 'managerApprover', 'reviewer', 'rejectedBy', 'returnedBy', 'orderedBy', 'postOrderNoteUpdatedBy', 'items.material']);
 
         $user = $request->user();
 

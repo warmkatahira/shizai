@@ -365,7 +365,19 @@
             <tbody class="divide-y divide-gray-100">
                 @foreach ($order->items as $item)
                     <tr class="hover:bg-accent-light/40 transition-colors">
-                        <td class="px-4 py-3 font-medium">{{ $item->material_name }}</td>
+                        <td class="px-4 py-3 font-medium">
+                            <div class="flex items-center gap-3">
+                                @if ($item->material?->imageUrl())
+                                    <img src="{{ $item->material->imageUrl() }}" alt="{{ $item->material_name }}" data-zoom
+                                         class="w-10 h-10 object-cover rounded-md border border-gray-200 shrink-0 cursor-zoom-in transition hover:opacity-80">
+                                @else
+                                    <span class="grid place-items-center w-10 h-10 rounded-md bg-gray-100 text-gray-300 shrink-0" aria-hidden="true">
+                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909M18 15.75h.008v.008H18v-.008ZM2.25 6a3.75 3.75 0 0 1 3.75-3.75h12A3.75 3.75 0 0 1 21.75 6v12a3.75 3.75 0 0 1-3.75 3.75h-12A3.75 3.75 0 0 1 2.25 18V6Z" /></svg>
+                                    </span>
+                                @endif
+                                <span>{{ $item->material_name }}</span>
+                            </div>
+                        </td>
                         <td class="px-4 py-3 text-gray-500">{{ $item->supplier_name ?: '—' }}</td>
                         <td class="px-4 py-3 text-gray-500">{{ $item->unit }}</td>
                         <td class="px-4 py-3 text-right">{{ \App\Support\Money::yen($item->unit_price) }}</td>
