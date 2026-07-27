@@ -139,6 +139,7 @@ class Material extends Model
             'length_mm' => $this->length_mm,
             'width_mm' => $this->width_mm,
             'height_mm' => $this->height_mm,
+            'size_text' => $this->size_text,
             'min_lot_qty' => $this->min_lot_qty,
         ];
     }

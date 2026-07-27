@@ -71,7 +71,7 @@
         @foreach ($items as $item)
             <tr>
                 <td>{{ $item->material_name }}</td>
-                <td class="center nowrap">{{ $item->sizeText() ?? '' }}</td>
+                <td class="center">{{ $item->size_text ?: ($item->sizeText() ?? '') }}</td>
                 <td class="num nowrap">{{ $item->minLotText() ?? '' }}</td>
                 <td class="num nowrap">{{ \App\Support\Money::yen($item->unit_price, '') }}</td>
                 <td class="num nowrap">{{ number_format($item->quantity) }} {{ $item->unit }}</td>

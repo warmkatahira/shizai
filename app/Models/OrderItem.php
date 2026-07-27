@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[Fillable([
     'order_id', 'material_id', 'material_name', 'category_id', 'category_name',
     'supplier_id', 'supplier_name', 'unit', 'unit_price', 'quantity',
-    'length_mm', 'width_mm', 'height_mm', 'min_lot_qty',
+    'length_mm', 'width_mm', 'height_mm', 'size_text', 'min_lot_qty',
 ])]
 class OrderItem extends Model
 {
