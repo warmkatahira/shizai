@@ -33,8 +33,8 @@
                                 <label class="relative inline-flex items-center cursor-pointer shrink-0">
                                     <input type="checkbox" name="actions[{{ $a['action'] }}]" value="1"
                                            class="sr-only peer" {{ $a['enabled'] ? 'checked' : '' }}>
-                                    <div class="w-11 h-6 rounded-full bg-gray-300 transition-colors peer-checked:bg-green-600
-                                                peer-focus-visible:ring-2 peer-focus-visible:ring-green-600/40"></div>
+                                    <div class="w-11 h-6 rounded-full bg-gray-300 transition-colors peer-checked:bg-[#34C759]
+                                                peer-focus-visible:ring-2 peer-focus-visible:ring-[#34C759]/40"></div>
                                     <div class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white shadow
                                                 transition-transform peer-checked:translate-x-5"></div>
                                 </label>
