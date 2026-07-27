@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
-use App\Support\ActivityLogger;
 use App\Support\OrderNotifier;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -32,8 +31,6 @@ class OrderApprovalController extends Controller
             'manager_approved_at' => now(),
         ]);
 
-        ActivityLogger::log('order.manager_approved', "発注 #{$order->id} を所長承認しました", $order, $order->office_id);
-
         // 総務へ通知
         $order->load(['office', 'requester', 'items']);
         OrderNotifier::notifyNextApprover($order);
@@ -55,8 +52,6 @@ class OrderApprovalController extends Controller
             'reviewed_by' => $user->id,
             'reviewed_at' => now(),
         ]);
-
-        ActivityLogger::log('order.affairs_approved', "発注 #{$order->id} を総務承認しました", $order, $order->office_id);
 
         // 申請者へ通知
         $order->load(['requester', 'items']);
@@ -82,8 +77,6 @@ class OrderApprovalController extends Controller
             'is_special_approval' => true,
             'special_reason' => $validated['special_reason'],
         ]);
-
-        ActivityLogger::log('order.special_approved', "発注 #{$order->id} を特例承認しました（理由：{$validated['special_reason']}）", $order, $order->office_id);
 
         // 申請者へ通知
         $order->load(['requester', 'items']);
@@ -115,8 +108,6 @@ class OrderApprovalController extends Controller
             'returned_at' => now(),
         ]);
 
-        ActivityLogger::log('order.returned', "発注 #{$order->id} を差し戻しました（理由：{$validated['return_reason']}）", $order, $order->office_id);
-
         // 申請者（＋その営業所の所長）へ通知
         $order->load(['office', 'requester', 'items']);
         OrderNotifier::notifyApplicant($order);
@@ -139,8 +130,6 @@ class OrderApprovalController extends Controller
             'reject_reason' => $validated['reject_reason'],
             'rejected_by' => $user->id,
         ]);
-
-        ActivityLogger::log('order.rejected', "発注 #{$order->id} を却下しました（理由：{$validated['reject_reason']}）", $order, $order->office_id);
 
         // 申請者へ通知
         $order->load(['office', 'requester', 'items']);

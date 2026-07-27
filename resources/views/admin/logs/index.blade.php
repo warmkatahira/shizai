@@ -15,7 +15,10 @@
 @section('content')
     <div class="flex items-center justify-between mb-6">
         <h1 class="text-xl font-bold">操作ログ</h1>
-        <span class="text-sm text-gray-400">誰が・いつ・何をしたかの記録（管理者のみ）</span>
+        <a href="{{ route('admin.logs.settings') }}"
+           class="inline-flex items-center gap-1.5 bg-white border border-gray-300 hover:bg-gray-50 text-sm text-gray-700 px-4 py-2 rounded-md">
+            <span aria-hidden="true">⚙</span> 記録設定
+        </a>
     </div>
 
     {{-- 検索・絞り込み --}}

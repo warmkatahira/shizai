@@ -8,7 +8,6 @@ use App\Models\Order;
 use App\Models\Supplier;
 use App\Models\User;
 use App\Http\Controllers\Concerns\FiltersByPeriod;
-use App\Support\ActivityLogger;
 use App\Support\OrderNotifier;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -290,8 +289,6 @@ class OrderController extends Controller
             return $order;
         });
 
-        ActivityLogger::log('order.created', "発注 #{$order->id} を申請しました", $order, $order->office_id);
-
         // 次の承認者（所長 or 総務）へメール通知
         $order->load(['office', 'requester', 'items']);
         OrderNotifier::notifyNextApprover($order);
@@ -341,8 +338,6 @@ class OrderController extends Controller
             $order->items()->createMany($items);
         });
 
-        ActivityLogger::log('order.resubmitted', "発注 #{$order->id} を再申請しました", $order, $order->office_id);
-
         $order->load(['office', 'requester', 'items']);
         OrderNotifier::notifyNextApprover($order);
 
@@ -361,10 +356,7 @@ class OrderController extends Controller
         abort_unless($order->canBeDeletedBy($request->user()), 403, 'この申請を削除する権限がありません。');
 
         $id = $order->id;
-        $officeId = $order->office_id;
         $order->delete();
-
-        ActivityLogger::log('order.deleted', "発注 #{$id} を削除しました", null, $officeId);
 
         return redirect($this->backUrl($request))
             ->with('status', "発注申請 #{$id} を削除しました。");
@@ -487,8 +479,6 @@ class OrderController extends Controller
             'post_order_note_updated_by' => $user->id,
             'post_order_note_updated_at' => now(),
         ]);
-
-        ActivityLogger::log('order.post_note_updated', "発注 #{$order->id} の発注者メモを更新しました", $order, $order->office_id);
 
         return redirect()->route('orders.show', $order)
             ->with('status', '発注者メモを更新しました。');

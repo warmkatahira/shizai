@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Office;
-use App\Support\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -29,8 +28,7 @@ class OfficeController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $data = $this->validateData($request);
-        $office = Office::create($data);
-        ActivityLogger::log('master.office_created', "営業所「{$office->name}」を登録しました", $office);
+        Office::create($data);
 
         return redirect()->route('admin.offices.index')->with('status', '営業所を登録しました。');
     }
@@ -45,7 +43,6 @@ class OfficeController extends Controller
     public function update(Request $request, Office $office): RedirectResponse
     {
         $office->update($this->validateData($request, $office));
-        ActivityLogger::log('master.office_updated', "営業所「{$office->name}」を更新しました", $office);
 
         return redirect()->route('admin.offices.index')->with('status', '営業所を更新しました。');
     }
@@ -57,9 +54,7 @@ class OfficeController extends Controller
             return back()->with('status', '所属ユーザーがいるため削除できません。無効化してください。');
         }
 
-        $name = $office->name;
         $office->delete();
-        ActivityLogger::log('master.office_deleted', "営業所「{$name}」を削除しました");
 
         return redirect()->route('admin.offices.index')->with('status', '営業所を削除しました。');
     }

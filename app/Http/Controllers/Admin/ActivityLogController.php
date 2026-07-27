@@ -2,32 +2,33 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Concerns\FiltersByPeriod;
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
+use App\Models\ActivityLogSetting;
 use App\Models\User;
+use App\Support\ActivityLogCatalog;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
- * 操作ログの閲覧（管理者のみ。ルート側で role:admin）。
+ * 操作ログの閲覧＋記録オン/オフ設定（管理者のみ。ルート側で role:admin）。
  *
  * 「誰が・いつ・何をしたか」の記録を、期間・種別・操作者・キーワードで絞って一覧表示する。
- * 記録は App\Support\ActivityLogger が各操作の直後に残している。閲覧専用（作成・編集はしない）。
+ * 記録そのものは LogActivity ミドルウェア＋認証イベントが自動で行う。ここは閲覧と設定のみ。
  */
 class ActivityLogController extends Controller
 {
-    use FiltersByPeriod;
-
     /** 1ページの件数（発注一覧と揃える） */
     private const PER_PAGE = 50;
 
     public function index(Request $request): View
     {
-        // 初回表示は当月に絞る（全期間スキャンを既定にしない）。日付を空にして送れば全期間。
-        $this->applyDefaultPeriod($request);
+        // 初回表示は当日だけに絞る（操作ログは件数が多いので当月では範囲が広すぎる）。
+        // 日付を空にして送れば全期間も見られる。
+        $this->applyDefaultDay($request);
 
         $logs = $this->filtered($request)
             ->with(['user', 'office'])
@@ -67,7 +68,7 @@ class ActivityLogController extends Controller
      */
     public function export(Request $request): StreamedResponse
     {
-        $this->applyDefaultPeriod($request);
+        $this->applyDefaultDay($request);
 
         $filename = 'activity_logs_' . now()->format('Ymd_His') . '.csv';
 
@@ -95,6 +96,58 @@ class ActivityLogController extends Controller
 
             fclose($out);
         }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
+    /**
+     * 記録オン/オフの設定画面。カタログの全操作を、カテゴリごとに現在のオン/オフ付きで並べる。
+     */
+    public function settings(): View
+    {
+        // カテゴリ順に、そのカテゴリの操作定義を集める（表示順を安定させる）
+        $groups = collect(ActivityLogCatalog::categories())
+            ->map(fn ($label, $category) => [
+                'label' => $label,
+                'actions' => ActivityLogCatalog::all()
+                    ->filter(fn ($def) => $def['category'] === $category)
+                    ->map(fn ($def) => $def + ['enabled' => ActivityLogSetting::isEnabled($def['action'])])
+                    ->values(),
+            ])
+            ->filter(fn ($group) => $group['actions']->isNotEmpty())
+            ->values();
+
+        return view('admin.logs.settings', ['groups' => $groups]);
+    }
+
+    /**
+     * 設定の保存。チェックの入った操作だけオン、それ以外はオフにする
+     * （チェックボックスは未チェックだと送られてこないので、カタログ全体を基準に判定する）。
+     */
+    public function updateSettings(Request $request): RedirectResponse
+    {
+        $checked = array_keys($request->input('actions', []));
+
+        $states = ActivityLogCatalog::all()->keys()
+            ->mapWithKeys(fn ($action) => [$action => in_array($action, $checked, true)])
+            ->all();
+
+        ActivityLogSetting::putMany($states);
+
+        return redirect()->route('admin.logs.settings')->with('status', '操作ログの記録設定を保存しました。');
+    }
+
+    /**
+     * メニューから開いた初回表示のときだけ、期間に当日を入れる。
+     * フォームを送信すると date_from / date_to は空でも送られてくるので、
+     * has() で初回表示かどうかを判定できる（空で送れば全期間）。
+     */
+    private function applyDefaultDay(Request $request): void
+    {
+        if ($request->has('date_from') || $request->has('date_to')) {
+            return;
+        }
+
+        $today = now()->toDateString();
+        $request->merge(['date_from' => $today, 'date_to' => $today]);
     }
 
     /**

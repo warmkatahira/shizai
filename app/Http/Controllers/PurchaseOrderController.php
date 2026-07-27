@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
-use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Mpdf\Mpdf;
@@ -39,23 +38,13 @@ class PurchaseOrderController extends Controller
         abort_unless($order->supplier, 404, 'この発注申請には業者が設定されていません。');
 
         // 初回のダウンロードで発注済にする。2回目以降は再発行なので状態は変えない
-        $isFirstIssue = $order->isPendingOrder();
-        if ($isFirstIssue) {
+        if ($order->isPendingOrder()) {
             $order->update([
                 'status' => Order::STATUS_ORDERED,
                 'ordered_by' => $user->id,
                 'ordered_at' => now(),
             ]);
         }
-
-        ActivityLogger::log(
-            'order.purchase_order_issued',
-            $isFirstIssue
-                ? "発注 #{$order->id} の発注書を作成し、発注済にしました"
-                : "発注 #{$order->id} の発注書を再発行しました",
-            $order,
-            $order->office_id,
-        );
 
         $html = view('purchase_orders.pdf', [
             'order' => $order,

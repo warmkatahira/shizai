@@ -24,6 +24,7 @@ class ActivityLog extends Model
         'master' => 'マスタ',
         'user' => 'ユーザー',
         'auth' => 'ログイン',
+        'report' => '集計',
     ];
 
     protected function casts(): array

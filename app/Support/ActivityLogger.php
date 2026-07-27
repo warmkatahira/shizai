@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use App\Models\ActivityLog;
+use App\Models\ActivityLogSetting;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -25,6 +26,13 @@ class ActivityLogger
     public static function log(string $action, string $description, ?Model $subject = null, ?int $officeId = null): void
     {
         try {
+            // 設定でオフの操作は記録しない（既定はカタログの default）。
+            // 判定（キャッシュ/DB参照）も含めて try 内に入れ、何が起きても
+            // 業務（承認・保存など）を巻き込まないようにする。
+            if (! ActivityLogSetting::isEnabled($action)) {
+                return;
+            }
+
             $user = auth()->user();
 
             ActivityLog::create([

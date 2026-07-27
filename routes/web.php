@@ -90,6 +90,9 @@ Route::middleware('auth')->group(function () {
             Route::resource('users', UserController::class)->except('show');
             Route::get('logs', [ActivityLogController::class, 'index'])->name('logs.index');
             Route::get('logs-export', [ActivityLogController::class, 'export'])->name('logs.export');
+            // 記録オン/オフの設定
+            Route::get('logs-settings', [ActivityLogController::class, 'settings'])->name('logs.settings');
+            Route::put('logs-settings', [ActivityLogController::class, 'updateSettings'])->name('logs.settings.update');
         });
     });
 });
