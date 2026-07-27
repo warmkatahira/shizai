@@ -5,7 +5,7 @@
     table { border-collapse: collapse; width: 100%; }
     .header td { vertical-align: top; padding: 0; }
     .header .left { width: 55%; }
-    .header .right { width: 45%; }
+    .header .right { width: 45%; text-align: right; }
     .header .label { color: #333; }
 
     .supplier-name { font-size: 13pt; padding-bottom: 4px; }
