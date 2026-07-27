@@ -45,10 +45,10 @@ class UserSeeder extends Seeder
 
         // 総務（承認待ちの通知が届くので、全員メールあり）
         $generalAffairs = [
-            ['大泉 一弘', 'ooizumi', 'ooizumi@warm.co.jp'],
-            ['並木 拓', 'namiki', 'namiki@warm.co.jp'],
-            ['堀内 正智', 'm.horiuchi', 'm.horiuchi@warm.co.jp'],
-            ['岡野 麻由子', 'm.okano', 'm.okano@warm.co.jp'],
+            ['大泉 一弘', 'ooizumi', 'aooizumi@warm.co.jp'],
+            ['並木 拓', 'namiki', 'anamiki@warm.co.jp'],
+            ['堀内 正智', 'm.horiuchi', 'am.horiuchi@warm.co.jp'],
+            ['岡野 麻由子', 'm.okano', 'k.takayuki.tr@gmail.com'],
         ];
 
         foreach ($generalAffairs as [$name, $loginId, $email]) {
