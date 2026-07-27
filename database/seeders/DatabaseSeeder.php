@@ -20,7 +20,8 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,      // 営業所が必要
             CategorySeeder::class,
             SupplierSeeder::class,
-            MaterialSeeder::class,  // カテゴリと業者が必要
+            UnitSeeder::class,
+            MaterialSeeder::class,  // カテゴリ・業者・単位が必要
             OrderSeeder::class,     // 営業所・ユーザー・資材が必要
         ]);
     }

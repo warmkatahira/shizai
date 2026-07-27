@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[Fillable([
     'name', 'category_id', 'supplier_id',
     'length_mm', 'width_mm', 'height_mm',
-    'unit', 'unit_price', 'min_lot_qty', 'min_lot_unit', 'has_imprint', 'note', 'is_active',
+    'unit_id', 'unit_price', 'min_lot_qty', 'has_imprint', 'note', 'is_active',
 ])]
 class Material extends Model
 {
@@ -42,10 +42,9 @@ class Material extends Model
             'length_mm' => ['nullable', 'integer', 'min:0', 'max:99999'],
             'width_mm' => ['nullable', 'integer', 'min:0', 'max:99999'],
             'height_mm' => ['nullable', 'integer', 'min:0', 'max:99999'],
-            'unit' => ['required', 'string', 'max:20'],
+            'unit_id' => ['required', 'exists:units,id'],
             'unit_price' => ['nullable', 'numeric', 'min:0', 'max:99999999'],
             'min_lot_qty' => ['nullable', 'integer', 'min:0', 'max:9999999'],
-            'min_lot_unit' => ['nullable', 'string', 'max:20'],
             'note' => ['nullable', 'string', 'max:1000'],
             'has_imprint' => ['boolean'],
             'is_active' => ['boolean'],
@@ -62,10 +61,9 @@ class Material extends Model
             'length_mm' => '縦',
             'width_mm' => '横',
             'height_mm' => '高さ',
-            'unit' => '単位',
+            'unit_id' => '単位',
             'unit_price' => '単価',
             'min_lot_qty' => '最低ロット数量',
-            'min_lot_unit' => '最低ロットの単位',
             'note' => '備考',
             'has_imprint' => '名入れ',
             'is_active' => '有効',
@@ -105,6 +103,12 @@ class Material extends Model
         return $this->belongsTo(Supplier::class);
     }
 
+    /** 単位 */
+    public function unit(): BelongsTo
+    {
+        return $this->belongsTo(Unit::class);
+    }
+
     /**
      * この資材を発注明細にするときのスナップショット。
      *
@@ -121,13 +125,12 @@ class Material extends Model
             'category_name' => $this->category?->name,
             'supplier_id' => $this->supplier_id,
             'supplier_name' => $this->supplier?->name,
-            'unit' => $this->unit,
+            'unit' => $this->unit?->name,
             'unit_price' => $this->unit_price,
             'length_mm' => $this->length_mm,
             'width_mm' => $this->width_mm,
             'height_mm' => $this->height_mm,
             'min_lot_qty' => $this->min_lot_qty,
-            'min_lot_unit' => $this->min_lot_unit,
         ];
     }
 }

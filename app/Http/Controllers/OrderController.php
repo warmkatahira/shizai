@@ -256,7 +256,7 @@ class OrderController extends Controller
     /** 指定業者の有効な資材（カテゴリ順 → 品名順） */
     private function activeMaterialsOf(Supplier $supplier)
     {
-        return Material::with('category')
+        return Material::with(['category', 'unit'])
             ->active()
             ->where('materials.supplier_id', $supplier->id)
             ->sortedByCategory()
@@ -412,7 +412,7 @@ class OrderController extends Controller
         }
 
         // 1申請＝1業者なので、選んだ業者の資材だけに限定する
-        $materials = Material::with(['supplier', 'category'])
+        $materials = Material::with(['supplier', 'category', 'unit'])
             ->whereIn('id', $selected->keys())
             ->where('is_active', true)
             ->where('supplier_id', $validated['supplier_id'])
@@ -442,7 +442,7 @@ class OrderController extends Controller
                     '「%s」は %s%s 単位で発注してください（入力値：%s）。',
                     $material->name,
                     number_format($lot),
-                    $material->min_lot_unit ?? '',
+                    $material->unit?->name ?? '',
                     number_format((int) $qty),
                 );
 

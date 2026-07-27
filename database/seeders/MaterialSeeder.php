@@ -5,12 +5,13 @@ namespace Database\Seeders;
 use App\Models\Category;
 use App\Models\Material;
 use App\Models\Supplier;
+use App\Models\Unit;
 use Illuminate\Database\Seeder;
 
 /**
  * 資材マスタ。「資材発注 詳細確認リスト」の項目をひととおり埋めたサンプル。
  * 担当者・連絡先・発注方法は業者マスタ側に持つ（SupplierSeeder）。
- * CategorySeeder / SupplierSeeder より後に実行すること。
+ * CategorySeeder / SupplierSeeder / UnitSeeder より後に実行すること。
  */
 class MaterialSeeder extends Seeder
 {
@@ -18,22 +19,23 @@ class MaterialSeeder extends Seeder
     {
         $categories = Category::pluck('id', 'name');
         $suppliers = Supplier::pluck('id', 'name');
+        $units = Unit::pluck('id', 'name');
 
-        // [品名, カテゴリ, 発注業者, [縦,横,高], 単位, 単価, ロット数, ロット単位, 名入れ, 備考]
+        // [品名, カテゴリ, 発注業者, [縦,横,高], 単位, 単価, ロット数, 名入れ, 備考]
         $rows = [
-            ['60サイズ 段ボール箱', '段ボール箱', 'セッツカートン', [270, 185, 105], '枚', 34.5, 500, '枚', false, null],
-            ['80サイズ 段ボール箱', '段ボール箱', 'セッツカートン', [339, 249, 172], '枚', 47.1, 500, '枚', false, null],
-            ['A-小 段ボール箱', '段ボール箱', 'フレックス', [240, 180, 100], '枚', 18.2, 2000, '枚', false, '内寸 234×174×97'],
-            ['ネコポス用ダンボール（A4）', '段ボール箱', 'フレックス', [null, null, null], '枚', 29.8, 2000, '枚', false, null],
-            ['クッション封筒 K60-BOX', '袋・封筒', 'アイセカンド', [null, null, null], '枚', 16.8, 3600, '枚', false, '400枚入'],
-            ['OPP袋 フタ無し B5サイズ', '袋・封筒', 'イクソブ', [null, null, null], '枚', 3.3, 8000, '枚', false, null],
-            ['プチプチ袋 d36', '緩衝材', 'アイセカンド', [235, 150, null], '枚', 4.5, 3000, '枚', false, null],
-            ['ボーガスペーパー 538×350', '緩衝材', 'フレックス', [538, 350, null], 'ケース', 1493, 10, 'ケース', false, '10本入'],
-            ['OPPテープ 48μ 48×100m', 'テープ・フィルム', 'フレックス', [null, null, null], 'ケース', 79, 5, 'ケース', false, null],
-            ['名入れ緩衝封筒（自社ロゴ入り）', '袋・封筒', '共立', [null, null, null], '枚', 24, 20000, '枚', true, '納期45〜60日'],
+            ['60サイズ 段ボール箱', '段ボール箱', 'セッツカートン', [270, 185, 105], '枚', 34.5, 500, false, null],
+            ['80サイズ 段ボール箱', '段ボール箱', 'セッツカートン', [339, 249, 172], '枚', 47.1, 500, false, null],
+            ['A-小 段ボール箱', '段ボール箱', 'フレックス', [240, 180, 100], '枚', 18.2, 2000, false, '内寸 234×174×97'],
+            ['ネコポス用ダンボール（A4）', '段ボール箱', 'フレックス', [null, null, null], '枚', 29.8, 2000, false, null],
+            ['クッション封筒 K60-BOX', '袋・封筒', 'アイセカンド', [null, null, null], '枚', 16.8, 3600, false, '400枚入'],
+            ['OPP袋 フタ無し B5サイズ', '袋・封筒', 'イクソブ', [null, null, null], '枚', 3.3, 8000, false, null],
+            ['プチプチ袋 d36', '緩衝材', 'アイセカンド', [235, 150, null], '枚', 4.5, 3000, false, null],
+            ['ボーガスペーパー 538×350', '緩衝材', 'フレックス', [538, 350, null], 'ケース', 1493, 10, false, '10本入'],
+            ['OPPテープ 48μ 48×100m', 'テープ・フィルム', 'フレックス', [null, null, null], 'ケース', 79, 5, false, null],
+            ['名入れ緩衝封筒（自社ロゴ入り）', '袋・封筒', '共立', [null, null, null], '枚', 24, 20000, true, '納期45〜60日'],
         ];
 
-        foreach ($rows as [$name, $category, $supplier, $size, $unit, $price, $lotQty, $lotUnit, $imprint, $note]) {
+        foreach ($rows as [$name, $category, $supplier, $size, $unit, $price, $lotQty, $imprint, $note]) {
             Material::create([
                 'name' => $name,
                 'category_id' => $categories[$category],
@@ -41,10 +43,9 @@ class MaterialSeeder extends Seeder
                 'length_mm' => $size[0],
                 'width_mm' => $size[1],
                 'height_mm' => $size[2],
-                'unit' => $unit,
+                'unit_id' => $units[$unit],
                 'unit_price' => $price,
                 'min_lot_qty' => $lotQty,
-                'min_lot_unit' => $lotUnit,
                 'has_imprint' => $imprint,
                 'note' => $note,
             ]);

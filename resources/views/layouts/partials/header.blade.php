@@ -20,6 +20,7 @@
     $masters = collect([
         ['label' => '資材', 'route' => 'admin.materials.index'],
         ['label' => 'カテゴリ', 'route' => 'admin.categories.index'],
+        ['label' => '単位', 'route' => 'admin.units.index'],
         ['label' => '業者', 'route' => 'admin.suppliers.index'],
         ['label' => '営業所', 'route' => 'admin.offices.index'],
         ['label' => 'ユーザー', 'route' => 'admin.users.index', 'adminOnly' => true],

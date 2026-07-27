@@ -87,7 +87,7 @@
                         <td class="px-4 py-3">{{ $material->supplier?->name ?? '—' }}</td>
                         <td class="px-4 py-3 text-gray-500">{{ $material->supplier?->orderMethodLabel() ?? '—' }}</td>
                         <td class="px-4 py-3 text-gray-500">{{ $material->sizeText() ?? '—' }}</td>
-                        <td class="px-4 py-3 text-gray-500">{{ $material->unit }}</td>
+                        <td class="px-4 py-3 text-gray-500">{{ $material->unit?->name ?? '—' }}</td>
                         <td class="px-4 py-3 text-right">{{ \App\Support\Money::yen($material->unit_price) }}</td>
                         <td class="px-4 py-3 text-right text-gray-500">{{ $material->minLotText() ?? '—' }}</td>
                         <td class="px-4 py-3 text-gray-500">{{ $material->has_imprint ? 'あり' : '—' }}</td>

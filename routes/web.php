@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\MaterialController;
 use App\Http\Controllers\Admin\OfficeController;
 use App\Http\Controllers\Admin\SupplierController;
+use App\Http\Controllers\Admin\UnitController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
@@ -78,6 +79,7 @@ Route::middleware('auth')->group(function () {
             Route::resource('offices', OfficeController::class)->except('show');
             Route::resource('suppliers', SupplierController::class)->except('show');
             Route::resource('categories', CategoryController::class)->except('show');
+            Route::resource('units', UnitController::class)->except('show');
             // 資材マスタのCSV出力・取り込み（取り込みはIDで突合。詳細は App\Support\MaterialCsv）
             Route::get('materials-export', [MaterialController::class, 'export'])->name('materials.export');
             Route::post('materials-import', [MaterialController::class, 'import'])->name('materials.import');

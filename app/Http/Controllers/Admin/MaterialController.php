@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Material;
 use App\Models\Supplier;
+use App\Models\Unit;
 use App\Support\MaterialCsv;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
@@ -34,7 +35,7 @@ class MaterialController extends Controller
      */
     private function filteredMaterials(Request $request): Builder
     {
-        return Material::with(['supplier', 'category'])
+        return Material::with(['supplier', 'category', 'unit'])
             ->when($request->filled('supplier_id'),
                 fn ($q) => $q->where('materials.supplier_id', $request->input('supplier_id')))
             ->when($request->filled('category_id'),
@@ -88,12 +89,13 @@ class MaterialController extends Controller
         return redirect()->route('admin.materials.index')->with('status', '資材を削除しました。');
     }
 
-    /** フォームの選択肢（業者・カテゴリ） */
+    /** フォームの選択肢（業者・カテゴリ・単位） */
     private function formOptions(): array
     {
         return [
             'suppliers' => Supplier::where('is_active', true)->orderBy('name')->get(),
             'categories' => Category::where('is_active', true)->orderBy('sort_order')->orderBy('name')->get(),
+            'units' => Unit::where('is_active', true)->orderBy('sort_order')->orderBy('name')->get(),
         ];
     }
 

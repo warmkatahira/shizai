@@ -5,6 +5,7 @@ namespace App\Support;
 use App\Models\Category;
 use App\Models\Material;
 use App\Models\Supplier;
+use App\Models\Unit;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -26,7 +27,7 @@ class MaterialCsv
     public const HEADERS = [
         'ID', '品名', 'カテゴリ', '発注業者',
         '縦(mm)', '横(mm)', '高さ(mm)',
-        '単位', '単価', '最低ロット数量', '最低ロットの単位',
+        '単位', '単価', '最低ロット数量',
         '名入れ', '備考', '有効',
     ];
 
@@ -45,11 +46,10 @@ class MaterialCsv
             $material->length_mm,
             $material->width_mm,
             $material->height_mm,
-            $material->unit,
+            $material->unit?->name ?? '',
             // 単価は decimal。「34.50」ではなく「34.5」で出す（Excelで見やすいように）
             $material->unit_price === null ? '' : (float) $material->unit_price,
             $material->min_lot_qty,
-            $material->min_lot_unit,
             $material->has_imprint ? self::YES : self::NO,
             $material->note,
             $material->is_active ? self::YES : self::NO,
@@ -76,6 +76,7 @@ class MaterialCsv
         // 名前 → ID の対応表。1行ずつ問い合わせると行数ぶんSQLが飛ぶので先に引いておく
         $categories = Category::pluck('id', 'name');
         $suppliers = Supplier::pluck('id', 'name');
+        $units = Unit::pluck('id', 'name');
         $existingIds = Material::pluck('id')->flip();
 
         $errors = [];
@@ -83,7 +84,7 @@ class MaterialCsv
 
         foreach ($rows as [$lineNo, $row]) {
             try {
-                $parsed[] = [$lineNo, self::parseRow($row, $categories, $suppliers, $existingIds)];
+                $parsed[] = [$lineNo, self::parseRow($row, $categories, $suppliers, $units, $existingIds)];
             } catch (ValidationException $e) {
                 foreach ($e->errors() as $messages) {
                     foreach ($messages as $message) {
@@ -170,7 +171,7 @@ class MaterialCsv
      *
      * @throws ValidationException
      */
-    private static function parseRow(array $row, Collection $categories, Collection $suppliers, Collection $existingIds): array
+    private static function parseRow(array $row, Collection $categories, Collection $suppliers, Collection $units, Collection $existingIds): array
     {
         // 列が足りない行でも落ちないように埋める
         $cols = array_pad(array_slice($row, 0, count(self::HEADERS)), count(self::HEADERS), '');
@@ -191,14 +192,13 @@ class MaterialCsv
             'length_mm' => self::nullableNumber($cols[4]),
             'width_mm' => self::nullableNumber($cols[5]),
             'height_mm' => self::nullableNumber($cols[6]),
-            'unit' => $cols[7],
+            'unit_id' => self::lookup($units, $cols[7], '単位'),
             'unit_price' => self::nullableNumber($cols[8]),
             'min_lot_qty' => self::nullableNumber($cols[9]),
-            'min_lot_unit' => $cols[10] === '' ? null : $cols[10],
-            'has_imprint' => self::parseBool($cols[11], default: false),
-            'note' => $cols[12] === '' ? null : $cols[12],
+            'has_imprint' => self::parseBool($cols[10], default: false),
+            'note' => $cols[11] === '' ? null : $cols[11],
             // 有効列が空欄なら「有効」として扱う（新規追加の行をいちいち書かなくて済むように）
-            'is_active' => self::parseBool($cols[13], default: true),
+            'is_active' => self::parseBool($cols[12], default: true),
         ];
 
         Validator::make($data, Material::validationRules(), [], Material::attributeNames())->validate();

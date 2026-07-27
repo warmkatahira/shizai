@@ -60,9 +60,19 @@
 
     <div class="grid grid-cols-2 gap-4">
         <div>
-            <label for="unit" class="block text-sm font-medium text-gray-700 mb-1">単位 <span class="text-red-500">*</span></label>
-            <input autocomplete="off" id="unit" name="unit" type="text" value="{{ old('unit', $material->unit ?? '個') }}" required
-                   class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
+            <label for="unit_id" class="block text-sm font-medium text-gray-700 mb-1">単位 <span class="text-red-500">*</span></label>
+            <select id="unit_id" name="unit_id" required
+                    class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
+                <option value="">（選択してください）</option>
+                @foreach ($units as $unit)
+                    <option value="{{ $unit->id }}" {{ (string) old('unit_id', $material->unit_id) === (string) $unit->id ? 'selected' : '' }}>
+                        {{ $unit->name }}
+                    </option>
+                @endforeach
+            </select>
+            @if ($units->isEmpty())
+                <p class="text-xs text-amber-600 mt-1">単位マスタが未登録です。先に単位を登録すると選べます。</p>
+            @endif
         </div>
         <div>
             <label for="unit_price" class="block text-sm font-medium text-gray-700 mb-1">単価（円）</label>
@@ -73,27 +83,10 @@
     </div>
 
     <div>
-        <span class="block text-sm font-medium text-gray-700 mb-1">最低ロット</span>
-        <div class="grid grid-cols-2 gap-4">
-            <div>
-                <label for="min_lot_qty" class="block text-xs text-gray-500 mb-1">数量</label>
-                <input autocomplete="off" id="min_lot_qty" name="min_lot_qty" type="number" min="0" value="{{ old('min_lot_qty', $material->min_lot_qty) }}"
-                       class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
-            </div>
-            <div>
-                <label for="min_lot_unit" class="block text-xs text-gray-500 mb-1">単位</label>
-                <input autocomplete="off" id="min_lot_unit" name="min_lot_unit" type="text" list="lot-units"
-                       value="{{ old('min_lot_unit', $material->min_lot_unit) }}" placeholder="枚 / ケース / 本"
-                       class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
-                <datalist id="lot-units">
-                    <option value="枚"></option>
-                    <option value="ケース"></option>
-                    <option value="本"></option>
-                    <option value="個"></option>
-                    <option value="巻"></option>
-                </datalist>
-            </div>
-        </div>
+        <label for="min_lot_qty" class="block text-sm font-medium text-gray-700 mb-1">最低ロット数量</label>
+        <input autocomplete="off" id="min_lot_qty" name="min_lot_qty" type="number" min="0" value="{{ old('min_lot_qty', $material->min_lot_qty) }}"
+               class="w-40 rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
+        <p class="text-xs text-gray-400 mt-1">単位は上の「単位」を使います（この数量の倍数でのみ発注可）。空欄ならロット制限なし。</p>
     </div>
 
     <div>

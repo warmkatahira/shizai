@@ -18,7 +18,7 @@ class MaterialCatalogController extends Controller
 {
     public function index(Request $request): View
     {
-        $materials = Material::with(['category', 'supplier'])
+        $materials = Material::with(['category', 'supplier', 'unit'])
             ->active()
             ->when($request->filled('supplier_id'),
                 fn ($q) => $q->where('materials.supplier_id', $request->input('supplier_id')))

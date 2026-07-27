@@ -86,7 +86,7 @@
                                 <td class="px-4 py-3 text-gray-500">{{ $material->sizeText() ?? '—' }}</td>
                                 <td class="px-4 py-3 text-right">{{ \App\Support\Money::yen($material->unit_price) }}</td>
                                 <td class="px-4 py-3 text-right text-gray-500">{{ $material->minLotText() ?? '—' }}</td>
-                                <td class="px-4 py-3 text-gray-500">{{ $material->unit }}</td>
+                                <td class="px-4 py-3 text-gray-500">{{ $material->unit?->name ?? '—' }}</td>
                                 <td class="px-4 py-3">
                                     <input autocomplete="off" type="number" min="0" max="999999"
                                            step="{{ $lot ?: 1 }}"
@@ -97,7 +97,7 @@
                                            data-lot="{{ $lot ?: 0 }}"
                                            class="w-28 rounded-md border border-gray-300 px-2 py-1 text-right focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
                                     @if ($lot)
-                                        <span class="block text-xs text-gray-400 mt-1">{{ number_format($lot) }}{{ $material->min_lot_unit }}単位</span>
+                                        <span class="block text-xs text-gray-400 mt-1">{{ number_format($lot) }}{{ $material->unit?->name }}単位</span>
                                     @endif
                                 </td>
                                 <td class="px-4 py-3 text-right" data-subtotal>—</td>
