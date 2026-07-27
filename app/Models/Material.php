@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Storage;
  */
 #[Fillable([
     'name', 'category_id', 'supplier_id',
-    'length_mm', 'width_mm', 'height_mm',
+    'length_mm', 'width_mm', 'height_mm', 'size_text',
     'unit_id', 'unit_price', 'min_lot_qty', 'has_imprint', 'note', 'is_active', 'image_path',
 ])]
 class Material extends Model
@@ -43,6 +43,7 @@ class Material extends Model
             'length_mm' => ['nullable', 'integer', 'min:0', 'max:99999'],
             'width_mm' => ['nullable', 'integer', 'min:0', 'max:99999'],
             'height_mm' => ['nullable', 'integer', 'min:0', 'max:99999'],
+            'size_text' => ['nullable', 'string', 'max:100'],
             'unit_id' => ['required', 'exists:units,id'],
             'unit_price' => ['nullable', 'numeric', 'min:0', 'max:99999999'],
             'min_lot_qty' => ['nullable', 'integer', 'min:0', 'max:9999999'],
@@ -62,6 +63,7 @@ class Material extends Model
             'length_mm' => '縦',
             'width_mm' => '横',
             'height_mm' => '高さ',
+            'size_text' => 'サイズ',
             'unit_id' => '単位',
             'unit_price' => '単価',
             'min_lot_qty' => '最低ロット数量',

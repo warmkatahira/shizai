@@ -58,6 +58,14 @@
         </div>
     </div>
 
+    <div>
+        <label for="size_text" class="block text-sm font-medium text-gray-700 mb-1">サイズ（自由入力）</label>
+        <input autocomplete="off" id="size_text" name="size_text" type="text" value="{{ old('size_text', $material->size_text) }}"
+               placeholder="例：粒外袋 W200×H300"
+               class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
+        <p class="text-xs text-gray-400 mt-1">規格名つきの表記など、縦横高とは別に自由に書けます。</p>
+    </div>
+
     <div class="grid grid-cols-2 gap-4">
         <div>
             <label for="unit_id" class="block text-sm font-medium text-gray-700 mb-1">単位 <span class="text-red-500">*</span></label>

@@ -101,7 +101,10 @@
                     <th class="px-4 py-3">品名</th>
                     <th class="px-4 py-3">カテゴリ</th>
                     <th class="px-4 py-3">発注業者</th>
-                    <th class="px-4 py-3">寸法(mm)</th>
+                    <th class="px-4 py-3 text-right">縦(mm)</th>
+                    <th class="px-4 py-3 text-right">横(mm)</th>
+                    <th class="px-4 py-3 text-right">高さ(mm)</th>
+                    <th class="px-4 py-3">サイズ</th>
                     <th class="px-4 py-3">単位</th>
                     <th class="px-4 py-3 text-right">単価</th>
                     <th class="px-4 py-3 text-right">最低ロット</th>
@@ -133,7 +136,10 @@
                         </td>
                         <td class="px-4 py-3 text-gray-500">{{ $material->category?->name ?? '—' }}</td>
                         <td class="px-4 py-3">{{ $material->supplier?->name ?? '—' }}</td>
-                        <td class="px-4 py-3 text-gray-500">{{ $material->sizeText() ?? '—' }}</td>
+                        <td class="px-4 py-3 text-right text-gray-500">{{ $material->length_mm ?? '—' }}</td>
+                        <td class="px-4 py-3 text-right text-gray-500">{{ $material->width_mm ?? '—' }}</td>
+                        <td class="px-4 py-3 text-right text-gray-500">{{ $material->height_mm ?? '—' }}</td>
+                        <td class="px-4 py-3 text-gray-500">{{ $material->size_text ?: '—' }}</td>
                         <td class="px-4 py-3">{{ $material->unit?->name ?? '—' }}</td>
                         <td class="px-4 py-3 text-right">{{ \App\Support\Money::yen($material->unit_price) }}</td>
                         <td class="px-4 py-3 text-right text-gray-500">{{ $material->minLotText() ?? '—' }}</td>
@@ -151,7 +157,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="10" class="px-4 py-8 text-center text-gray-400">資材がまだありません。</td></tr>
+                    <tr><td colspan="13" class="px-4 py-8 text-center text-gray-400">資材がまだありません。</td></tr>
                 @endforelse
             </tbody>
         </table>
