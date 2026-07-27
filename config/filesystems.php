@@ -47,10 +47,11 @@ return [
             'report' => false,
         ],
 
-        // DBバックアップの保存先。/var/backup 配下（本番用。要ディレクトリ作成＋書き込み権限）
+        // DBバックアップの保存先。/var/backups 配下（Ubuntu/Debian 標準のディレクトリ）。
+        // 実際の保存先は {root}/{backup.name} = /var/backups/shizai/。BACKUP_ROOT で上書き可。
         'backups' => [
             'driver' => 'local',
-            'root' => env('BACKUP_ROOT', '/var/backup'),
+            'root' => env('BACKUP_ROOT', '/var/backups'),
             'throw' => false,
             'report' => false,
         ],
