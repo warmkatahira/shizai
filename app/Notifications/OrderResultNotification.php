@@ -28,7 +28,7 @@ class OrderResultNotification extends Notification
         if ($order->isRejected()) {
             return (new MailMessage)
                 ->subject("【資材発注】申請が却下されました（#{$order->id}）")
-                ->greeting("{$notifiable->name} 様")
+                ->greeting("{$notifiable->name} さん")
                 ->line("発注申請 #{$order->id} は却下されました。")
                 ->line("却下理由：{$order->reject_reason}")
                 ->action('申請内容を確認する', route('orders.show', $order))
@@ -39,7 +39,7 @@ class OrderResultNotification extends Notification
         if ($order->isReturned()) {
             return (new MailMessage)
                 ->subject("【資材発注】申請が差し戻されました（#{$order->id}）")
-                ->greeting("{$notifiable->name} 様")
+                ->greeting("{$notifiable->name} さん")
                 ->line("発注申請 #{$order->id} が差し戻されました（{$order->returnedBy?->name}）。")
                 ->line("差し戻しの理由：{$order->return_reason}")
                 ->line('内容を修正して再申請してください。再申請すると承認は最初からやり直しになります。')
@@ -50,7 +50,7 @@ class OrderResultNotification extends Notification
         // 発注済
         $message = (new MailMessage)
             ->subject("【資材発注】発注が確定しました（#{$order->id}）")
-            ->greeting("{$notifiable->name} 様")
+            ->greeting("{$notifiable->name} さん")
             ->line("発注申請 #{$order->id} が承認され、発注が確定しました。");
 
         if ($order->is_special_approval) {

@@ -31,11 +31,11 @@ class OrderPendingApprovalNotification extends Notification
 
         return (new MailMessage)
             ->subject("【資材発注】承認待ちの申請があります（#{$order->id}）")
-            ->greeting("{$notifiable->name} 様")
+            ->greeting("{$notifiable->name} さん")
             ->line("あなた（{$who}）の確認待ちの発注申請があります。")
             ->line("申請番号：#{$order->id}")
             ->line("営業所：{$order->office->name}")
-            ->line("申請者：{$order->requester->name}")
+            ->line("申請者：{$order->requester_name}")
             ->line("点数：{$order->items->count()} 点 / 参考合計：¥" . number_format($order->totalPrice()))
             ->action('申請内容を確認する', route('orders.show', $order))
             ->line('内容をご確認のうえ、承認または却下をお願いします。');
