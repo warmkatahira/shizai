@@ -29,9 +29,6 @@
             </div>
         </main>
 
-        <footer class="py-4 text-center text-xs text-gray-400">
-            &copy; {{ date('Y') }} 資材発注システム
-        </footer>
     </div>
 
     {{-- 画像の拡大表示（ライトボックス）。data-zoom を付けた画像をクリックすると開く。
