@@ -22,8 +22,9 @@
 
         if ($user->canManageMasters()) {
             $cards[] = ['admin.materials.index', '資材マスタ', '発注できる資材を登録・編集します。', 'materials'];
-            $cards[] = ['admin.suppliers.index', '業者マスタ', '仕入先の業者と発注方法を登録・編集します。', 'suppliers'];
             $cards[] = ['admin.categories.index', 'カテゴリマスタ', '資材のカテゴリを登録・編集します。', 'categories'];
+            $cards[] = ['admin.units.index', '単位マスタ', '資材の単位（枚・ケースなど）を登録・編集します。', 'units'];
+            $cards[] = ['admin.suppliers.index', '業者マスタ', '仕入先の業者と発注方法を登録・編集します。', 'suppliers'];
             $cards[] = ['admin.offices.index', '営業所マスタ', '営業所（拠点）を登録・編集します。', 'offices'];
         } else {
             $cards[] = ['materials.index', '資材を調べる', 'どの業者にどの資材がいくらであるかを確認します。', 'materials-search'];
@@ -31,6 +32,7 @@
 
         if ($user->isAdmin()) {
             $cards[] = ['admin.users.index', 'ユーザー管理', '利用者と権限を登録・編集します。', 'users'];
+            $cards[] = ['admin.logs.index', '操作ログ', '誰がいつ何をしたかの記録を確認します。', 'logs'];
         }
     @endphp
 
