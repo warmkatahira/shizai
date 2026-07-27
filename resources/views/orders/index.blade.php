@@ -79,7 +79,7 @@
                class="inline-flex items-center gap-1 bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-700 text-sm px-4 py-2 rounded-md">
                 <span aria-hidden="true">✕</span> 条件クリア
             </a>
-            <a href="{{ route('orders.export', $filters) }}"
+            <a href="{{ route('orders.export', $filters) }}" data-no-loader
                class="ml-auto bg-green-600 hover:bg-green-700 text-white text-sm px-5 py-2 rounded-md">
                 📥 CSVダウンロード
             </a>
@@ -98,7 +98,7 @@
                         <th class="px-4 py-3">営業所</th>
                     @endunless
                     <th class="px-4 py-3">発注業者</th>
-                    <th class="px-4 py-3">発注者</th>
+                    <th class="px-4 py-3">申請者</th>
                     <th class="px-4 py-3 text-right">点数</th>
                     <th class="px-4 py-3">状態</th>
                     <th class="px-4 py-3 text-right">操作</th>
@@ -106,7 +106,7 @@
             </thead>
             <tbody class="divide-y divide-gray-100">
                 @forelse ($orders as $order)
-                    <tr>
+                    <tr class="hover:bg-accent-light/40 transition-colors">
                         <td class="px-4 py-3 font-medium">#{{ $order->id }}</td>
                         <td class="px-4 py-3 text-gray-500">{{ $order->created_at->format('Y/m/d H:i') }}</td>
                         @unless (auth()->user()->isSales())

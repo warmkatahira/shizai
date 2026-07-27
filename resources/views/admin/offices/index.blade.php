@@ -25,7 +25,7 @@
             </thead>
             <tbody class="divide-y divide-gray-100">
                 @forelse ($offices as $office)
-                    <tr>
+                    <tr class="hover:bg-accent-light/40 transition-colors">
                         <td class="px-4 py-3 font-medium">{{ $office->name }}</td>
                         <td class="px-4 py-3 text-gray-500">{{ $office->code ?: '—' }}</td>
                         <td class="px-4 py-3 text-gray-500">

@@ -26,7 +26,7 @@
             </thead>
             <tbody class="divide-y divide-gray-100">
                 @forelse ($suppliers as $supplier)
-                    <tr>
+                    <tr class="hover:bg-accent-light/40 transition-colors">
                         <td class="px-4 py-3 font-medium">{{ $supplier->name }}</td>
                         <td class="px-4 py-3 text-gray-500">{{ $supplier->code ?: '—' }}</td>
                         <td class="px-4 py-3">{{ $supplier->contact_person ?: '—' }}</td>

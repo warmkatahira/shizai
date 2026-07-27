@@ -75,7 +75,12 @@ class PurchaseOrderController extends Controller
         $mpdf->SetTitle('発注書 ' . $order->purchaseOrderNo());
         $mpdf->WriteHTML($html);
 
-        $filename = sprintf('発注書_%s_%s.pdf', $order->purchaseOrderNo(), $order->supplier->name);
+        $filename = sprintf(
+            '資材発注書_%s_%s_%s.pdf',
+            $order->purchaseOrderNo(),
+            $order->supplier->name,
+            $order->ordered_at->format('Ymd'),
+        );
 
         return response($mpdf->Output($filename, \Mpdf\Output\Destination::STRING_RETURN), 200, [
             'Content-Type' => 'application/pdf',

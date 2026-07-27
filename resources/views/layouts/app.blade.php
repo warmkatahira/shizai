@@ -9,6 +9,9 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen bg-gray-100 text-gray-800">
+    {{-- ページ遷移中のローディングバー（見た目は app.css の #page-loader） --}}
+    <div id="page-loader" role="progressbar" aria-hidden="true"></div>
+
     <div class="min-h-screen flex flex-col">
         @include('layouts.partials.header')
 
@@ -38,12 +41,51 @@
         JSが動かない場合は、フォーム内の検索ボタンがそのまま使える。
     --}}
     <script>
+        // ページ遷移中のローディングバー。リンク遷移・フォーム送信で表示し、
+        // 次のページに切り替わるとDOMごと差し替わって自然に消える。
+        // ファイルのダウンロード（CSV・発注書PDF）はページが変わらず消えないので、
+        // data-no-loader を付けた要素からは出さない。
+        const pageLoader = document.getElementById('page-loader');
+        const showLoader = () => pageLoader && pageLoader.classList.add('is-active');
+        const hideLoader = () => pageLoader && pageLoader.classList.remove('is-active');
+
         document.querySelectorAll('form[data-auto-submit]').forEach((form) => {
             form.addEventListener('change', () => {
                 form.setAttribute('aria-busy', 'true');
+                showLoader();
                 form.submit();
             });
         });
+
+        // 通常のリンククリックで表示（別タブ・ダウンロード・ページ内リンク等は除く）
+        document.addEventListener('click', (e) => {
+            const link = e.target.closest('a');
+            if (! link || link.closest('[data-no-loader]') || link.hasAttribute('data-no-loader')) {
+                return;
+            }
+            const href = link.getAttribute('href');
+            if (! href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('javascript:')) {
+                return;
+            }
+            // 別タブ・修飾キー・右クリック・ダウンロード・別オリジンは対象外
+            if (link.target === '_blank' || link.hasAttribute('download') || link.origin !== window.location.origin) {
+                return;
+            }
+            if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
+                return;
+            }
+            showLoader();
+        });
+
+        // フォーム送信で表示（ダウンロード系フォームは data-no-loader で除外）
+        document.addEventListener('submit', (e) => {
+            if (! e.target.hasAttribute('data-no-loader')) {
+                showLoader();
+            }
+        });
+
+        // 戻る/進む（bfcache 復元）で戻ったときはバーを消す
+        window.addEventListener('pageshow', hideLoader);
 
         // ヘッダーのメニュー（<details data-menu>）は、外側をクリックするか Esc で閉じる。
         // details のままだと開きっぱなしになり、他のメニューと重なって見えるため。

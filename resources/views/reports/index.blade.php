@@ -11,7 +11,7 @@
                 <span class="text-sm font-normal text-gray-500">／ {{ auth()->user()->office->name }}</span>
             @endif
         </h1>
-        <a href="{{ route('reports.export', request()->query()) }}"
+        <a href="{{ route('reports.export', request()->query()) }}" data-no-loader
            class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm px-4 py-2 rounded-md">CSVダウンロード</a>
     </div>
 
@@ -117,7 +117,7 @@
             <tbody class="divide-y divide-gray-100">
                 @forelse ($rows as $row)
                     @php $share = $totals->amount > 0 ? $row->amount / $totals->amount * 100 : 0; @endphp
-                    <tr>
+                    <tr class="hover:bg-accent-light/40 transition-colors">
                         <td class="px-4 py-3 font-medium">{{ $row->label }}</td>
                         <td class="px-4 py-3 text-right text-gray-500">{{ number_format($row->order_count) }}</td>
                         <td class="px-4 py-3 text-right text-gray-500">{{ number_format($row->item_count) }}</td>

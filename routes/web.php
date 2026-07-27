@@ -51,6 +51,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/orders/{order}/purchase-order', [PurchaseOrderController::class, 'download'])
         ->name('orders.purchaseOrder');
 
+    // 発注後メモの更新（発注済のみ・総務/管理者。判定は Order::canUpdatePostOrderNote）
+    Route::patch('/orders/{order}/post-order-note', [OrderController::class, 'updatePostOrderNote'])
+        ->name('orders.postOrderNote');
+
     // ----- 資材一覧（閲覧のみ。全ログインユーザー。編集は /admin/materials で管理者のみ） -----
     Route::get('/materials', [MaterialCatalogController::class, 'index'])->name('materials.index');
 

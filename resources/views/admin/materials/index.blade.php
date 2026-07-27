@@ -6,7 +6,7 @@
     <div class="flex items-center justify-between mb-6">
         <h1 class="text-xl font-bold">資材マスタ管理</h1>
         <div class="flex items-center gap-3">
-            <a href="{{ route('admin.materials.export') }}"
+            <a href="{{ route('admin.materials.export', $filters) }}" data-no-loader
                class="bg-green-600 hover:bg-green-700 text-white text-sm px-4 py-2 rounded-md">📥 CSVダウンロード</a>
             <a href="{{ route('admin.materials.create') }}"
                class="bg-accent hover:bg-accent-dark text-ink text-sm px-4 py-2 rounded-md">＋ 新規資材</a>
@@ -40,6 +40,59 @@
         </div>
     </details>
 
+    {{-- 絞り込み。条件を変えると自動検索。CSVダウンロードは下のリンクに条件が引き継がれる --}}
+    <form method="GET" action="{{ route('admin.materials.index') }}" data-auto-submit
+          class="bg-white shadow rounded-lg p-4 mb-6">
+        <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div>
+                <label class="block text-xs text-gray-500 mb-1">発注業者</label>
+                <select name="supplier_id" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-accent-dark">
+                    <option value="">すべて</option>
+                    @foreach ($suppliers as $supplier)
+                        <option value="{{ $supplier->id }}" {{ (string) ($filters['supplier_id'] ?? '') === (string) $supplier->id ? 'selected' : '' }}>{{ $supplier->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-xs text-gray-500 mb-1">カテゴリ</label>
+                <select name="category_id" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-accent-dark">
+                    <option value="">すべて</option>
+                    @foreach ($categories as $category)
+                        <option value="{{ $category->id }}" {{ (string) ($filters['category_id'] ?? '') === (string) $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-xs text-gray-500 mb-1">状態</label>
+                <select name="status" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-accent-dark">
+                    <option value="">すべて</option>
+                    <option value="active" {{ ($filters['status'] ?? '') === 'active' ? 'selected' : '' }}>有効</option>
+                    <option value="inactive" {{ ($filters['status'] ?? '') === 'inactive' ? 'selected' : '' }}>無効</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-xs text-gray-500 mb-1">品名キーワード</label>
+                <input autocomplete="off" type="text" name="keyword" value="{{ $filters['keyword'] ?? '' }}" placeholder="例：段ボール"
+                       class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-accent-dark">
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3 mt-4">
+            {{-- 条件を変えると自動で検索される。ボタンはJSが動かないときの保険 --}}
+            <noscript>
+                <button type="submit" class="bg-accent hover:bg-accent-dark text-ink text-sm px-5 py-2 rounded-md">検索</button>
+            </noscript>
+            <a href="{{ route('admin.materials.index') }}"
+               class="inline-flex items-center gap-1 bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-700 text-sm px-4 py-2 rounded-md">
+                <span aria-hidden="true">✕</span> 条件クリア
+            </a>
+            <span class="ml-auto text-sm text-gray-500">{{ number_format($materials->count()) }} 件</span>
+        </div>
+    </form>
+
     <div class="bg-white shadow rounded-lg overflow-auto max-h-[70vh]">
         <table class="w-full text-sm whitespace-nowrap">
             {{-- スクロールしても列名が見えるようヘッダー行を固定する --}}
@@ -59,7 +112,7 @@
             </thead>
             <tbody class="divide-y divide-gray-100">
                 @forelse ($materials as $material)
-                    <tr>
+                    <tr class="hover:bg-accent-light/40 transition-colors">
                         <td class="px-4 py-3 font-medium">
                             {{ $material->name }}
                             @if ($material->note)

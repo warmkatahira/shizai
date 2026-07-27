@@ -23,7 +23,7 @@
             </thead>
             <tbody class="divide-y divide-gray-100">
                 @forelse ($categories as $category)
-                    <tr>
+                    <tr class="hover:bg-accent-light/40 transition-colors">
                         <td class="px-4 py-3 font-medium">{{ $category->name }}</td>
                         <td class="px-4 py-3 text-right text-gray-500">{{ $category->sort_order }}</td>
                         <td class="px-4 py-3 text-right">{{ $category->materials_count }} 件</td>

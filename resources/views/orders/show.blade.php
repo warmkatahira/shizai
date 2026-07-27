@@ -4,8 +4,8 @@
 
 @section('content')
     <div class="flex items-center justify-between mb-6">
-        <h1 class="text-xl font-bold">発注申請 #{{ $order->id }}</h1>
-        @include('orders.partials.status-badge')
+        <h1 class="text-xl font-bold">発注申請</h1>
+        @include('orders.partials.status-badge', ['large' => true])
     </div>
 
     {{-- 却下理由の表示 --}}
@@ -55,6 +55,10 @@
     <div class="bg-white shadow rounded-lg p-6 mb-6">
         <dl class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
             <div>
+                <dt class="text-gray-500">発注No</dt>
+                <dd class="font-medium">{{ $order->purchaseOrderNo() }}</dd>
+            </div>
+            <div>
                 <dt class="text-gray-500">営業所</dt>
                 <dd class="font-medium">{{ $order->office->name }}</dd>
             </div>
@@ -63,7 +67,7 @@
                 <dd class="font-medium">{{ $order->supplier?->name ?? '—' }}</dd>
             </div>
             <div>
-                <dt class="text-gray-500">発注者</dt>
+                <dt class="text-gray-500">申請者</dt>
                 <dd class="font-medium">
                     {{ $order->requester_name ?? '—' }}
                     <span class="block text-xs text-gray-400 font-normal">アカウント：{{ $order->requester->name }}</span>
@@ -98,7 +102,7 @@
                 </dd>
             </div>
             <div>
-                <dt class="text-gray-500">発注（発注書の作成）</dt>
+                <dt class="text-gray-500">発注者（発注書の作成）</dt>
                 <dd class="font-medium">
                     @if ($order->orderedBy)
                         {{ $order->orderedBy->name }}
@@ -147,21 +151,66 @@
                 @endif
             </p>
             @if ($order->supplier)
-                <form method="POST" action="{{ route('orders.purchaseOrder', $order) }}"
+                <form method="POST" action="{{ route('orders.purchaseOrder', $order) }}" data-no-loader
                       @if ($order->isPendingOrder())
                           onsubmit="return confirm('発注書を作成します。この申請は「発注済」になります。よろしいですか？')"
                       @endif>
                     @csrf
                     <button class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm px-4 py-2 rounded-md">
                         @if ($order->isPendingOrder())
-                            発注書を作成して発注する（{{ $order->supplier->name }}）
+                            発注書を作成して発注する
                         @else
-                            発注書を再ダウンロード（{{ $order->supplier->name }}）
+                            発注書を再ダウンロード
                         @endif
                     </button>
                 </form>
             @else
                 <p class="text-sm text-gray-400">業者が設定されていないため、発注書を作成できません。</p>
+            @endif
+        </div>
+    @endif
+
+    {{-- 発注後メモ（発注済のみ）。業者から言われたこと等を残す。総務・管理者が更新、閲覧は全員 --}}
+    @if ($order->isOrdered())
+        <div class="bg-white shadow rounded-lg p-6 mb-6">
+            <h2 class="font-semibold mb-1">発注者メモ</h2>
+            <p class="text-xs text-gray-500 mb-4">
+                発注後に業者から言われたことや、その他の連絡事項を残せます。全員が閲覧できます。
+                @unless ($actions['updatePostOrderNote'])
+                    <span class="text-gray-400">（編集できるのは総務・管理者です）</span>
+                @endunless
+            </p>
+
+            @if ($actions['updatePostOrderNote'])
+                <form method="POST" action="{{ route('orders.postOrderNote', $order) }}">
+                    @csrf
+                    @method('PATCH')
+                    <textarea name="post_order_note" rows="4" maxlength="2000" autocomplete="off"
+                              class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none"
+                              placeholder="例：次回入荷は◯◯以降とのこと。代替品△△を提案された 等">{{ old('post_order_note', $order->post_order_note) }}</textarea>
+                    @error('post_order_note')
+                        <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                    <div class="flex flex-wrap items-center gap-3 mt-3">
+                        <button class="bg-accent hover:bg-accent-dark text-ink text-sm px-6 py-2 rounded-md">メモを保存</button>
+                        @if ($order->post_order_note_updated_at)
+                            <span class="text-xs text-gray-400">
+                                最終更新：{{ $order->postOrderNoteUpdatedBy?->name ?? '—' }} / {{ $order->post_order_note_updated_at->format('Y/m/d H:i') }}
+                            </span>
+                        @endif
+                    </div>
+                </form>
+            @else
+                @if ($order->post_order_note)
+                    <p class="whitespace-pre-wrap text-sm">{{ $order->post_order_note }}</p>
+                    @if ($order->post_order_note_updated_at)
+                        <p class="text-xs text-gray-400 mt-2">
+                            最終更新：{{ $order->postOrderNoteUpdatedBy?->name ?? '—' }} / {{ $order->post_order_note_updated_at->format('Y/m/d H:i') }}
+                        </p>
+                    @endif
+                @else
+                    <p class="text-sm text-gray-400">まだメモはありません。</p>
+                @endif
             @endif
         </div>
     @endif
@@ -315,7 +364,7 @@
             </thead>
             <tbody class="divide-y divide-gray-100">
                 @foreach ($order->items as $item)
-                    <tr>
+                    <tr class="hover:bg-accent-light/40 transition-colors">
                         <td class="px-4 py-3 font-medium">{{ $item->material_name }}</td>
                         <td class="px-4 py-3 text-gray-500">{{ $item->supplier_name ?: '—' }}</td>
                         <td class="px-4 py-3 text-gray-500">{{ $item->unit }}</td>

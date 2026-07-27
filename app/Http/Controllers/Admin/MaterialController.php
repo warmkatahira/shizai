@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Material;
 use App\Models\Supplier;
 use App\Support\MaterialCsv;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -14,12 +15,37 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class MaterialController extends Controller
 {
-    /** 資材一覧（カテゴリ順 → 品名順） */
-    public function index(): View
+    /** 資材一覧（カテゴリ順 → 品名順。業者・カテゴリ・品名・状態で絞り込み） */
+    public function index(Request $request): View
     {
-        $materials = Material::with(['supplier', 'category'])->sortedByCategory()->get();
+        return view('admin.materials.index', [
+            'materials' => $this->filteredMaterials($request)->get(),
+            // 絞り込みの選択肢は無効なものも含める（無効な業者・カテゴリで探したいこともある）
+            'suppliers' => Supplier::orderBy('name')->get(),
+            'categories' => Category::orderBy('sort_order')->orderBy('name')->get(),
+            'filters' => $request->only(['supplier_id', 'category_id', 'keyword', 'status']),
+        ]);
+    }
 
-        return view('admin.materials.index', compact('materials'));
+    /**
+     * 一覧・CSV出力で共通の絞り込みクエリ。
+     * 発注業者 / カテゴリ / 品名キーワード / 状態（有効・無効）。
+     * 管理側は無効な資材も一覧に出すので、状態は既定では絞らない。
+     */
+    private function filteredMaterials(Request $request): Builder
+    {
+        return Material::with(['supplier', 'category'])
+            ->when($request->filled('supplier_id'),
+                fn ($q) => $q->where('materials.supplier_id', $request->input('supplier_id')))
+            ->when($request->filled('category_id'),
+                fn ($q) => $q->where('materials.category_id', $request->input('category_id')))
+            ->when($request->filled('keyword'),
+                fn ($q) => $q->where('materials.name', 'like', '%' . $request->input('keyword') . '%'))
+            ->when($request->input('status') === 'active',
+                fn ($q) => $q->where('materials.is_active', true))
+            ->when($request->input('status') === 'inactive',
+                fn ($q) => $q->where('materials.is_active', false))
+            ->sortedByCategory();
     }
 
     /** 新規作成フォーム */
@@ -87,10 +113,13 @@ class MaterialController extends Controller
         );
     }
 
-    /** 資材マスタをCSVでダウンロード（Excel対応のBOM付きUTF-8） */
-    public function export(): StreamedResponse
+    /**
+     * 資材マスタをCSVでダウンロード（Excel対応のBOM付きUTF-8）。
+     * 一覧と同じ絞り込みを適用するので、いま表示している内容がそのまま出力される。
+     */
+    public function export(Request $request): StreamedResponse
     {
-        $materials = Material::with(['supplier', 'category'])->sortedByCategory()->get();
+        $materials = $this->filteredMaterials($request)->get();
 
         $filename = 'materials_' . now()->format('Ymd_His') . '.csv';
 

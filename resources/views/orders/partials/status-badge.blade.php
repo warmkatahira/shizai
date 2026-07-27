@@ -7,8 +7,10 @@
         \App\Models\Order::STATUS_RETURNED => 'bg-orange-100 text-orange-700',
         \App\Models\Order::STATUS_REJECTED => 'bg-red-100 text-red-700',
     ][$order->status] ?? 'bg-gray-100 text-gray-600';
+    // 詳細画面では ['large' => true] を渡して大きく表示する（一覧は小さいまま）
+    $sizeClasses = ($large ?? false) ? 'px-4 py-1.5 text-base font-medium' : 'px-2 py-0.5 text-xs';
 @endphp
-<span class="inline-block px-2 py-0.5 rounded text-xs {{ $classes }}">
+<span class="inline-block rounded {{ $sizeClasses }} {{ $classes }}">
     {{ $order->statusLabel() }}
     @if ($order->is_special_approval && ! $order->isRejected())
         <span class="opacity-70">(特例)</span>

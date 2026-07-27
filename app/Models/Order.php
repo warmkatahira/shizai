@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'is_special_approval', 'special_reason',
     'reject_reason', 'rejected_by',
     'return_reason', 'returned_by', 'returned_at',
+    'post_order_note', 'post_order_note_updated_by', 'post_order_note_updated_at',
 ])]
 class Order extends Model
 {
@@ -46,6 +47,7 @@ class Order extends Model
             'reviewed_at' => 'datetime',
             'ordered_at' => 'datetime',
             'returned_at' => 'datetime',
+            'post_order_note_updated_at' => 'datetime',
             'desired_delivery_date' => 'date',
             'is_special_approval' => 'boolean',
         ];
@@ -54,7 +56,7 @@ class Order extends Model
     /** 発注書に印字する発注NO（orders の連番） */
     public function purchaseOrderNo(): string
     {
-        return (string) $this->id;
+        return '#' . $this->id;
     }
 
     /** 発注先の業者（1申請＝1業者） */
@@ -103,6 +105,12 @@ class Order extends Model
     public function returnedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'returned_by');
+    }
+
+    /** 発注後メモを最後に更新した人 */
+    public function postOrderNoteUpdatedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'post_order_note_updated_by');
     }
 
     /** 明細 */
@@ -220,6 +228,16 @@ class Order extends Model
 
         return $user->isBackOffice()
             || ($user->isSales() && $user->office_id === $this->office_id);
+    }
+
+    /**
+     * 発注後メモを更新できるか。
+     * 発注済（＝実際に業者へ発注した後）で、総務・管理者なら誰でも更新できる。
+     * 閲覧は全員できる（このメソッドは更新可否だけを見る）。
+     */
+    public function canUpdatePostOrderNote(User $user): bool
+    {
+        return $this->isOrdered() && $user->canIssuePurchaseOrder();
     }
 
     /** 合計金額（参考単価 × 数量の合計。単価不明の明細は0扱い） */

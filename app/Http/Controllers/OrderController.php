@@ -459,12 +459,37 @@ class OrderController extends Controller
         return $items;
     }
 
+    /**
+     * 発注後メモを更新する（発注済のみ・総務/管理者）。
+     * 業者から言われたこと等を残す自由記入メモ。閲覧は全員だが更新はここで絞る。
+     */
+    public function updatePostOrderNote(Request $request, Order $order): RedirectResponse
+    {
+        $user = $request->user();
+        abort_unless($order->canUpdatePostOrderNote($user), 403, '発注者メモを更新する権限がありません。');
+
+        $validated = $request->validate([
+            'post_order_note' => ['nullable', 'string', 'max:2000'],
+        ], [], [
+            'post_order_note' => '発注者メモ',
+        ]);
+
+        $order->update([
+            'post_order_note' => $validated['post_order_note'] ?? null,
+            'post_order_note_updated_by' => $user->id,
+            'post_order_note_updated_at' => now(),
+        ]);
+
+        return redirect()->route('orders.show', $order)
+            ->with('status', '発注者メモを更新しました。');
+    }
+
     /** 発注申請の詳細 */
     public function show(Request $request, Order $order): View
     {
         $this->authorizeView($request, $order);
 
-        $order->load(['office', 'supplier', 'requester', 'managerApprover', 'reviewer', 'rejectedBy', 'returnedBy', 'items']);
+        $order->load(['office', 'supplier', 'requester', 'managerApprover', 'reviewer', 'rejectedBy', 'returnedBy', 'orderedBy', 'postOrderNoteUpdatedBy', 'items']);
 
         $user = $request->user();
 
@@ -477,6 +502,7 @@ class OrderController extends Controller
             'reject' => $order->canBeRejectedBy($user),
             'edit' => $order->canBeEditedBy($user),
             'delete' => $order->canBeDeletedBy($user),
+            'updatePostOrderNote' => $order->canUpdatePostOrderNote($user),
         ];
 
         return view('orders.show', [
