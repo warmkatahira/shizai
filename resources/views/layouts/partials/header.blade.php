@@ -43,6 +43,15 @@
 
         {{-- ナビ（PC） --}}
         <nav class="hidden md:flex items-center gap-1 ml-3 text-sm">
+            {{-- 発注（新規申請）は営業所の主要動作。目立つCTAとして先頭に置く --}}
+            @if ($user->isSales())
+                <a href="{{ route('orders.create') }}"
+                   class="inline-flex items-center gap-1 bg-accent hover:bg-accent-dark text-ink font-medium px-3 py-1.5 rounded-full transition"
+                   @if (request()->routeIs('orders.create')) aria-current="page" @endif>
+                    <span aria-hidden="true" class="text-base leading-none">＋</span>発注
+                </a>
+            @endif
+
             <a href="{{ route('orders.index') }}"
                class="px-3 py-1.5 rounded-full transition {{ $pill($current['orders']) }}"
                @if ($current['orders']) aria-current="page" @endif>発注申請</a>
@@ -127,6 +136,10 @@
                 <div class="absolute left-4 right-4 top-full mt-2 rounded-2xl border border-gray-200 bg-white p-2 shadow-xl shadow-ink/5">
                     <p class="px-3 pt-1 pb-2 text-xs text-gray-400 sm:hidden">{{ $user->name }}</p>
 
+                    @if ($user->isSales())
+                        <a href="{{ route('orders.create') }}"
+                           class="block rounded-lg px-3 py-2 text-sm bg-accent hover:bg-accent-dark text-ink font-medium mb-1">＋ 発注</a>
+                    @endif
                     <a href="{{ route('orders.index') }}"
                        class="block rounded-lg px-3 py-2 text-sm {{ $current['orders'] ? 'bg-accent-light text-accent-strong font-medium' : 'text-gray-600 hover:bg-gray-50' }}">発注申請</a>
                     <a href="{{ route('reports.index') }}"
