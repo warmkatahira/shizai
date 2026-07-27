@@ -12,7 +12,7 @@ class UnitSeeder extends Seeder
 {
     public function run(): void
     {
-        $names = ['枚', 'ケース', '本', '個', '箱', '巻', 'セット', 'ロール', 'm', 'kg'];
+        $names = ['枚', 'ケース', '本', '個', '箱', '巻'];
 
         foreach ($names as $i => $name) {
             Unit::create([
