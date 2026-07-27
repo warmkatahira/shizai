@@ -10,9 +10,9 @@
 body,
 body *:not(html):not(style):not(br):not(tr):not(code) {
     box-sizing: border-box;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans',
-        'Hiragino Kaku Gothic ProN', Meiryo, Roboto, Helvetica, Arial, sans-serif,
-        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+    font-family: 'Kosugi Maru', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+        'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, Roboto, Helvetica, Arial,
+        sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
     position: relative;
 }
 

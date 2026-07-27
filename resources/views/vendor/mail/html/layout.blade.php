@@ -7,6 +7,11 @@
 <meta name="color-scheme" content="light">
 <meta name="supported-color-schemes" content="light">
 <style>
+/* アプリと同じ丸ゴシック（Kosugi Maru）。Web フォントを解釈する
+   Apple Mail 等でのみ適用され、Gmail/Outlook は無視して端末標準の
+   ゴシックにフォールバックする（theme の font-family 参照）。 */
+@import url('https://fonts.bunny.net/css?family=kosugi-maru:400');
+
 @media only screen and (max-width: 600px) {
 .inner-body {
 width: 100% !important;
