@@ -11,6 +11,7 @@ use App\Support\MaterialCsv;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -60,7 +61,13 @@ class MaterialController extends Controller
     /** 登録 */
     public function store(Request $request): RedirectResponse
     {
-        Material::create($this->validateData($request));
+        $data = $this->validateData($request);
+
+        if ($path = $this->uploadedImagePath($request)) {
+            $data['image_path'] = $path;
+        }
+
+        Material::create($data);
 
         return redirect()->route('admin.materials.index')->with('status', '資材を登録しました。');
     }
@@ -76,7 +83,19 @@ class MaterialController extends Controller
     /** 更新 */
     public function update(Request $request, Material $material): RedirectResponse
     {
-        $material->update($this->validateData($request));
+        $data = $this->validateData($request);
+
+        if ($path = $this->uploadedImagePath($request)) {
+            // 差し替え：古い画像は消す
+            $this->deleteImage($material->image_path);
+            $data['image_path'] = $path;
+        } elseif ($request->boolean('remove_image')) {
+            // 「画像を削除」にチェック
+            $this->deleteImage($material->image_path);
+            $data['image_path'] = null;
+        }
+
+        $material->update($data);
 
         return redirect()->route('admin.materials.index')->with('status', '資材を更新しました。');
     }
@@ -84,9 +103,35 @@ class MaterialController extends Controller
     /** 削除 */
     public function destroy(Material $material): RedirectResponse
     {
+        $this->deleteImage($material->image_path);
         $material->delete();
 
         return redirect()->route('admin.materials.index')->with('status', '資材を削除しました。');
+    }
+
+    /**
+     * アップロードされた画像を検証して public ディスクに保存し、保存パスを返す。
+     * ファイルが無ければ null。
+     */
+    private function uploadedImagePath(Request $request): ?string
+    {
+        $request->validate([
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+        ], [], ['image' => '画像']);
+
+        if (! $request->hasFile('image')) {
+            return null;
+        }
+
+        return $request->file('image')->store('materials', 'public');
+    }
+
+    /** public ディスク上の画像を削除する（パスが無ければ何もしない） */
+    private function deleteImage(?string $path): void
+    {
+        if ($path) {
+            Storage::disk('public')->delete($path);
+        }
     }
 
     /** フォームの選択肢（業者・カテゴリ・単位） */

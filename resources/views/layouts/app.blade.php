@@ -34,6 +34,15 @@
         </footer>
     </div>
 
+    {{-- 画像の拡大表示（ライトボックス）。data-zoom を付けた画像をクリックすると開く。
+         背景クリック・✕・Esc で閉じる。JSフレームワークは使わない。 --}}
+    <div id="image-lightbox" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 p-4 cursor-zoom-out"
+         role="dialog" aria-modal="true" aria-hidden="true">
+        <img src="" alt="" class="max-w-full max-h-[90vh] rounded-lg shadow-2xl">
+        <button type="button" data-lightbox-close aria-label="閉じる"
+                class="absolute top-4 right-4 grid place-items-center w-10 h-10 rounded-full bg-white/90 text-ink text-lg hover:bg-white">✕</button>
+    </div>
+
     {{--
         data-auto-submit を付けた検索フォームは、条件を変えた時点で自動的に検索する。
         change イベントを使うので、テキスト入力は「Enter」か「フォーカスを外したとき」だけ発火し、
@@ -118,6 +127,46 @@
                     }
                 });
             });
+        });
+
+        // 画像の拡大表示（ライトボックス）
+        const lightbox = document.getElementById('image-lightbox');
+        const lightboxImg = lightbox ? lightbox.querySelector('img') : null;
+
+        const openLightbox = (src, alt) => {
+            if (! lightbox) return;
+            lightboxImg.src = src;
+            lightboxImg.alt = alt || '';
+            lightbox.classList.remove('hidden');
+            lightbox.classList.add('flex');
+            lightbox.setAttribute('aria-hidden', 'false');
+        };
+
+        const closeLightbox = () => {
+            if (! lightbox) return;
+            lightbox.classList.add('hidden');
+            lightbox.classList.remove('flex');
+            lightbox.setAttribute('aria-hidden', 'true');
+            lightboxImg.src = '';
+        };
+
+        document.addEventListener('click', (e) => {
+            const zoom = e.target.closest('[data-zoom]');
+            if (zoom) {
+                e.preventDefault();
+                openLightbox(zoom.getAttribute('data-zoom-src') || zoom.getAttribute('src'), zoom.getAttribute('alt'));
+                return;
+            }
+            // 背景（オーバーレイ自身）か ✕ をクリックしたら閉じる
+            if (e.target === lightbox || e.target.closest('[data-lightbox-close]')) {
+                closeLightbox();
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeLightbox();
+            }
         });
     </script>
 </body>

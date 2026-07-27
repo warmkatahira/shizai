@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * 資材マスタモデル。
@@ -14,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[Fillable([
     'name', 'category_id', 'supplier_id',
     'length_mm', 'width_mm', 'height_mm',
-    'unit_id', 'unit_price', 'min_lot_qty', 'has_imprint', 'note', 'is_active',
+    'unit_id', 'unit_price', 'min_lot_qty', 'has_imprint', 'note', 'is_active', 'image_path',
 ])]
 class Material extends Model
 {
@@ -107,6 +108,12 @@ class Material extends Model
     public function unit(): BelongsTo
     {
         return $this->belongsTo(Unit::class);
+    }
+
+    /** 画像の公開URL（未登録なら null） */
+    public function imageUrl(): ?string
+    {
+        return $this->image_path ? Storage::disk('public')->url($this->image_path) : null;
     }
 
     /**

@@ -95,6 +95,23 @@
                   class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">{{ old('note', $material->note) }}</textarea>
     </div>
 
+    <div>
+        <span class="block text-sm font-medium text-gray-700 mb-1">画像</span>
+        @if ($material->imageUrl())
+            <div class="flex items-start gap-4 mb-2">
+                <img src="{{ $material->imageUrl() }}" alt="{{ $material->name }}" data-zoom
+                     class="w-24 h-24 object-cover rounded-md border border-gray-200 cursor-zoom-in transition hover:opacity-80">
+                <label class="flex items-center gap-2 text-sm text-gray-600">
+                    <input type="checkbox" name="remove_image" value="1" class="rounded border-gray-300">
+                    画像を削除する
+                </label>
+            </div>
+        @endif
+        <input autocomplete="off" id="image" name="image" type="file" accept="image/jpeg,image/png,image/webp"
+               class="block w-full text-sm text-gray-600 file:mr-3 file:rounded-md file:border-0 file:bg-accent file:px-4 file:py-2 file:text-ink hover:file:bg-accent-dark">
+        <p class="text-xs text-gray-400 mt-1">JPEG / PNG / WebP、5MBまで。{{ $material->imageUrl() ? '選ぶと差し替わります。' : '' }}</p>
+    </div>
+
     <label class="flex items-center gap-2 text-sm text-gray-700">
         <input autocomplete="off" type="checkbox" name="has_imprint" value="1" class="rounded border-gray-300"
                {{ old('has_imprint', $material->has_imprint ?? false) ? 'checked' : '' }}>
