@@ -68,6 +68,10 @@
                class="inline-flex items-center gap-1 bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-700 text-sm px-4 py-2 rounded-md">
                 <span aria-hidden="true">✕</span> 条件クリア
             </a>
+            <a href="{{ route('admin.logs.export', $filters) }}" data-no-loader
+               class="ml-auto bg-green-600 hover:bg-green-700 text-white text-sm px-5 py-2 rounded-md">
+                📥 CSVダウンロード
+            </a>
         </div>
     </form>
 

@@ -89,6 +89,7 @@ Route::middleware('auth')->group(function () {
         Route::middleware('role:admin')->group(function () {
             Route::resource('users', UserController::class)->except('show');
             Route::get('logs', [ActivityLogController::class, 'index'])->name('logs.index');
+            Route::get('logs-export', [ActivityLogController::class, 'export'])->name('logs.export');
         });
     });
 });

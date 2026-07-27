@@ -6,7 +6,9 @@
         'orders' => request()->routeIs('orders.*'),
         'reports' => request()->routeIs('reports.*'),
         'catalog' => request()->routeIs('materials.*'),
-        'masters' => request()->routeIs('admin.*'),
+        // 操作ログは独立タブなので、マスタ管理の現在地判定からは除く
+        'masters' => request()->routeIs('admin.*') && ! request()->routeIs('admin.logs.*'),
+        'logs' => request()->routeIs('admin.logs.*'),
     ];
 
     // ナビのリンクの見た目。現在地はベージュの塗り、それ以外はホバーでうっすら反応する
@@ -21,7 +23,6 @@
         ['label' => '業者', 'route' => 'admin.suppliers.index'],
         ['label' => '営業所', 'route' => 'admin.offices.index'],
         ['label' => 'ユーザー', 'route' => 'admin.users.index', 'adminOnly' => true],
-        ['label' => '操作ログ', 'route' => 'admin.logs.index', 'adminOnly' => true],
     ])->reject(fn ($item) => ($item['adminOnly'] ?? false) && ! $user->isAdmin());
 @endphp
 
@@ -79,6 +80,13 @@
                         @endforeach
                     </div>
                 </details>
+            @endif
+
+            {{-- 操作ログはマスタではないので、マスタ管理の右に独立タブとして出す（管理者のみ） --}}
+            @if ($user->isAdmin())
+                <a href="{{ route('admin.logs.index') }}"
+                   class="px-3 py-1.5 rounded-full transition {{ $pill($current['logs']) }}"
+                   @if ($current['logs']) aria-current="page" @endif>操作ログ</a>
             @endif
         </nav>
 
@@ -139,6 +147,12 @@
                                 {{ $item['label'] }}
                             </a>
                         @endforeach
+                    @endif
+
+                    {{-- 操作ログ（管理者のみ。マスタとは別枠） --}}
+                    @if ($user->isAdmin())
+                        <a href="{{ route('admin.logs.index') }}"
+                           class="block rounded-lg px-3 py-2 text-sm mt-1 {{ $current['logs'] ? 'bg-accent-light text-accent-strong font-medium' : 'text-gray-600 hover:bg-gray-50' }}">操作ログ</a>
                     @endif
                 </div>
             </details>
