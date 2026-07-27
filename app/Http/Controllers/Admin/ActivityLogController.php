@@ -37,8 +37,10 @@ class ActivityLogController extends Controller
         return view('admin.logs.index', [
             'logs' => $logs,
             'categories' => ActivityLog::CATEGORIES,
-            // 操作者プルダウンは有効な全ユーザー（まだログが無い人でも選べる）
-            'users' => User::where('is_active', true)->orderBy('name')->get(),
+            // 操作者プルダウンは有効な全ユーザー（まだログが無い人でも選べる）。
+            // 権限ごとにグループ分けするので role で束ねる（各グループ内は氏名順）
+            'usersByRole' => User::where('is_active', true)->orderBy('name')->get()->groupBy('role'),
+            'roleLabels' => User::ROLE_LABELS,
             'filters' => $request->only(['category', 'user_id', 'keyword', 'date_from', 'date_to']),
         ]);
     }

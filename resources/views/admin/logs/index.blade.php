@@ -36,8 +36,15 @@
                 <label class="block text-xs text-gray-500 mb-1">操作者</label>
                 <select name="user_id" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-accent-dark">
                     <option value="">すべて</option>
-                    @foreach ($users as $u)
-                        <option value="{{ $u->id }}" {{ (string) ($filters['user_id'] ?? '') === (string) $u->id ? 'selected' : '' }}>{{ $u->name }}</option>
+                    {{-- 権限ごとにグループ分けして並べる（管理者 → 総務 → 営業所の順） --}}
+                    @foreach ($roleLabels as $role => $roleLabel)
+                        @if (($usersByRole[$role] ?? collect())->isNotEmpty())
+                            <optgroup label="{{ $roleLabel }}">
+                                @foreach ($usersByRole[$role] as $u)
+                                    <option value="{{ $u->id }}" {{ (string) ($filters['user_id'] ?? '') === (string) $u->id ? 'selected' : '' }}>{{ $u->name }}</option>
+                                @endforeach
+                            </optgroup>
+                        @endif
                     @endforeach
                 </select>
             </div>
