@@ -36,8 +36,10 @@ class LoginController extends Controller
             'password' => 'パスワード',
         ]);
 
-        // 有効なユーザーのみログイン可能
-        if (! Auth::attempt([...$credentials, 'is_active' => true], $request->boolean('remember'))) {
+        // 有効なユーザーのみログイン可能。
+        // 「ログイン状態を保持する」は使わない（営業所の申請用アカウントは共通で使い回すため、
+        // 共有PCで長期間ログインしたままになるのを避ける）。セッションの有効期間だけで扱う。
+        if (! Auth::attempt([...$credentials, 'is_active' => true])) {
             throw ValidationException::withMessages([
                 'login_id' => 'ログインIDまたはパスワードが正しくありません。',
             ]);
