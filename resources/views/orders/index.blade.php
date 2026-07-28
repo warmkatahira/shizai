@@ -86,11 +86,11 @@
         </div>
     </form>
 
-    <div class="bg-white shadow rounded-lg">
+    <div class="bg-white shadow rounded-lg overflow-auto max-h-[70vh]">
         <table class="w-full text-sm">
-            {{-- スクロールしても列名が見えるよう固定する。ページごとスクロールする表なので、
-                 固定ヘッダー（h-16）に隠れないよう top-16 で止める --}}
-            <thead class="bg-gray-50 text-gray-500 text-left sticky top-16 z-10 shadow-[0_1px_0_0_var(--color-gray-200)]">
+            {{-- スクロールしても列名が見えるよう固定する。枠内スクロール（overflow-auto）なので
+                 sticky の基準はこの枠。マスタ系と同じく top-0 で枠の上端に貼り付ける --}}
+            <thead class="bg-gray-50 text-gray-500 text-left sticky top-0 z-10 shadow-[0_1px_0_0_var(--color-gray-200)]">
                 <tr>
                     <th class="px-4 py-3">申請番号</th>
                     <th class="px-4 py-3">申請日</th>
