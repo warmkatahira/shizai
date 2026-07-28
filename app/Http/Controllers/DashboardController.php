@@ -27,7 +27,7 @@ class DashboardController extends Controller
     /**
      * 「あなたが対応すべきこと」。役割ごとに、いま手を動かすべき件数とリンク先を返す。
      *
-     * @return array<int, array{label: string, count: int, query: array, tone: string}>
+     * @return array<int, array{label: string, count: int, query: array}>
      */
     private function todos(User $user): array
     {
@@ -40,7 +40,6 @@ class DashboardController extends Controller
                 'count' => Order::where('office_id', $user->office_id)
                     ->where('status', Order::STATUS_PENDING_MANAGER)->count(),
                 'query' => ['status' => Order::STATUS_PENDING_MANAGER],
-                'tone' => 'amber',
             ];
         }
 
@@ -50,13 +49,11 @@ class DashboardController extends Controller
                 'label' => '総務承認待ち',
                 'count' => Order::where('status', Order::STATUS_PENDING_AFFAIRS)->count(),
                 'query' => ['status' => Order::STATUS_PENDING_AFFAIRS],
-                'tone' => 'blue',
             ];
             $todos[] = [
                 'label' => '発注待ち（発注書未作成）',
                 'count' => Order::where('status', Order::STATUS_PENDING_ORDER)->count(),
                 'query' => ['status' => Order::STATUS_PENDING_ORDER],
-                'tone' => 'accent',
             ];
         }
 
@@ -67,7 +64,6 @@ class DashboardController extends Controller
                 'count' => Order::where('office_id', $user->office_id)
                     ->where('status', Order::STATUS_RETURNED)->count(),
                 'query' => ['status' => Order::STATUS_RETURNED],
-                'tone' => 'orange',
             ];
         }
 
