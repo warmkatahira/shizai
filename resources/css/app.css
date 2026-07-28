@@ -91,6 +91,142 @@
 }
 
 /**
+ * ------------------------------------------------------------------
+ * アニメーション
+ * ------------------------------------------------------------------
+ * 業務システムなので「気づかない程度に効く」ものだけ。動きは 0.3秒以内、
+ * 待ち時間が増える演出はしない。
+ *
+ * 動きを抑える設定（prefers-reduced-motion: reduce）の人には全部止めるため、
+ * このセクションは丸ごと no-preference の中に入れてある。
+ */
+@media (prefers-reduced-motion: no-preference) {
+    /* ページ遷移のクロスフェード。対応ブラウザだけで効き、非対応は今までどおり瞬時に切り替わる */
+    @view-transition {
+        navigation: auto;
+    }
+
+    /* ヘッダーは遷移しても同じ位置にあるので、フェードさせず据え置く */
+    header {
+        view-transition-name: app-header;
+    }
+
+    /* 下から少し持ち上げて出す。8px・0.28秒より大きくすると安っぽく見える */
+    @keyframes rise-in {
+        from {
+            opacity: 0;
+            translate: 0 8px;
+        }
+    }
+
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+        }
+    }
+
+    /* .stagger を付けた入れ物の直下の子を、少しずつ遅らせて出す */
+    .stagger > * {
+        animation: rise-in 0.28s ease-out both;
+    }
+
+    .stagger > *:nth-child(2) { animation-delay: 0.05s; }
+    .stagger > *:nth-child(3) { animation-delay: 0.1s; }
+    .stagger > *:nth-child(4) { animation-delay: 0.15s; }
+    .stagger > *:nth-child(5) { animation-delay: 0.2s; }
+    .stagger > *:nth-child(n + 6) { animation-delay: 0.25s; }
+
+    /* 表の行。件数が多いので遅延はつけず、まとめてふわっと出すだけ */
+    tbody tr {
+        animation: fade-in 0.3s ease-out both;
+    }
+
+    /* ヘッダーのドロップダウン。開くときにふわっと降りてくる
+       （閉じるときは details が中身を消してしまうのでアニメーションできない） */
+    details[data-menu][open] > div:not([hidden]) {
+        animation: rise-in 0.18s ease-out both;
+    }
+
+    /* ボタンの押した感じ */
+    button,
+    input[type='submit'] {
+        transition: scale 0.08s ease;
+    }
+
+    button:active,
+    input[type='submit']:active {
+        scale: 0.98;
+    }
+
+    /* フラッシュメッセージ：上から出て、6秒後に自分で畳まれて消える */
+    .flash-message {
+        animation: rise-in 0.3s ease-out both, flash-out 0.5s ease-in 6s both;
+        overflow: hidden;
+        max-height: 12rem; /* 0 へ縮めるので、始点の高さが要る（none からは補間できない） */
+    }
+
+    @keyframes flash-out {
+        to {
+            opacity: 0;
+            max-height: 0;
+            margin-bottom: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            border-width: 0;
+        }
+    }
+
+    /* 対応が必要なものが残っているときだけ、リングが1回だけ広がって注意を引く（3回で止める） */
+    @keyframes pulse-ring {
+        from {
+            box-shadow: 0 0 0 0 rgba(143, 106, 80, 0.35);
+        }
+        to {
+            box-shadow: 0 0 0 12px rgba(143, 106, 80, 0);
+        }
+    }
+
+    /* 擬似要素に持たせる。要素そのものは .stagger の登場アニメーションを使うので、
+       同じ element に animation を2回指定すると片方が消えてしまう */
+    .pulse-ring {
+        position: relative;
+    }
+
+    .pulse-ring::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        pointer-events: none;
+        animation: pulse-ring 2.4s ease-out 0.3s 3;
+    }
+
+    /* スクロールしたときだけヘッダーに影を出す（スクロール駆動アニメーション。JS不要） */
+    @supports (animation-timeline: scroll()) {
+        header {
+            animation: header-shadow linear both;
+            animation-timeline: scroll();
+            animation-range: 0 80px;
+        }
+
+        @keyframes header-shadow {
+            to {
+                box-shadow: 0 1px 12px rgba(52, 37, 31, 0.08);
+            }
+        }
+    }
+}
+
+/* 表の行にカーソルを乗せたら、左端にアクセント色のバーを出す（動きの設定に関係なく出す） */
+tbody tr td:first-child {
+    transition: box-shadow 0.15s ease;
+}
+
+tbody tr:hover td:first-child {
+    box-shadow: inset 2px 0 0 0 var(--color-accent-strong);
+}
+
+/**
  * ページ遷移中のローディング表示（画面全体の暗幕＋中央のスピナー）。
  * リンク遷移・フォーム送信で表示し、次のページに切り替わるとDOMごと差し替わって自然に消える。
  * 背景は半透明のグレーで画面を薄く覆い、中央にアクセント色の回転スピナーを出す。

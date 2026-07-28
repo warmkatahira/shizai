@@ -20,11 +20,12 @@
          タイルは全部同じ大きさ（grid-cols-2 に揃え、中身の量で高さが変わらないよう h-full） --}}
     @if (! empty($todos))
         <h2 class="text-sm font-bold text-gray-500 mb-3">対応が必要なもの</h2>
-        <div class="grid gap-4 sm:grid-cols-2 mb-10">
+        <div class="stagger grid gap-4 sm:grid-cols-2 mb-10">
             @foreach ($todos as $todo)
+                {{-- 残っているものだけ、読み込み直後にリングを3回だけ広げて気づかせる（pulse-ring） --}}
                 <a href="{{ route('orders.index', $todo['query']) }}"
                    class="group h-full flex flex-col justify-between bg-white rounded-2xl ring-1 ring-ink/5 px-6 py-5
-                          transition hover:-translate-y-px hover:ring-accent-dark">
+                          transition hover:-translate-y-px hover:ring-accent-dark {{ $todo['count'] > 0 ? 'pulse-ring' : '' }}">
                     <span class="flex items-center gap-2 text-sm text-gray-600">
                         {{ $todo['label'] }}
                         <svg class="w-4 h-4 text-gray-300 transition group-hover:translate-x-0.5 group-hover:text-accent-strong"
@@ -35,7 +36,7 @@
                     {{-- 数字が主役。tabular-nums で桁が増えても位置がぶれないようにする。
                          色はステータスごとに分けず、パレットのアクセント（accent-strong）で統一する --}}
                     <span class="mt-3 text-4xl leading-none font-bold tabular-nums {{ $todo['count'] > 0 ? 'text-accent-strong' : 'text-gray-300' }}">
-                        {{ number_format($todo['count']) }}<span class="text-base font-normal text-gray-400 ml-1.5">件</span>
+                        <span data-countup="{{ $todo['count'] }}">{{ number_format($todo['count']) }}</span><span class="text-base font-normal text-gray-400 ml-1.5">件</span>
                     </span>
                 </a>
             @endforeach
@@ -46,18 +47,18 @@
     <h2 class="text-sm font-bold text-gray-500 mb-3">今月の状況</h2>
     <div class="grid gap-4 mb-8">
         {{-- KPIは横一列の細い帯にして、主役（対応が必要なもの）とぶつからないようにする --}}
-        <div class="grid grid-cols-3 gap-4">
+        <div class="stagger grid grid-cols-3 gap-4">
             <div class="bg-white rounded-2xl ring-1 ring-ink/5 px-5 py-4">
                 <p class="text-xs text-gray-500">今月の発注件数</p>
-                <p class="mt-1 text-xl font-bold text-ink tabular-nums">{{ number_format($kpis['count']) }}<span class="text-sm font-normal text-gray-400 ml-0.5">件</span></p>
+                <p class="mt-1 text-xl font-bold text-ink tabular-nums"><span data-countup="{{ $kpis['count'] }}">{{ number_format($kpis['count']) }}</span><span class="text-sm font-normal text-gray-400 ml-0.5">件</span></p>
             </div>
             <div class="bg-white rounded-2xl ring-1 ring-ink/5 px-5 py-4">
                 <p class="text-xs text-gray-500">今月の発注金額</p>
-                <p class="mt-1 text-xl font-bold text-ink tabular-nums">{{ \App\Support\Money::yen($kpis['amount']) }}</p>
+                <p class="mt-1 text-xl font-bold text-ink tabular-nums"><span data-countup="{{ (int) $kpis['amount'] }}" data-countup-prefix="¥">{{ \App\Support\Money::yen($kpis['amount']) }}</span></p>
             </div>
             <div class="bg-white rounded-2xl ring-1 ring-ink/5 px-5 py-4">
                 <p class="text-xs text-gray-500">今月の申請件数</p>
-                <p class="mt-1 text-xl font-bold text-ink tabular-nums">{{ number_format($kpis['applied']) }}<span class="text-sm font-normal text-gray-400 ml-0.5">件</span></p>
+                <p class="mt-1 text-xl font-bold text-ink tabular-nums"><span data-countup="{{ $kpis['applied'] }}">{{ number_format($kpis['applied']) }}</span><span class="text-sm font-normal text-gray-400 ml-0.5">件</span></p>
             </div>
         </div>
 

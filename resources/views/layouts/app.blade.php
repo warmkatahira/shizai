@@ -18,9 +18,9 @@
         {{-- 本文 --}}
         <main class="flex-1">
             <div class="max-w-6xl mx-auto px-4 py-8">
-                {{-- フラッシュメッセージ --}}
+                {{-- フラッシュメッセージ（6秒後に自分で畳まれて消える。見た目は app.css の .flash-message） --}}
                 @if (session('status'))
-                    <div class="mb-4 rounded-md bg-green-50 border border-green-200 px-4 py-3 text-green-800">
+                    <div class="flash-message mb-4 rounded-md bg-green-50 border border-green-200 px-4 py-3 text-green-800">
                         {{ session('status') }}
                     </div>
                 @endif
@@ -51,9 +51,21 @@
         // 次のページに切り替わるとDOMごと差し替わって自然に消える。
         // ファイルのダウンロード（CSV・発注書PDF）はページが変わらず消えないので、
         // data-no-loader を付けた要素からは出さない。
+        // すぐ切り替わるページでは暗幕を出さない（一瞬の点滅がうるさく、ページ遷移の
+        // クロスフェードとも噛み合わないため）。250ms を超えて待たされたときだけ出す。
         const pageLoader = document.getElementById('page-loader');
-        const showLoader = () => pageLoader && pageLoader.classList.add('is-active');
-        const hideLoader = () => pageLoader && pageLoader.classList.remove('is-active');
+        let loaderTimer = null;
+
+        const showLoader = () => {
+            if (! pageLoader || loaderTimer) return;
+            loaderTimer = setTimeout(() => pageLoader.classList.add('is-active'), 250);
+        };
+
+        const hideLoader = () => {
+            clearTimeout(loaderTimer);
+            loaderTimer = null;
+            pageLoader && pageLoader.classList.remove('is-active');
+        };
 
         document.querySelectorAll('form[data-auto-submit]').forEach((form) => {
             form.addEventListener('change', () => {
@@ -125,6 +137,40 @@
                 });
             });
         });
+
+        // 数字のカウントアップ。data-countup="1234" を付けた要素が 0 から回る。
+        // 終わったら元のテキスト（¥や小数を含む整形済みの文字列）に戻すので、表示は必ず正確になる。
+        const animateCountUp = (el) => {
+            const target = parseFloat(el.dataset.countup);
+            const finalText = el.textContent;
+
+            if (! isFinite(target) || target <= 0) {
+                return;
+            }
+
+            const prefix = el.dataset.countupPrefix || '';
+            const duration = 600;
+            const startedAt = performance.now();
+
+            const step = (now) => {
+                const progress = Math.min(1, (now - startedAt) / duration);
+                // 最後にゆっくり止まる（ease-out）
+                const eased = 1 - Math.pow(1 - progress, 3);
+
+                if (progress < 1) {
+                    el.textContent = prefix + Math.round(target * eased).toLocaleString();
+                    requestAnimationFrame(step);
+                } else {
+                    el.textContent = finalText;
+                }
+            };
+
+            requestAnimationFrame(step);
+        };
+
+        if (! window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            document.querySelectorAll('[data-countup]').forEach(animateCountUp);
+        }
 
         // 画像の拡大表示（ライトボックス）
         const lightbox = document.getElementById('image-lightbox');

@@ -170,6 +170,8 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
   - 営業所・総務が「どの業者に何がいくらであるか」を確認するための読み取り専用。編集は管理者のみ
   - ナビには管理者以外に表示（管理者はマスタ管理の「資材」から見られるため）
 - `/admin/{offices,suppliers,categories,materials}` マスタ管理（**管理者と総務**）
+  - 資材の **状態は初期値が「有効」**（普段使うのは有効な資材だけ）。CSV出力にも同じ初期値がかかる。
+    「すべて」は空文字で送られて `null` になるので、値ではなく**キーの有無**で初回表示か判定する（`applyDefaultStatus`）
   - 資材だけ **CSV出力・CSV取り込み**ができる（`/admin/materials-export` / `/admin/materials-import`。ロジックは `App\Support\MaterialCsv`）
     - **出したCSVをExcelで直して戻す**運用。突合は**1列目のID**：IDが入っていれば更新、空なら新規追加
       （品名で突合すると、品名を直したいときに「別の資材の新規追加」になってしまうため）
@@ -218,6 +220,13 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
   発注申請一覧もマスタ系も同じ。`sticky` の基準は `overflow` を持つ親なので、枠内スクロールなら `top-0` でその枠の上端に貼り付く
   - `overflow-hidden` の中では sticky が効かないので、囲みに付けないこと
   - ページごとスクロールする表にする場合だけは、固定ヘッダー（`h-16`）に隠れないよう `top-16` が必要になる
+- **アニメーションは `resources/css/app.css` の「アニメーション」セクションに集約**。業務システムなので0.3秒以内・控えめに。
+  セクションごと `@media (prefers-reduced-motion: no-preference)` の中にあるので、動きを抑える設定の人には何も動かない
+  - ページ遷移のクロスフェードは `@view-transition { navigation: auto }`（対応ブラウザのみ。非対応は今までどおり）
+  - `.stagger` を付けた入れ物は、直下の子が少しずつ遅れて出る（ダッシュボードのタイル）
+  - `data-countup="123"` を付けた要素は0から数字が回る（`layouts/app.blade.php` の共通スクリプト）。
+    終わったら**元のテキストに戻す**ので、¥や小数を含む整形済みの表示が崩れない
+  - ページ遷移の暗幕（`#page-loader`）は**250ms待ってから**出す。すぐ切り替わる画面で点滅させないため
 - ページネーションのビューは `resources/views/vendor/pagination/` に取り込み済み。
   Laravel標準の「Showing X to Y of Z results」を消し、件数は呼び出し側で日本語表示している
 
