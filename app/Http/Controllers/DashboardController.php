@@ -102,8 +102,9 @@ class DashboardController extends Controller
     /**
      * 直近6ヶ月の発注金額推移（発注済・ordered_at 月別）。
      * 金額だけだと高額資材1件で跳ねるので、件数も一緒に返す。
+     * 申請件数（created_at 月別）は KPI タイルのスパークライン用。
      *
-     * @return array<int, array{label: string, amount: float, count: int, is_current: bool}>
+     * @return array<int, array{label: string, amount: float, count: int, applied: int, is_current: bool}>
      */
     private function amountTrend(?int $officeId): array
     {
@@ -123,6 +124,14 @@ class DashboardController extends Controller
             ->get()
             ->keyBy('ym');
 
+        // 申請件数は「申請日（created_at）」なので、発注済に限らず別で数える
+        $appliedRows = Order::where('created_at', '>=', $start)
+            ->when($officeId, fn ($q) => $q->where('office_id', $officeId))
+            ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as ym")
+            ->selectRaw('COUNT(*) as applied_count')
+            ->groupBy('ym')
+            ->pluck('applied_count', 'ym');
+
         // 6ヶ月ぶんの枠を作り、データが無い月は0で埋める
         $trend = [];
         for ($i = 0; $i < 6; $i++) {
@@ -133,6 +142,7 @@ class DashboardController extends Controller
                 'label' => $month->format('n') . '月',
                 'amount' => (float) ($row->amount ?? 0),
                 'count' => (int) ($row->orders_count ?? 0),
+                'applied' => (int) ($appliedRows[$key] ?? 0),
                 'is_current' => $key === $currentYm,
             ];
         }

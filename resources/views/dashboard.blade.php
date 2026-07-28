@@ -47,18 +47,28 @@
     <h2 class="text-sm font-bold text-gray-500 mb-3">今月の状況</h2>
     <div class="grid gap-4 mb-8">
         {{-- KPIは横一列の細い帯にして、主役（対応が必要なもの）とぶつからないようにする --}}
+        {{-- 数字の右に直近6ヶ月のミニ折れ線を添える（データは推移グラフと同じ $trend） --}}
         <div class="stagger grid grid-cols-3 gap-4">
             <div class="bg-white rounded-2xl ring-1 ring-ink/5 px-5 py-4">
                 <p class="text-xs text-gray-500">今月の発注件数</p>
-                <p class="mt-1 text-xl font-bold text-ink tabular-nums"><span data-countup="{{ $kpis['count'] }}">{{ number_format($kpis['count']) }}</span><span class="text-sm font-normal text-gray-400 ml-0.5">件</span></p>
+                <div class="mt-1 flex items-end justify-between gap-2">
+                    <p class="text-xl font-bold text-ink tabular-nums"><span data-countup="{{ $kpis['count'] }}">{{ number_format($kpis['count']) }}</span><span class="text-sm font-normal text-gray-400 ml-0.5">件</span></p>
+                    @include('dashboard._sparkline', ['values' => array_column($trend, 'count')])
+                </div>
             </div>
             <div class="bg-white rounded-2xl ring-1 ring-ink/5 px-5 py-4">
                 <p class="text-xs text-gray-500">今月の発注金額</p>
-                <p class="mt-1 text-xl font-bold text-ink tabular-nums"><span data-countup="{{ (int) $kpis['amount'] }}" data-countup-prefix="¥">{{ \App\Support\Money::yen($kpis['amount']) }}</span></p>
+                <div class="mt-1 flex items-end justify-between gap-2">
+                    <p class="text-xl font-bold text-ink tabular-nums"><span data-countup="{{ (int) $kpis['amount'] }}" data-countup-prefix="¥">{{ \App\Support\Money::yen($kpis['amount']) }}</span></p>
+                    @include('dashboard._sparkline', ['values' => array_column($trend, 'amount')])
+                </div>
             </div>
             <div class="bg-white rounded-2xl ring-1 ring-ink/5 px-5 py-4">
                 <p class="text-xs text-gray-500">今月の申請件数</p>
-                <p class="mt-1 text-xl font-bold text-ink tabular-nums"><span data-countup="{{ $kpis['applied'] }}">{{ number_format($kpis['applied']) }}</span><span class="text-sm font-normal text-gray-400 ml-0.5">件</span></p>
+                <div class="mt-1 flex items-end justify-between gap-2">
+                    <p class="text-xl font-bold text-ink tabular-nums"><span data-countup="{{ $kpis['applied'] }}">{{ number_format($kpis['applied']) }}</span><span class="text-sm font-normal text-gray-400 ml-0.5">件</span></p>
+                    @include('dashboard._sparkline', ['values' => array_column($trend, 'applied')])
+                </div>
             </div>
         </div>
 

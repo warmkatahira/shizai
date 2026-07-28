@@ -147,6 +147,35 @@
         animation: rise-in 0.18s ease-out both;
     }
 
+    /*
+     * SVGの線を「引く」アニメーション。
+     * dasharray に線の長さぶんを入れて全部隠し、dashoffset を0に戻して現す。
+     * 初期状態（隠す指定）もこの中に書いてあるので、動きを抑える設定の人には
+     * 最初から引かれた状態で見える。
+     */
+    .timeline-line,   /* 承認の経緯：段と段をつなぐ縦線（済んだ区間だけ） */
+    .spark-line,      /* KPIタイルのミニ折れ線 */
+    .check-circle,    /* フラッシュメッセージのチェック（丸） */
+    .check-mark {     /* 同（レ点） */
+        stroke-dasharray: 200;
+        stroke-dashoffset: 200;
+        animation: draw-stroke 0.5s ease-out both;
+    }
+
+    /* 縦線は短いので速く。遅延は呼び出し側で段ごとにずらす */
+    .timeline-line { animation-duration: 0.35s; }
+
+    /* 折れ線は少しゆっくり引く */
+    .spark-line { animation-duration: 0.9s; animation-delay: 0.2s; }
+
+    /* 丸を描いてから、追いかけてレ点を引く */
+    .check-circle { animation-duration: 0.45s; }
+    .check-mark { animation-duration: 0.35s; animation-delay: 0.25s; }
+
+    @keyframes draw-stroke {
+        to { stroke-dashoffset: 0; }
+    }
+
     /* ボタンの押した感じ */
     button,
     input[type='submit'] {

@@ -18,9 +18,15 @@
         {{-- 本文 --}}
         <main class="flex-1">
             <div class="max-w-6xl mx-auto px-4 py-8">
-                {{-- フラッシュメッセージ（6秒後に自分で畳まれて消える。見た目は app.css の .flash-message） --}}
+                {{-- フラッシュメッセージ（6秒後に自分で畳まれて消える。見た目は app.css の .flash-message）。
+                     チェックマークは丸→レ点の順に線が引かれる（SVGの stroke-dashoffset） --}}
                 @if (session('status'))
-                    <div class="flash-message mb-4 rounded-md bg-green-50 border border-green-200 px-4 py-3 text-green-800">
+                    <div class="flash-message mb-4 flex items-center gap-2.5 rounded-md bg-green-50 border border-green-200 px-4 py-3 text-green-800">
+                        <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle class="check-circle" cx="12" cy="12" r="10" opacity="0.35"/>
+                            <path class="check-mark" d="M7.2 12.4l3.3 3.3L16.9 9.3"/>
+                        </svg>
                         {{ session('status') }}
                     </div>
                 @endif
