@@ -20,6 +20,8 @@ class MaterialController extends Controller
     /** 資材一覧（カテゴリ順 → 品名順。業者・カテゴリ・品名・状態で絞り込み） */
     public function index(Request $request): View
     {
+        $this->applyDefaultStatus($request);
+
         return view('admin.materials.index', [
             'materials' => $this->filteredMaterials($request)->get(),
             // 絞り込みの選択肢は無効なものも含める（無効な業者・カテゴリで探したいこともある）
@@ -30,9 +32,22 @@ class MaterialController extends Controller
     }
 
     /**
+     * 状態の初期値。マスタ管理から開いた初回表示のときだけ「有効」にする
+     * （普段使うのは有効な資材だけなので、無効を混ぜて見せない）。
+     *
+     * 「すべて」を選ぶと status= が空で送られ、ConvertEmptyStringsToNull で null になるため、
+     * 値ではなく**キーの有無**で初回かどうかを判定する（発注一覧と同じやり方）。
+     */
+    private function applyDefaultStatus(Request $request): void
+    {
+        if (! $request->has('status')) {
+            $request->merge(['status' => 'active']);
+        }
+    }
+
+    /**
      * 一覧・CSV出力で共通の絞り込みクエリ。
      * 発注業者 / カテゴリ / 品名キーワード / 状態（有効・無効）。
-     * 管理側は無効な資材も一覧に出すので、状態は既定では絞らない。
      */
     private function filteredMaterials(Request $request): Builder
     {
@@ -166,6 +181,9 @@ class MaterialController extends Controller
      */
     public function export(Request $request): StreamedResponse
     {
+        // 画面で見えているものがそのままCSVに出るよう、一覧と同じ初期値を適用する
+        $this->applyDefaultStatus($request);
+
         $materials = $this->filteredMaterials($request)->get();
 
         $filename = 'materials_' . now()->format('Ymd_His') . '.csv';
