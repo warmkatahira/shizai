@@ -109,6 +109,23 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
 単価は **`decimal(10,2)`**。実データに 34.5円 / 6.07円 のような小数が存在するため整数では持てない。
 表示は `App\Support\Money::yen()` を使う（小数がある時だけ小数を出す：2532 → ¥2,532 ／ 34.5 → ¥34.5）。
 
+### 日時の扱い
+アプリのタイムゾーンは **`Asia/Tokyo`**（`config/app.php` の既定値。`APP_TIMEZONE` で上書き可）。
+国内専用なのでDBにも日本時間で保存し、そのまま表示する（UTC保存＋表示時に変換、はしない）。
+- 以前は UTC だったため、**画面の申請日時とバックアップのファイル名が9時間ずれていた**。
+  spatie/laravel-backup はファイル名を `Carbon::now()`（＝アプリのTZ）で付けるので、
+  スケジュールの `->timezone('Asia/Tokyo')` だけでは名前は直らない
+- 切り替え時に既存データを +9時間する変換を入れてある（`..._shift_timestamps_to_jst`。`down` で戻せる）
+- MySQLのセッションTZは触っていない（`SYSTEM`＝UTCのまま）。列は `timestamp` 型なので、
+  **DBサーバーのシステムTZを変えると保存済みの値がずれる**点に注意
+
+### DBバックアップ
+`spatie/laravel-backup`。毎日 **AM3:00（JST）** に `backup:run --only-db`、**2:45** に `backup:clean`（`routes/console.php`）。
+保存先は `/var/backups/shizai/`（`config/filesystems.php` の `backups` ディスク。`BACKUP_ROOT` で変更可）。
+- 掃除は **新しい順に7個だけ残して残りは削除**（`App\Support\KeepLatestBackupsStrategy`。個数は `BACKUP_KEEP_COUNT`）。
+  spatie 既定の「期間ごとに間引く」方式は何個残るか分かりにくいので、個数指定に差し替えている
+- **本番サーバーで `* * * * * php artisan schedule:run` の cron 登録が必要**
+
 ## 主な画面
 - `/orders` 発注一覧（検索：ステータス/営業所/業者/品名/期間、CSVダウンロード付き）
   - **1ページ50件のページネーション**（`OrderController::PER_PAGE`）。検索条件はページリンクに引き継ぐ（`withQueryString`）

@@ -1,5 +1,6 @@
 <?php
 
+use App\Support\KeepLatestBackupsStrategy;
 use Spatie\Backup\Notifications\Notifiable;
 use Spatie\Backup\Notifications\Notifications\BackupHasFailedNotification;
 use Spatie\Backup\Notifications\Notifications\BackupWasSuccessfulNotification;
@@ -321,16 +322,21 @@ return [
 
     'cleanup' => [
         /*
-         * The strategy that will be used to cleanup old backups. The default strategy
-         * will keep all backups for a certain amount of days. After that period only
-         * a daily backup will be kept. After that period only weekly backups will
-         * be kept and so on.
-         *
-         * No matter how you configure it the default strategy will never
-         * delete the newest backup.
+         * 掃除のルール。既定の DefaultStrategy（期間ごとに間引く）ではなく、
+         * 「新しいものから keep_latest_count 個だけ残して、残りは消す」方式にしている。
+         * 日次1件・小容量なので、個数で管理したほうが分かりやすいため。
          */
-        'strategy' => DefaultStrategy::class,
+        'strategy' => KeepLatestBackupsStrategy::class,
 
+        /*
+         * 残しておくバックアップの個数（新しい順）。KeepLatestBackupsStrategy が読む。
+         */
+        'keep_latest_count' => env('BACKUP_KEEP_COUNT', 7),
+
+        /*
+         * ここから下は既定の DefaultStrategy 用の設定。上の strategy を
+         * DefaultStrategy::class に戻したときに効く（spatie が必須で読むので消さない）。
+         */
         'default_strategy' => [
             /*
              * The number of days for which backups must be kept.
