@@ -176,6 +176,61 @@
         to { stroke-dashoffset: 0; }
     }
 
+    /*
+     * ログイン画面のロゴ（partials/logo-mark.blade.php）。
+     * カートの線が描かれ → 車輪 → ＋バッジ の順に組み上がる。遅延は呼び出し側で要素ごとに指定。
+     */
+    .logo-cart {
+        stroke-dasharray: 900; /* パスの全長（約810）より少し長く取って、最初は完全に隠す */
+        stroke-dashoffset: 900;
+        animation: draw-stroke 0.9s ease-out both;
+    }
+
+    .logo-plus {
+        stroke-dasharray: 80;
+        stroke-dashoffset: 80;
+        animation: draw-stroke 0.25s ease-out both;
+    }
+
+    /*
+     * ログイン画面の見出し「資材発注システム」。輪郭をなぞってから塗りが入る（手書き風）。
+     *
+     * 破線の長さ（stroke-dasharray）は、文字の輪郭ひとつぶんの長さより長くする必要がある。
+     * 短いと輪郭が途中までしか描かれず、長すぎると最後の一瞬までまったく現れない。
+     * 22px の漢字の輪郭は長くても200程度なので 300 にしてある（見え方が急なら小さくする）。
+     * 輪郭は文字ごと・画ごとに別々の線なので、短い画から順に現れて書いているように見える。
+     */
+    .title-write {
+        fill-opacity: 0;
+        stroke: var(--color-ink);
+        stroke-width: 0.7;
+        stroke-dasharray: 300;
+        stroke-dashoffset: 300;
+        animation:
+            draw-stroke 1.4s linear 0.4s both,
+            title-ink 0.5s ease-out 1.7s both;
+    }
+
+    /* なぞり終わったら、線と入れ替わりに塗りを入れる */
+    @keyframes title-ink {
+        to {
+            fill-opacity: 1;
+            stroke-opacity: 0;
+        }
+    }
+
+    /* 車輪と＋バッジ。少し行き過ぎてから戻る（cubic-bezier）ことで「ポン」と出る */
+    .logo-pop {
+        transform-box: fill-box; /* SVGの図形は自分の形を基準に拡大縮小させる */
+        transform-origin: center;
+        transform: scale(0);
+        animation: logo-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+
+    @keyframes logo-pop {
+        to { transform: scale(1); }
+    }
+
     /* ボタンの押した感じ */
     button,
     input[type='submit'] {
@@ -255,6 +310,11 @@
 /* ログイン画面の背景。上からアクセント色がごく薄く落ちてきて、白いカードが浮く */
 .auth-bg {
     background: radial-gradient(130% 80% at 50% 0%, var(--color-accent-light) 0%, var(--color-gray-100) 62%);
+}
+
+/* ログイン画面の見出し（SVGの文字）。動かさないときは普通の塗り文字として出す */
+.title-write {
+    fill: var(--color-ink);
 }
 
 /* 発注申請フォームで、数量を入れた行の地色（JSから付け外しする） */
