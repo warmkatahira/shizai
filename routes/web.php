@@ -60,9 +60,11 @@ Route::middleware('auth')->group(function () {
     // ----- 資材一覧（閲覧のみ。全ログインユーザー。編集は /admin/materials で管理者のみ） -----
     Route::get('/materials', [MaterialCatalogController::class, 'index'])->name('materials.index');
 
-    // ----- 発注集計（カテゴリ別・業者別・営業所別・資材別） -----
-    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
-    Route::get('/reports-export', [ReportController::class, 'export'])->name('reports.export');
+    // ----- 発注集計（カテゴリ別・業者別・営業所別・資材別）。総務・管理者のみ -----
+    Route::middleware('role:admin,general_affairs')->group(function () {
+        Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+        Route::get('/reports-export', [ReportController::class, 'export'])->name('reports.export');
+    });
 
     // ----- 承認・差し戻し・却下アクション -----
     Route::post('/orders/{order}/manager-approve', [OrderApprovalController::class, 'managerApprove'])->name('orders.managerApprove');

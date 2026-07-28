@@ -16,6 +16,19 @@
         ? 'bg-accent-light text-accent-strong font-medium'
         : 'text-gray-500 hover:bg-gray-100 hover:text-ink';
 
+    // 発注メニュー。申請・一覧・集計は全部「発注まわり」なので1つのドロップダウンにまとめる
+    // match/except は現在地の判定用（orders.create は orders.* に含まれるので一覧側から除外する）
+    $orders = collect([
+        ['label' => '新規申請', 'route' => 'orders.create', 'match' => ['orders.create'], 'salesOnly' => true],
+        ['label' => '発注申請一覧', 'route' => 'orders.index', 'match' => ['orders.*'], 'except' => ['orders.create']],
+        ['label' => '発注集計', 'route' => 'reports.index', 'match' => ['reports.*'], 'backOfficeOnly' => true],
+    ])->reject(fn ($item) => (($item['salesOnly'] ?? false) && ! $user->isSales())
+        || (($item['backOfficeOnly'] ?? false) && ! $user->isBackOffice()));
+
+    // ドロップダウンの各項目が現在地かどうか
+    $isCurrent = fn (array $item) => request()->routeIs(...$item['match'])
+        && (empty($item['except']) || ! request()->routeIs(...$item['except']));
+
     // マスタ管理のメニュー（管理者・総務）。ユーザー管理だけは権限を付与できるので管理者のみ
     $masters = collect([
         ['label' => '資材', 'route' => 'admin.materials.index'],
@@ -43,22 +56,29 @@
 
         {{-- ナビ（PC） --}}
         <nav class="hidden md:flex items-center gap-1 ml-3 text-sm">
-            {{-- 発注（新規申請）は営業所の主要動作。目立つCTAとして先頭に置く --}}
-            @if ($user->isSales())
-                <a href="{{ route('orders.create') }}"
-                   class="inline-flex items-center gap-1 bg-accent hover:bg-accent-dark text-ink font-medium px-3 py-1.5 rounded-full transition"
-                   @if (request()->routeIs('orders.create')) aria-current="page" @endif>
-                    <span aria-hidden="true" class="text-base leading-none">＋</span>発注
-                </a>
-            @endif
-
-            <a href="{{ route('orders.index') }}"
-               class="px-3 py-1.5 rounded-full transition {{ $pill($current['orders']) }}"
-               @if ($current['orders']) aria-current="page" @endif>発注申請</a>
-
-            <a href="{{ route('reports.index') }}"
-               class="px-3 py-1.5 rounded-full transition {{ $pill($current['reports']) }}"
-               @if ($current['reports']) aria-current="page" @endif>集計</a>
+            {{-- 発注まわり（新規申請・一覧・集計）はマスタ管理と同じくドロップダウンにまとめる --}}
+            <details class="group relative" data-menu>
+                <summary class="list-none [&::-webkit-details-marker]:hidden cursor-pointer select-none
+                                flex items-center gap-1 px-3 py-1.5 rounded-full transition {{ $pill($current['orders'] || $current['reports']) }}">
+                    発注
+                    <svg class="w-3.5 h-3.5 transition-transform duration-200 group-open:rotate-180"
+                         viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M5.2 7.5a.75.75 0 0 1 1.06 0L10 11.2l3.74-3.7a.75.75 0 1 1 1.06 1.06l-4.27 4.24a.75.75 0 0 1-1.06 0L5.2 8.56a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/>
+                    </svg>
+                </summary>
+                <div class="absolute left-0 mt-2 w-44 rounded-xl border border-gray-200 bg-white p-1.5 shadow-lg shadow-ink/5">
+                    @foreach ($orders as $item)
+                        <a href="{{ route($item['route']) }}"
+                           class="block rounded-lg px-3 py-2 transition
+                                  {{ $isCurrent($item)
+                                      ? 'bg-accent-light text-accent-strong font-medium'
+                                      : 'text-gray-600 hover:bg-gray-50 hover:text-ink' }}"
+                           @if ($isCurrent($item)) aria-current="page" @endif>
+                            {{ $item['label'] }}
+                        </a>
+                    @endforeach
+                </div>
+            </details>
 
             @unless ($user->canManageMasters())
                 {{-- マスタを編集できる人は「マスタ管理 > 資材」から見られるので、こちらは出さない --}}
@@ -136,14 +156,16 @@
                 <div class="absolute left-4 right-4 top-full mt-2 rounded-2xl border border-gray-200 bg-white p-2 shadow-xl shadow-ink/5">
                     <p class="px-3 pt-1 pb-2 text-xs text-gray-400 sm:hidden">{{ $user->name }}</p>
 
-                    @if ($user->isSales())
-                        <a href="{{ route('orders.create') }}"
-                           class="block rounded-lg px-3 py-2 text-sm bg-accent hover:bg-accent-dark text-ink font-medium mb-1">＋ 発注</a>
-                    @endif
-                    <a href="{{ route('orders.index') }}"
-                       class="block rounded-lg px-3 py-2 text-sm {{ $current['orders'] ? 'bg-accent-light text-accent-strong font-medium' : 'text-gray-600 hover:bg-gray-50' }}">発注申請</a>
-                    <a href="{{ route('reports.index') }}"
-                       class="block rounded-lg px-3 py-2 text-sm {{ $current['reports'] ? 'bg-accent-light text-accent-strong font-medium' : 'text-gray-600 hover:bg-gray-50' }}">集計</a>
+                    <p class="px-3 pt-1 pb-1 text-[10px] tracking-wide text-gray-400">発注</p>
+                    @foreach ($orders as $item)
+                        <a href="{{ route($item['route']) }}"
+                           class="block rounded-lg px-3 py-2 text-sm
+                                  {{ $isCurrent($item)
+                                      ? 'bg-accent-light text-accent-strong font-medium'
+                                      : 'text-gray-600 hover:bg-gray-50' }}">
+                            {{ $item['label'] }}
+                        </a>
+                    @endforeach
 
                     @unless ($user->canManageMasters())
                         <a href="{{ route('materials.index') }}"
