@@ -57,8 +57,20 @@
 
             {{-- ステップ2：数量を入力。最低ロットがある資材はロットの倍数でしか入力できない --}}
             <div class="bg-white shadow rounded-lg overflow-hidden mb-6">
-                <div class="px-4 py-3 bg-gray-50 border-b border-gray-100 text-sm font-medium">
-                    {{ $supplier->name }} の資材（{{ $materials->count() }}件）
+                {{-- 資材が多いと探すのが大変なので、その場で絞り込めるようにする。
+                     どちらの入力欄にも name を付けていないので、申請の内容としては送信されない --}}
+                <div class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex flex-wrap items-center gap-3">
+                    <span class="text-sm font-medium">
+                        {{ $supplier->name }} の資材（<span data-visible-count>{{ $materials->count() }}</span>件）
+                    </span>
+                    <div class="ml-auto flex items-center gap-3">
+                        <input type="search" autocomplete="off" data-material-filter placeholder="品名で絞り込む"
+                               class="w-52 rounded-md border border-gray-300 px-3 py-1.5 text-sm outline-none focus:border-accent-dark">
+                        <label class="flex items-center gap-1.5 text-xs text-gray-600 whitespace-nowrap">
+                            <input type="checkbox" data-only-selected class="rounded border-gray-300">
+                            入力済みのみ
+                        </label>
+                    </div>
                 </div>
                 <table class="w-full text-sm">
                     <thead class="bg-gray-50 text-gray-500 text-left">
@@ -69,7 +81,7 @@
                             <th class="px-4 py-3 text-right">単価</th>
                             <th class="px-4 py-3 text-right">最低ロット</th>
                             <th class="px-4 py-3">単位</th>
-                            <th class="px-4 py-3 w-36">数量</th>
+                            <th class="px-4 py-3 w-48">数量</th>
                             <th class="px-4 py-3 text-right w-28">小計</th>
                         </tr>
                     </thead>
@@ -80,7 +92,8 @@
                                 // 入力エラーで戻ってきたときは old、そうでなければ元の申請の数量
                                 $qty = old('quantities.' . $material->id, $quantities[$material->id] ?? '');
                             @endphp
-                            <tr>
+                            {{-- data-name は絞り込み用（品名とカテゴリのどちらでも引けるようにしておく） --}}
+                            <tr data-name="{{ $material->name }} {{ $material->category?->name }}">
                                 <td class="px-4 py-3 font-medium">
                                     <div class="flex items-center gap-3">
                                         @if ($material->imageUrl())
@@ -100,14 +113,21 @@
                                 <td class="px-4 py-3 text-right text-gray-500">{{ $material->minLotText() ?? '—' }}</td>
                                 <td class="px-4 py-3 text-gray-500">{{ $material->unit?->name ?? '—' }}</td>
                                 <td class="px-4 py-3">
-                                    <input autocomplete="off" type="number" min="0" max="999999"
-                                           step="{{ $lot ?: 1 }}"
-                                           name="quantities[{{ $material->id }}]"
-                                           value="{{ $qty }}"
-                                           data-qty
-                                           data-price="{{ $material->unit_price ?? 0 }}"
-                                           data-lot="{{ $lot ?: 0 }}"
-                                           class="w-28 rounded-md border border-gray-300 px-2 py-1 text-right focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
+                                    {{-- ロット単位で増減するボタン。手打ちでロット違反を起こしにくくする --}}
+                                    <div class="flex items-center gap-1">
+                                        <button type="button" data-step="-1" tabindex="-1" aria-label="減らす"
+                                                class="grid place-items-center w-7 h-7 shrink-0 rounded-md border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-ink">−</button>
+                                        <input autocomplete="off" type="number" min="0" max="999999"
+                                               step="{{ $lot ?: 1 }}"
+                                               name="quantities[{{ $material->id }}]"
+                                               value="{{ $qty }}"
+                                               data-qty
+                                               data-price="{{ $material->unit_price ?? 0 }}"
+                                               data-lot="{{ $lot ?: 0 }}"
+                                               class="w-24 rounded-md border border-gray-300 px-2 py-1 text-right focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
+                                        <button type="button" data-step="1" tabindex="-1" aria-label="増やす"
+                                                class="grid place-items-center w-7 h-7 shrink-0 rounded-md border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-ink">＋</button>
+                                    </div>
                                     @if ($lot)
                                         <span class="block text-xs text-gray-400 mt-1">{{ number_format($lot) }}{{ $material->unit?->name }}単位</span>
                                     @endif
@@ -245,6 +265,65 @@
 
                 inputs.forEach((input) => input.addEventListener('input', recalc));
                 recalc(); // 入力エラーで戻ってきたときや、再申請で数量が入っているときも計算し直す
+
+                // ── ロット単位の増減ボタン ────────────────────────────────
+                // 最低ロットがある資材は、その倍数だけ増減する（手打ちでの違反を減らす）
+                document.querySelectorAll('[data-step]').forEach((button) => {
+                    button.addEventListener('click', () => {
+                        const input = button.closest('td').querySelector('[data-qty]');
+                        const lot = parseInt(input.dataset.lot, 10) || 1;
+                        const current = parseInt(input.value, 10) || 0;
+                        const next = current + lot * parseInt(button.dataset.step, 10);
+
+                        input.value = Math.min(999999, Math.max(0, next)) || '';
+                        recalc();
+                    });
+                });
+
+                // ── 品名での絞り込み ──────────────────────────────────────
+                // 行の表示/非表示を切り替えるだけ。隠した行の数量はそのまま送信される
+                const filterBox = document.querySelector('[data-material-filter]');
+                const onlySelected = document.querySelector('[data-only-selected]');
+                const visibleCount = document.querySelector('[data-visible-count]');
+                const rows = document.querySelectorAll('tbody tr[data-name]');
+
+                function applyFilter() {
+                    const keyword = (filterBox.value || '').trim().toLowerCase();
+                    let visible = 0;
+
+                    rows.forEach((row) => {
+                        const hitKeyword = ! keyword || row.dataset.name.toLowerCase().includes(keyword);
+                        const hasQty = (parseInt(row.querySelector('[data-qty]').value, 10) || 0) > 0;
+                        const show = hitKeyword && (! onlySelected.checked || hasQty);
+
+                        row.classList.toggle('hidden', ! show);
+                        if (show) visible++;
+                    });
+
+                    visibleCount.textContent = visible.toLocaleString('ja-JP');
+                }
+
+                filterBox.addEventListener('input', applyFilter);
+                onlySelected.addEventListener('change', applyFilter);
+                // 「入力済みのみ」表示中に数量を消したら、その行もすぐ消えるように
+                inputs.forEach((input) => input.addEventListener('input', () => {
+                    if (onlySelected.checked) applyFilter();
+                }));
+
+                // ── 入力したまま画面を離れようとしたら確認する ────────────────
+                let dirty = false;
+                const orderForm = document.querySelector('[data-qty]').closest('form');
+
+                inputs.forEach((input) => input.addEventListener('input', () => (dirty = true)));
+                document.querySelectorAll('[data-step]').forEach((b) => b.addEventListener('click', () => (dirty = true)));
+                orderForm.addEventListener('submit', () => (dirty = false)); // 送信するときは当然出さない
+
+                window.addEventListener('beforeunload', (e) => {
+                    if (dirty) {
+                        e.preventDefault();
+                        e.returnValue = ''; // 文言はブラウザ側が決める（指定しても表示されない）
+                    }
+                });
             })();
         </script>
     @endif

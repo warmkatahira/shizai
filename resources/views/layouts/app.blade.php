@@ -101,15 +101,43 @@
             showLoader();
         });
 
-        // フォーム送信で表示（ダウンロード系フォームは data-no-loader で除外）
+        // フォーム送信で表示（ダウンロード系フォームは data-no-loader で除外）。
+        // onsubmit="return confirm(...)" で「キャンセル」されたときは送信されないので出さない
         document.addEventListener('submit', (e) => {
-            if (! e.target.hasAttribute('data-no-loader')) {
+            if (! e.defaultPrevented && ! e.target.hasAttribute('data-no-loader')) {
                 showLoader();
             }
         });
 
         // 戻る/進む（bfcache 復元）で戻ったときはバーを消す
         window.addEventListener('pageshow', hideLoader);
+
+        // 「入力したまま離れようとしたら確認」（発注申請フォーム）で離脱をキャンセルすると、
+        // 先に出したローダーが残って操作できなくなる。ページが残っていたら消す。
+        // 実際に離脱した場合はページごと消えるので、このタイマーは動かない。
+        window.addEventListener('beforeunload', () => setTimeout(hideLoader, 0));
+
+        // 一覧の行（<tr data-href>）は、どこを押しても詳細へ飛ぶ。
+        // 行の中のリンク・ボタン・入力欄は本来の動作を優先し、文字を選択しただけのときも飛ばさない。
+        // キーボード操作の人のために、行の中の「詳細」リンクはそのまま残してある。
+        document.addEventListener('click', (e) => {
+            const row = e.target.closest('tr[data-href]');
+            if (! row || e.target.closest('a, button, input, label, select, textarea')) {
+                return;
+            }
+            if (e.button !== 0 || e.defaultPrevented || window.getSelection().toString()) {
+                return;
+            }
+
+            // Ctrl/⌘ クリックと中クリックは新しいタブで開く（リンクと同じ感覚で使えるように）
+            if (e.ctrlKey || e.metaKey) {
+                window.open(row.dataset.href, '_blank');
+                return;
+            }
+
+            showLoader();
+            window.location.href = row.dataset.href;
+        });
 
         // ヘッダーのメニュー（<details data-menu>）は、外側をクリックするか Esc で閉じる。
         // details のままだと開きっぱなしになり、他のメニューと重なって見えるため。

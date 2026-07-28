@@ -146,7 +146,9 @@
             </thead>
             <tbody class="divide-y divide-gray-100">
                 @forelse ($orders as $order)
-                    <tr class="hover:bg-accent-light/40 transition-colors">
+                    {{-- 行のどこを押しても詳細へ（処理は layouts/app.blade.php の共通スクリプト） --}}
+                    <tr data-href="{{ route('orders.show', $order) }}"
+                        class="cursor-pointer hover:bg-accent-light/40 transition-colors">
                         <td class="px-4 py-3 font-medium">#{{ $order->id }}</td>
                         <td class="px-4 py-3 text-gray-500">{{ $order->created_at->format('Y/m/d H:i') }}</td>
                         @unless (auth()->user()->isSales())
