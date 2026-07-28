@@ -93,6 +93,38 @@
         </div>
     </form>
 
+    {{-- いま効いている絞り込み。状態は初期値で「有効」が入るので、タグで見えるようにする --}}
+    @php
+        $chips = [];
+
+        if (filled($filters['status'] ?? null)) {
+            $chips[] = [
+                'label' => '状態：' . ($filters['status'] === 'active' ? '有効' : '無効'),
+                'remove' => ['status' => ''],
+            ];
+        }
+
+        if (filled($filters['supplier_id'] ?? null)) {
+            $chips[] = [
+                'label' => '業者：' . ($suppliers->firstWhere('id', (int) $filters['supplier_id'])?->name ?? $filters['supplier_id']),
+                'remove' => ['supplier_id' => ''],
+            ];
+        }
+
+        if (filled($filters['category_id'] ?? null)) {
+            $chips[] = [
+                'label' => 'カテゴリ：' . ($categories->firstWhere('id', (int) $filters['category_id'])?->name ?? $filters['category_id']),
+                'remove' => ['category_id' => ''],
+            ];
+        }
+
+        if (filled($filters['keyword'] ?? null)) {
+            $chips[] = ['label' => '品名：' . $filters['keyword'], 'remove' => ['keyword' => '']];
+        }
+    @endphp
+
+    @include('partials.filter-chips', ['chips' => $chips])
+
     <div class="bg-white shadow rounded-lg overflow-auto max-h-[70vh]">
         <table class="w-full text-sm whitespace-nowrap">
             {{-- スクロールしても列名が見えるようヘッダー行を固定する --}}

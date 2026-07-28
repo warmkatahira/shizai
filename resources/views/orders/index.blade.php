@@ -86,6 +86,46 @@
         </div>
     </form>
 
+    {{-- いま効いている絞り込み。総務は初期値でステータスが入るので、何で絞られているか見えるようにする --}}
+    @php
+        $chips = [];
+
+        if (filled($filters['status'] ?? null)) {
+            $chips[] = [
+                'label' => 'ステータス：' . ($statuses[$filters['status']] ?? $filters['status']),
+                'remove' => ['status' => ''],
+            ];
+        }
+
+        if (filled($filters['office_id'] ?? null)) {
+            $chips[] = [
+                'label' => '営業所：' . ($offices->firstWhere('id', (int) $filters['office_id'])?->name ?? $filters['office_id']),
+                'remove' => ['office_id' => ''],
+            ];
+        }
+
+        if (filled($filters['supplier_id'] ?? null)) {
+            $chips[] = [
+                'label' => '業者：' . ($suppliers->firstWhere('id', (int) $filters['supplier_id'])?->name ?? $filters['supplier_id']),
+                'remove' => ['supplier_id' => ''],
+            ];
+        }
+
+        if (filled($filters['keyword'] ?? null)) {
+            $chips[] = ['label' => '品名：' . $filters['keyword'], 'remove' => ['keyword' => '']];
+        }
+
+        // 期間は開始・終了で1つのタグにまとめる（外すときも両方まとめて外す）
+        if (filled($filters['date_from'] ?? null) || filled($filters['date_to'] ?? null)) {
+            $chips[] = [
+                'label' => '申請日：' . ($filters['date_from'] ?? '') . '〜' . ($filters['date_to'] ?? ''),
+                'remove' => ['date_from' => '', 'date_to' => ''],
+            ];
+        }
+    @endphp
+
+    @include('partials.filter-chips', ['chips' => $chips])
+
     <div class="bg-white shadow rounded-lg overflow-auto max-h-[70vh]">
         <table class="w-full text-sm">
             {{-- スクロールしても列名が見えるよう固定する。枠内スクロール（overflow-auto）なので

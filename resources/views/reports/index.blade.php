@@ -85,6 +85,42 @@
         </div>
     </form>
 
+    {{-- いま効いている絞り込み（集計軸は必ず1つ選ぶものなのでタグにしない） --}}
+    @php
+        $chips = [];
+
+        if (filled($filters['office_id'] ?? null)) {
+            $chips[] = [
+                'label' => '営業所：' . ($offices->firstWhere('id', (int) $filters['office_id'])?->name ?? $filters['office_id']),
+                'remove' => ['office_id' => ''],
+            ];
+        }
+
+        if (filled($filters['category_id'] ?? null)) {
+            $chips[] = [
+                'label' => 'カテゴリ：' . ($categories->firstWhere('id', (int) $filters['category_id'])?->name ?? $filters['category_id']),
+                'remove' => ['category_id' => ''],
+            ];
+        }
+
+        if (filled($filters['supplier_id'] ?? null)) {
+            $chips[] = [
+                'label' => '業者：' . ($suppliers->firstWhere('id', (int) $filters['supplier_id'])?->name ?? $filters['supplier_id']),
+                'remove' => ['supplier_id' => ''],
+            ];
+        }
+
+        // 期間を外すと全期間の集計になる
+        if (filled($filters['date_from'] ?? null) || filled($filters['date_to'] ?? null)) {
+            $chips[] = [
+                'label' => '発注日：' . ($filters['date_from'] ?? '') . '〜' . ($filters['date_to'] ?? ''),
+                'remove' => ['date_from' => '', 'date_to' => ''],
+            ];
+        }
+    @endphp
+
+    @include('partials.filter-chips', ['chips' => $chips])
+
     {{-- サマリー --}}
     <div class="grid grid-cols-3 gap-4 mb-6">
         <div class="bg-white shadow rounded-lg p-4">
