@@ -125,6 +125,107 @@ class Order extends Model
         return self::STATUS_LABELS[$this->status] ?? $this->status;
     }
 
+    // ---- 承認の経緯（詳細画面のタイムライン） ----
+
+    /** タイムラインの各段階の状態 */
+    public const STEP_DONE = 'done';        // 済んだ
+    public const STEP_CURRENT = 'current';  // いまここ（次にやること）
+    public const STEP_PENDING = 'pending';  // まだ来ていない
+    public const STEP_SKIPPED = 'skipped';  // 通らなかった（特例承認・所長本人の申請）
+    public const STEP_STOPPED = 'stopped';  // 差し戻し・却下でここで止まった
+
+    /**
+     * 承認の経緯を、申請 → 所長承認 → 総務承認 → 発注書の作成 の順で返す。
+     * 差し戻し・却下されている場合は最後にその段を足す。
+     *
+     * 表示専用（新しい情報は持たない。列に入っている日時と担当者を並べ替えているだけ）。
+     *
+     * @return array<int, array{label: string, name: ?string, at: ?\Illuminate\Support\Carbon, note: ?string, state: string}>
+     */
+    public function approvalSteps(): array
+    {
+        // 差し戻し・却下されたものは、そこで止まっているので「いまここ」を出さない
+        $stopped = $this->isReturned() || $this->isRejected();
+
+        $steps = [[
+            'label' => '申請',
+            'name' => $this->requester_name ?: $this->requester?->name,
+            'at' => $this->created_at,
+            'note' => null,
+            'state' => self::STEP_DONE,
+        ]];
+
+        $steps[] = match (true) {
+            (bool) $this->manager_approved_at => [
+                'label' => '所長承認', 'name' => $this->managerApprover?->name,
+                'at' => $this->manager_approved_at, 'note' => null, 'state' => self::STEP_DONE,
+            ],
+            (bool) $this->is_special_approval => [
+                'label' => '所長承認', 'name' => null, 'at' => null,
+                'note' => '特例承認のため省略', 'state' => self::STEP_SKIPPED,
+            ],
+            $this->isPendingManager() => [
+                'label' => '所長承認', 'name' => null, 'at' => null, 'note' => null,
+                'state' => $stopped ? self::STEP_PENDING : self::STEP_CURRENT,
+            ],
+            $stopped => [
+                'label' => '所長承認', 'name' => null, 'at' => null, 'note' => null, 'state' => self::STEP_PENDING,
+            ],
+            // 所長本人の申請は所長承認から始まらない（pending_affairs スタート）
+            default => [
+                'label' => '所長承認', 'name' => null, 'at' => null,
+                'note' => '所長本人の申請のため省略', 'state' => self::STEP_SKIPPED,
+            ],
+        };
+
+        $steps[] = match (true) {
+            (bool) $this->reviewed_at => [
+                'label' => $this->is_special_approval ? '総務の特例承認' : '総務承認',
+                'name' => $this->reviewer?->name, 'at' => $this->reviewed_at,
+                'note' => $this->is_special_approval ? $this->special_reason : null,
+                'state' => self::STEP_DONE,
+            ],
+            $this->isPendingAffairs() => [
+                'label' => '総務承認', 'name' => null, 'at' => null, 'note' => null,
+                'state' => $stopped ? self::STEP_PENDING : self::STEP_CURRENT,
+            ],
+            default => [
+                'label' => '総務承認', 'name' => null, 'at' => null, 'note' => null, 'state' => self::STEP_PENDING,
+            ],
+        };
+
+        $steps[] = match (true) {
+            (bool) $this->ordered_at => [
+                'label' => '発注書の作成（発注済）', 'name' => $this->orderedBy?->name,
+                'at' => $this->ordered_at, 'note' => null, 'state' => self::STEP_DONE,
+            ],
+            $this->isPendingOrder() => [
+                'label' => '発注書の作成', 'name' => null, 'at' => null, 'note' => null,
+                'state' => $stopped ? self::STEP_PENDING : self::STEP_CURRENT,
+            ],
+            default => [
+                'label' => '発注書の作成', 'name' => null, 'at' => null, 'note' => null, 'state' => self::STEP_PENDING,
+            ],
+        };
+
+        if ($this->isReturned()) {
+            $steps[] = [
+                'label' => '差し戻し', 'name' => $this->returnedBy?->name, 'at' => $this->returned_at,
+                'note' => $this->return_reason, 'state' => self::STEP_STOPPED,
+            ];
+        }
+
+        // 却下は日時の列を持たないので、担当者と理由だけ出す
+        if ($this->isRejected()) {
+            $steps[] = [
+                'label' => '却下', 'name' => $this->rejectedBy?->name, 'at' => null,
+                'note' => $this->reject_reason, 'state' => self::STEP_STOPPED,
+            ];
+        }
+
+        return $steps;
+    }
+
     public function isPendingManager(): bool
     {
         return $this->status === self::STATUS_PENDING_MANAGER;

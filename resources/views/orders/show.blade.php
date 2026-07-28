@@ -51,91 +51,64 @@
         </div>
     @endif
 
-    {{-- 基本情報 --}}
-    <div class="bg-white shadow rounded-lg p-6 mb-6">
-        <dl class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
-            <div>
-                <dt class="text-gray-500">発注No</dt>
-                <dd class="font-medium">{{ $order->purchaseOrderNo() }}</dd>
-            </div>
-            <div>
-                <dt class="text-gray-500">営業所</dt>
-                <dd class="font-medium">{{ $order->office->name }}</dd>
-            </div>
-            <div>
-                <dt class="text-gray-500">発注業者</dt>
-                <dd class="font-medium">{{ $order->supplier?->name ?? '—' }}</dd>
-            </div>
-            <div>
-                <dt class="text-gray-500">申請者</dt>
-                <dd class="font-medium">
-                    {{ $order->requester_name ?? '—' }}
-                    <span class="block text-xs text-gray-400 font-normal">アカウント：{{ $order->requester->name }}</span>
-                </dd>
-            </div>
-            <div>
-                <dt class="text-gray-500">申請日時</dt>
-                <dd class="font-medium">{{ $order->created_at->format('Y/m/d H:i') }}</dd>
-            </div>
-            <div>
-                <dt class="text-gray-500">所長承認</dt>
-                <dd class="font-medium">
-                    @if ($order->managerApprover)
-                        {{ $order->managerApprover->name }}
-                        <span class="text-gray-400 text-xs">{{ $order->manager_approved_at?->format('m/d H:i') }}</span>
-                    @elseif ($order->is_special_approval)
-                        <span class="text-gray-400">（特例でスキップ）</span>
-                    @else
-                        —
-                    @endif
-                </dd>
-            </div>
-            <div>
-                <dt class="text-gray-500">総務承認</dt>
-                <dd class="font-medium">
-                    @if ($order->reviewer)
-                        {{ $order->reviewer->name }}
-                        <span class="text-gray-400 text-xs">{{ $order->reviewed_at?->format('m/d H:i') }}</span>
-                    @else
-                        —
-                    @endif
-                </dd>
-            </div>
-            <div>
-                <dt class="text-gray-500">発注者（発注書の作成）</dt>
-                <dd class="font-medium">
-                    @if ($order->orderedBy)
-                        {{ $order->orderedBy->name }}
-                        <span class="text-gray-400 text-xs">{{ $order->ordered_at?->format('m/d H:i') }}</span>
-                    @else
-                        —
-                    @endif
-                </dd>
-            </div>
-        </dl>
+    {{-- 基本情報 ＋ 承認の経緯（承認者と日時は右のタイムラインに集約したので、ここには出さない） --}}
+    <div class="grid gap-6 lg:grid-cols-3 mb-6">
+        <div class="bg-white shadow rounded-lg p-6 lg:col-span-2">
+            <dl class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
+                <div>
+                    <dt class="text-gray-500">発注No</dt>
+                    <dd class="font-medium">{{ $order->purchaseOrderNo() }}</dd>
+                </div>
+                <div>
+                    <dt class="text-gray-500">営業所</dt>
+                    <dd class="font-medium">{{ $order->office->name }}</dd>
+                </div>
+                <div>
+                    <dt class="text-gray-500">発注業者</dt>
+                    <dd class="font-medium">{{ $order->supplier?->name ?? '—' }}</dd>
+                </div>
+                <div>
+                    <dt class="text-gray-500">申請者</dt>
+                    <dd class="font-medium">
+                        {{ $order->requester_name ?? '—' }}
+                        <span class="block text-xs text-gray-400 font-normal">アカウント：{{ $order->requester->name }}</span>
+                    </dd>
+                </div>
+                <div>
+                    <dt class="text-gray-500">申請日時</dt>
+                    <dd class="font-medium tabular-nums">{{ $order->created_at->format('Y/m/d H:i') }}</dd>
+                </div>
+            </dl>
 
-        @if ($order->desired_delivery_date || $order->note || $order->supplier_note)
-            <div class="mt-4 pt-4 border-t border-gray-100 text-sm space-y-3">
-                @if ($order->desired_delivery_date)
-                    <div>
-                        <dt class="text-gray-500 mb-1">希望納期</dt>
-                        <dd>{{ $order->desired_delivery_date->format('Y/m/d') }}</dd>
-                    </div>
-                @endif
-                @if ($order->note)
-                    <div>
-                        <dt class="text-gray-500 mb-1">備考（社内向け）</dt>
-                        <dd class="whitespace-pre-wrap">{{ $order->note }}</dd>
-                    </div>
-                @endif
-                @if ($order->supplier_note)
-                    <div>
-                        <dt class="text-gray-500 mb-1">業者への連絡事項（発注書に印字）</dt>
-                        <dd class="whitespace-pre-wrap">{{ $order->supplier_note }}</dd>
-                    </div>
-                @endif
-            </div>
-        @endif
+            @if ($order->desired_delivery_date || $order->note || $order->supplier_note)
+                <div class="mt-4 pt-4 border-t border-gray-100 text-sm space-y-3">
+                    @if ($order->desired_delivery_date)
+                        <div>
+                            <dt class="text-gray-500 mb-1">希望納期</dt>
+                            <dd>{{ $order->desired_delivery_date->format('Y/m/d') }}</dd>
+                        </div>
+                    @endif
+                    @if ($order->note)
+                        <div>
+                            <dt class="text-gray-500 mb-1">備考（社内向け）</dt>
+                            <dd class="whitespace-pre-wrap">{{ $order->note }}</dd>
+                        </div>
+                    @endif
+                    @if ($order->supplier_note)
+                        <div>
+                            <dt class="text-gray-500 mb-1">業者への連絡事項（発注書に印字）</dt>
+                            <dd class="whitespace-pre-wrap">{{ $order->supplier_note }}</dd>
+                        </div>
+                    @endif
+                </div>
+            @endif
+        </div>
+
+        {{-- 承認の経緯。いま誰の番で、これまで誰が何時に承認したかを縦に並べる --}}
+        <div class="bg-white shadow rounded-lg p-6">
+            <h2 class="text-sm font-bold text-gray-500 mb-4">承認の経緯</h2>
+            @include('orders.partials.approval-timeline')
+        </div>
     </div>
 
     {{-- 発注書PDF（発注待ち・発注済のみ・総務/管理者）。出すと「発注済」に進むのでPOST --}}
