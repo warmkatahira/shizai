@@ -12,8 +12,8 @@ Artisan::command('inspire', function () {
 |--------------------------------------------------------------------------
 | スケジュール
 |--------------------------------------------------------------------------
-| DBのバックアップを毎分取得する（spatie/laravel-backup）※動作確認用の設定。
-| アプリのタイムゾーンは UTC のため、timezone を明示して JST に合わせる。
+| DBのバックアップを毎日 AM3:00（日本時間）に取得する（spatie/laravel-backup）。
+| アプリのタイムゾーンは UTC のため、timezone を明示して JST の3時に合わせる。
 | 古いバックアップは保持設定（config/backup.php）に従って掃除する。
 |
 | ※本番サーバーで「* * * * * php artisan schedule:run」の cron 登録が必要。
@@ -23,5 +23,5 @@ Schedule::command('backup:clean')
     ->timezone('Asia/Tokyo');
 
 Schedule::command('backup:run --only-db')
-    ->everyMinute()
+    ->dailyAt('03:00')
     ->timezone('Asia/Tokyo');
