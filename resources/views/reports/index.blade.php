@@ -132,7 +132,7 @@
             <div class="text-2xl font-bold mt-1">{{ number_format($totals->quantity) }}</div>
         </div>
         <div class="bg-white shadow rounded-lg p-4">
-            <div class="text-xs text-gray-500">金額合計（参考）</div>
+            <div class="text-xs text-gray-500">金額合計</div>
             <div class="text-2xl font-bold mt-1">{{ \App\Support\Money::yen($totals->amount, '¥0') }}</div>
         </div>
     </div>

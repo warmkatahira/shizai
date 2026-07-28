@@ -118,11 +118,24 @@
                     </tbody>
                     <tfoot class="bg-gray-50">
                         <tr>
-                            <td colspan="7" class="px-4 py-3 text-right font-medium">合計（参考）</td>
+                            <td colspan="7" class="px-4 py-3 text-right font-medium">合計</td>
                             <td class="px-4 py-3 text-right font-bold" data-total>¥0</td>
                         </tr>
                     </tfoot>
                 </table>
+            </div>
+
+            {{-- 資材が多いと表の一番下までスクロールしないと合計が見えないので、画面下に貼り付けておく。
+                 中身は下の recalc() が表のtfootと一緒に書き換える --}}
+            <div class="sticky bottom-4 z-20 mb-6 flex items-center justify-between gap-4 rounded-xl
+                        bg-white/95 backdrop-blur ring-1 ring-ink/5 shadow-lg px-5 py-3">
+                <span class="text-sm text-gray-500">
+                    <span class="tabular-nums font-medium text-ink" data-selected-count>0</span> 品目を選択中
+                </span>
+                <span class="text-sm text-gray-500">
+                    合計
+                    <span class="ml-2 text-xl font-bold text-ink tabular-nums" data-total>¥0</span>
+                </span>
             </div>
 
             {{-- ステップ3：申請者・納期・連絡事項 --}}
@@ -188,16 +201,20 @@
             (function () {
                 const yen = (v) => '¥' + (Math.round(v * 100) / 100).toLocaleString('ja-JP');
                 const inputs = document.querySelectorAll('[data-qty]');
-                const totalCell = document.querySelector('[data-total]');
+                // 合計は表の下（tfoot）と画面下の固定バーの2か所にあるので、まとめて書き換える
+                const totalCells = document.querySelectorAll('[data-total]');
+                const countCells = document.querySelectorAll('[data-selected-count]');
 
                 function recalc() {
                     let total = 0;
+                    let selected = 0;
 
                     inputs.forEach((input) => {
                         const qty = parseInt(input.value, 10) || 0;
                         const price = parseFloat(input.dataset.price) || 0;
                         const lot = parseInt(input.dataset.lot, 10) || 0;
-                        const cell = input.closest('tr').querySelector('[data-subtotal]');
+                        const row = input.closest('tr');
+                        const cell = row.querySelector('[data-subtotal]');
 
                         // ロットの倍数でなければ申請できないので、その場で赤くして知らせる
                         const invalid = lot > 0 && qty > 0 && qty % lot !== 0;
@@ -206,9 +223,13 @@
                             invalid ? `${lot.toLocaleString('ja-JP')} の倍数で入力してください。` : ''
                         );
 
+                        // 数量を入れた行は地色を変えて、何を選んだか一目で分かるようにする
+                        row.classList.toggle('qty-row-on', qty > 0 && !invalid);
+
                         if (qty > 0 && !invalid) {
                             const subtotal = price * qty;
                             total += subtotal;
+                            selected++;
                             cell.textContent = yen(subtotal);
                             cell.classList.remove('text-gray-400');
                         } else {
@@ -218,7 +239,8 @@
                         }
                     });
 
-                    totalCell.textContent = yen(total);
+                    totalCells.forEach((cell) => (cell.textContent = yen(total)));
+                    countCells.forEach((cell) => (cell.textContent = selected.toLocaleString('ja-JP')));
                 }
 
                 inputs.forEach((input) => input.addEventListener('input', recalc));

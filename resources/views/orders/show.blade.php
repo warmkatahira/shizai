@@ -363,7 +363,7 @@
             </tbody>
             <tfoot class="bg-gray-50">
                 <tr>
-                    <td colspan="5" class="px-4 py-3 text-right font-medium">合計（参考）</td>
+                    <td colspan="5" class="px-4 py-3 text-right font-medium">合計</td>
                     <td class="px-4 py-3 text-right font-bold">{{ \App\Support\Money::yen($order->totalPrice()) }}</td>
                 </tr>
             </tfoot>
