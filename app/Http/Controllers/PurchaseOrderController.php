@@ -67,7 +67,10 @@ class PurchaseOrderController extends Controller
             'margin_left' => 12,
             'margin_right' => 12,
             'margin_top' => 12,
-            'margin_bottom' => 12,
+            // 納入先・備考欄＋ページ番号はページ下端に固定（ビューの htmlpagefooter）。
+            // その高さぶんを下の余白として空けておかないと本文と重なる
+            'margin_bottom' => 52,
+            'margin_footer' => 6,
             // フォントのキャッシュ先（storage 配下は書き込み可）
             'tempDir' => storage_path('app/mpdf'),
         ]);
