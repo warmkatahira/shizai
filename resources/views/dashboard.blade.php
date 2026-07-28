@@ -62,10 +62,18 @@
             <p class="text-xs text-gray-500 mb-4">発注金額の推移（直近6ヶ月・発注済）</p>
             <div class="flex items-end gap-3 h-40">
                 @foreach ($trend as $t)
-                    <div class="flex-1 flex flex-col items-center justify-end h-full">
-                        <span class="text-[10px] text-gray-400 mb-1">{{ $t['amount'] > 0 ? \App\Support\Money::yen($t['amount']) : '' }}</span>
-                        <div class="w-full rounded-t bg-accent" style="height: {{ max(2, round($t['amount'] / $trendMax * 100)) }}%"></div>
-                        <span class="text-xs text-gray-500 mt-2">{{ $t['label'] }}</span>
+                    <div class="flex-1 flex flex-col items-center justify-end h-full"
+                         title="{{ $t['label'] }}：{{ \App\Support\Money::yen($t['amount']) }} / {{ number_format($t['count']) }}件">
+                        {{-- 0円の月も ¥0 と出す（空白だと「データが無い」のか「0円」なのか分からない） --}}
+                        <span class="text-[10px] mb-1 {{ $t['amount'] > 0 ? 'text-gray-400' : 'text-gray-300' }}">
+                            {{ \App\Support\Money::yen($t['amount']) }}
+                        </span>
+                        {{-- 当月は色を濃くして「まだ途中の月」だと分かるようにする --}}
+                        <div class="w-full rounded-t {{ $t['is_current'] ? 'bg-accent-strong' : 'bg-accent' }}"
+                             style="height: {{ max(2, round($t['amount'] / $trendMax * 100)) }}%"></div>
+                        <span class="text-xs mt-2 {{ $t['is_current'] ? 'text-ink font-bold' : 'text-gray-500' }}">{{ $t['label'] }}</span>
+                        {{-- 金額だけだと高額資材1件で跳ねるので件数も添える --}}
+                        <span class="text-[10px] text-gray-400">{{ number_format($t['count']) }}件</span>
                     </div>
                 @endforeach
             </div>

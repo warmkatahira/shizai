@@ -105,31 +105,39 @@ class DashboardController extends Controller
 
     /**
      * 直近6ヶ月の発注金額推移（発注済・ordered_at 月別）。
+     * 金額だけだと高額資材1件で跳ねるので、件数も一緒に返す。
      *
-     * @return array<int, array{label: string, amount: float}>
+     * @return array<int, array{label: string, amount: float, count: int, is_current: bool}>
      */
     private function amountTrend(?int $officeId): array
     {
         $start = Carbon::now()->startOfMonth()->subMonths(5);
+        $currentYm = Carbon::now()->format('Y-m');
 
-        // 月ごとの合計金額を1クエリで取る
+        // 月ごとの合計金額と件数を1クエリで取る
+        // 明細と結合しているので、件数は COUNT(DISTINCT orders.id) でないと明細数になる
         $rows = Order::where('orders.status', Order::STATUS_ORDERED)
             ->where('orders.ordered_at', '>=', $start)
             ->when($officeId, fn ($q) => $q->where('orders.office_id', $officeId))
             ->join('order_items', 'order_items.order_id', '=', 'orders.id')
             ->selectRaw("DATE_FORMAT(orders.ordered_at, '%Y-%m') as ym")
             ->selectRaw('SUM(order_items.unit_price * order_items.quantity) as amount')
+            ->selectRaw('COUNT(DISTINCT orders.id) as orders_count')
             ->groupBy('ym')
-            ->pluck('amount', 'ym');
+            ->get()
+            ->keyBy('ym');
 
         // 6ヶ月ぶんの枠を作り、データが無い月は0で埋める
         $trend = [];
         for ($i = 0; $i < 6; $i++) {
             $month = (clone $start)->addMonths($i);
             $key = $month->format('Y-m');
+            $row = $rows[$key] ?? null;
             $trend[] = [
                 'label' => $month->format('n') . '月',
-                'amount' => (float) ($rows[$key] ?? 0),
+                'amount' => (float) ($row->amount ?? 0),
+                'count' => (int) ($row->orders_count ?? 0),
+                'is_current' => $key === $currentYm,
             ];
         }
 
