@@ -109,28 +109,43 @@
             <div class="flex items-start gap-4 mb-2">
                 <img src="{{ $material->imageUrl() }}" alt="{{ $material->name }}" data-zoom
                      class="w-24 h-24 object-cover rounded-md border border-gray-200 cursor-zoom-in transition hover:opacity-80">
-                <label class="flex items-center gap-2 text-sm text-gray-600">
-                    <input type="checkbox" name="remove_image" value="1" class="rounded border-gray-300">
-                    画像を削除する
-                </label>
+                @include('admin.partials.toggle', [
+                    'name' => 'remove_image',
+                    'label' => '画像を削除する',
+                    'checked' => false,
+                ])
             </div>
         @endif
-        <input autocomplete="off" id="image" name="image" type="file" accept="image/jpeg,image/png,image/webp"
-               class="block w-full text-sm text-gray-600 file:mr-3 file:rounded-md file:border-0 file:bg-accent file:px-4 file:py-2 file:text-ink hover:file:bg-accent-dark">
+        {{-- ドラッグ＆ドロップ用の枠。CSV取り込みと同じ仕組み（layouts/app.blade.php の共通スクリプト）。
+             label で input を包んでいるので、JSが動かなくてもクリックでファイル選択ダイアログが開く --}}
+        <label data-dropzone data-dropzone-reject="JPEG / PNG / WebP の画像を落としてください。"
+               class="dropzone flex flex-col items-center justify-center gap-1 w-full px-6 py-6
+                      border-2 border-dashed border-gray-300 rounded-lg cursor-pointer text-center
+                      hover:border-accent-dark hover:bg-accent-light/30 transition-colors">
+            <input autocomplete="off" id="image" name="image" type="file" accept="image/jpeg,image/png,image/webp" class="sr-only">
+            {{-- 落とした画像はその場で出す（何を入れたか目で確かめられるように） --}}
+            <img data-dropzone-thumb src="" alt=""
+                 class="hidden w-24 h-24 object-cover rounded-md border border-gray-200">
+            <span data-dropzone-icon class="text-2xl" aria-hidden="true">🖼️</span>
+            <span data-dropzone-label class="text-sm text-gray-600">
+                画像をここにドラッグ＆ドロップ
+            </span>
+            <span class="text-xs text-gray-400">クリックしてファイルを選ぶこともできます</span>
+        </label>
         <p class="text-xs text-gray-400 mt-1">JPEG / PNG / WebP、5MBまで。{{ $material->imageUrl() ? '選ぶと差し替わります。' : '' }}</p>
     </div>
 
-    <label class="flex items-center gap-2 text-sm text-gray-700">
-        <input autocomplete="off" type="checkbox" name="has_imprint" value="1" class="rounded border-gray-300"
-               {{ old('has_imprint', $material->has_imprint ?? false) ? 'checked' : '' }}>
-        名入れあり
-    </label>
+    @include('admin.partials.toggle', [
+        'name' => 'has_imprint',
+        'label' => '名入れあり',
+        'checked' => old('has_imprint', $material->has_imprint ?? false),
+    ])
 
-    <label class="flex items-center gap-2 text-sm text-gray-700">
-        <input autocomplete="off" type="checkbox" name="is_active" value="1" class="rounded border-gray-300"
-               {{ old('is_active', $material->is_active ?? true) ? 'checked' : '' }}>
-        有効にする（発注可能にする）
-    </label>
+    @include('admin.partials.toggle', [
+        'name' => 'is_active',
+        'label' => '有効にする（発注可能にする）',
+        'checked' => old('is_active', $material->is_active ?? true),
+    ])
 
     <div class="flex items-center gap-3 pt-2">
         <button type="submit" class="bg-accent hover:bg-accent-dark text-ink text-sm px-5 py-2 rounded-md">保存</button>

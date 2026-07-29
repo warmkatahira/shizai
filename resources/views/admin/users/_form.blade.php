@@ -45,11 +45,11 @@
         <p class="text-xs text-gray-400 mt-1">「営業所」権限の場合は必須です。</p>
     </div>
 
-    <label class="flex items-center gap-2 text-sm text-gray-700">
-        <input autocomplete="off" type="checkbox" name="is_manager" value="1" class="rounded border-gray-300"
-               {{ old('is_manager', $user->is_manager ?? false) ? 'checked' : '' }}>
-        この営業所の<span class="font-medium">所長</span>にする（自営業所の発注申請を一次承認できる）
-    </label>
+    @include('admin.partials.toggle', [
+        'name' => 'is_manager',
+        'label' => 'この営業所の<span class="font-medium">所長</span>にする（自営業所の発注申請を一次承認できる）',
+        'checked' => old('is_manager', $user->is_manager ?? false),
+    ])
 
     <div>
         <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
@@ -62,11 +62,11 @@
         </p>
     </div>
 
-    <label class="flex items-center gap-2 text-sm text-gray-700">
-        <input autocomplete="off" type="checkbox" name="is_active" value="1" class="rounded border-gray-300"
-               {{ old('is_active', $user->is_active ?? true) ? 'checked' : '' }}>
-        有効にする（ログイン可能にする）
-    </label>
+    @include('admin.partials.toggle', [
+        'name' => 'is_active',
+        'label' => '有効にする（ログイン可能にする）',
+        'checked' => old('is_active', $user->is_active ?? true),
+    ])
 
     <div class="flex items-center gap-3 pt-2">
         <button type="submit" class="bg-accent hover:bg-accent-dark text-ink text-sm px-5 py-2 rounded-md">保存</button>

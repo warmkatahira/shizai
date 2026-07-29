@@ -14,11 +14,11 @@
         <p class="text-xs text-gray-400 mt-1">小さい順に表示されます。</p>
     </div>
 
-    <label class="flex items-center gap-2 text-sm text-gray-700">
-        <input autocomplete="off" type="checkbox" name="is_active" value="1" class="rounded border-gray-300"
-               {{ old('is_active', $unit->is_active ?? true) ? 'checked' : '' }}>
-        有効にする
-    </label>
+    @include('admin.partials.toggle', [
+        'name' => 'is_active',
+        'label' => '有効にする',
+        'checked' => old('is_active', $unit->is_active ?? true),
+    ])
 
     <div class="flex items-center gap-3 pt-2">
         <button type="submit" class="bg-accent hover:bg-accent-dark text-ink text-sm px-5 py-2 rounded-md">保存</button>
