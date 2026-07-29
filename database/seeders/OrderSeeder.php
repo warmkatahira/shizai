@@ -43,9 +43,18 @@ class OrderSeeder extends Seeder
         ['LS', 'フレックス', '大森 幸子', Order::STATUS_RETURNED, null, null],
     ];
 
+    /**
+     * 承認者・発注者・却下者・差し戻し者に使わない総務のログインID。
+     * 大泉さんは承認業務を担当しない（承認待ちの通知も受け取らない。UserSeeder 参照）。
+     */
+    private const NON_REVIEWER_AFFAIRS = ['ooizumi'];
+
     public function run(): void
     {
-        $affairs = User::where('role', User::ROLE_GENERAL_AFFAIRS)->orderBy('id')->get();
+        $affairs = User::where('role', User::ROLE_GENERAL_AFFAIRS)
+            ->whereNotIn('login_id', self::NON_REVIEWER_AFFAIRS)
+            ->orderBy('id')
+            ->get();
 
         foreach (self::ORDERS as $i => [$officeCode, $supplierName, $requesterName, $status, $daysAgo, $supplierNote]) {
             $office = Office::where('code', $officeCode)->firstOrFail();
