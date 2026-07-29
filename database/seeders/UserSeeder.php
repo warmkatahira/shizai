@@ -49,7 +49,7 @@ class UserSeeder extends Seeder
             ['大泉 一弘', 'ooizumi', null],
             ['並木 拓', 'namiki', 'anamiki@warm.co.jp'],
             ['堀内 正智', 'm.horiuchi', 'am.horiuchi@warm.co.jp'],
-            ['岡野 麻由子', 'm.okano', 'k.takayuki.tr@gmail.com'],
+            ['岡野 麻由子', 'm.okano', 'am.okano@gmail.com'],
         ];
 
         foreach ($generalAffairs as [$name, $loginId, $email]) {
