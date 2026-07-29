@@ -281,7 +281,7 @@ class OrderController extends Controller
                 'status' => $this->initialStatusFor($user),
                 'note' => $validated['note'] ?? null,
                 'supplier_note' => $validated['supplier_note'] ?? null,
-                'desired_delivery_date' => $validated['desired_delivery_date'] ?? null,
+                'desired_delivery_date' => $validated['desired_delivery_date'],
             ]);
 
             $order->items()->createMany($items);
@@ -323,7 +323,7 @@ class OrderController extends Controller
                 'status' => $this->initialStatusFor($user),
                 'note' => $validated['note'] ?? null,
                 'supplier_note' => $validated['supplier_note'] ?? null,
-                'desired_delivery_date' => $validated['desired_delivery_date'] ?? null,
+                'desired_delivery_date' => $validated['desired_delivery_date'],
                 // 承認をやり直すので履歴を消す
                 'manager_approved_by' => null,
                 'manager_approved_at' => null,
@@ -378,9 +378,10 @@ class OrderController extends Controller
             'requester_name' => ['required', 'string', 'max:50'],
             'note' => ['nullable', 'string', 'max:1000'],
             'supplier_note' => ['nullable', 'string', 'max:1000'],
-            // 納入希望日は明日以降。当日納品は業者の締めに間に合わないので選ばせない
+            // 納入希望日は必須（総務が発注の優先順位を判断できないため）。
+            // 明日以降しか選べない。当日納品は業者の締めに間に合わないため
             // （画面の date 入力にも min を入れているが、迂回されても通らないようにここでも見る）
-            'desired_delivery_date' => ['nullable', 'date', 'after:today'],
+            'desired_delivery_date' => ['required', 'date', 'after:today'],
             'quantities' => ['array'],
             'quantities.*' => ['nullable', 'integer', 'min:0', 'max:999999'],
         ], [

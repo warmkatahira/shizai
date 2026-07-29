@@ -177,7 +177,9 @@
                         <p class="text-xs text-gray-400 mt-1">営業所で共通のアカウントを使うため、実際に発注する方の氏名を入れてください。</p>
                     </div>
                     <div>
-                        <label for="desired_delivery_date" class="block text-sm font-medium text-gray-700 mb-1">納入希望日</label>
+                        <label for="desired_delivery_date" class="block text-sm font-medium text-gray-700 mb-1">
+                            納入希望日 <span class="text-red-500">*</span>
+                        </label>
                         @php
                             // 当日納品は業者の締めに間に合わないので、明日以降しか選べないようにする
                             $earliestDelivery = now()->addDay()->format('Y-m-d');
@@ -185,7 +187,7 @@
                             // 差し戻しの再申請では、元の希望日がもう過去になっていることがある。その場合は空にする
                             $deliveryDate = $deliveryDate && $deliveryDate >= $earliestDelivery ? $deliveryDate : '';
                         @endphp
-                        <input autocomplete="off" id="desired_delivery_date" name="desired_delivery_date" type="date"
+                        <input autocomplete="off" id="desired_delivery_date" name="desired_delivery_date" type="date" required
                                min="{{ $earliestDelivery }}"
                                value="{{ $deliveryDate }}"
                                class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
