@@ -6,12 +6,6 @@
     </div>
 
     <div>
-        <label for="code" class="block text-sm font-medium text-gray-700 mb-1">業者コード</label>
-        <input autocomplete="off" id="code" name="code" type="text" value="{{ old('code', $supplier->code) }}"
-               class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
-    </div>
-
-    <div>
         <label for="contact_person" class="block text-sm font-medium text-gray-700 mb-1">担当者名</label>
         <input autocomplete="off" id="contact_person" name="contact_person" type="text" value="{{ old('contact_person', $supplier->contact_person) }}"
                class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">

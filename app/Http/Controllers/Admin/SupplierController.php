@@ -64,7 +64,6 @@ class SupplierController extends Controller
     {
         return $request->validate([
             'name' => ['required', 'string', 'max:100'],
-            'code' => ['nullable', 'string', 'max:20', 'unique:suppliers,code' . ($supplier ? ",{$supplier->id}" : '')],
             'contact_person' => ['nullable', 'string', 'max:50'],
             'phone' => ['nullable', 'string', 'max:30'],
             'fax' => ['nullable', 'string', 'max:30'],
@@ -73,7 +72,6 @@ class SupplierController extends Controller
             'is_active' => ['boolean'],
         ], [], [
             'name' => '業者名',
-            'code' => '業者コード',
             'contact_person' => '担当者名',
             'phone' => '電話番号',
             'fax' => 'FAX番号',

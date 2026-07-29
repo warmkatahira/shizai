@@ -71,7 +71,7 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
 - `users`（login_id・email・role・office_id・is_manager を保持）
   - **ログインは `login_id`**（メールではない）。営業所の申請用アカウントは共通で使い回すため、実在のメールを持たない
   - `email` は **null 許容の「通知先」**。無ければそのユーザーには通知を送らないだけで、ログインには影響しない
-- `suppliers`（業者マスタ） … name/code/contact_person/phone/fax/email/order_method/is_active。`materials.supplier_id` で参照
+- `suppliers`（業者マスタ） … name/contact_person/phone/fax/email/order_method/is_active。`materials.supplier_id` で参照
   - **担当者名・連絡先・発注方法は業者ごとに決まる**ので、資材ではなくここに持つ（資材側に持つと同じ値が何十行も重複する）
   - `order_method` は `mail` / `phone` / `fax` / `web` の4択（`Supplier::ORDER_METHODS`）。サイボウズ・ロジレスなどの専用システムは `web`
 - `categories`（商品カテゴリマスタ） … name/sort_order/is_active。`materials.category_id` で参照

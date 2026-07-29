@@ -15,7 +15,6 @@
             <thead class="bg-gray-50 text-gray-500 text-left sticky top-0 z-10 shadow-[0_1px_0_0_var(--color-gray-200)]">
                 <tr>
                     <th class="px-4 py-3">業者名</th>
-                    <th class="px-4 py-3">コード</th>
                     <th class="px-4 py-3">担当者</th>
                     <th class="px-4 py-3">発注方法</th>
                     <th class="px-4 py-3">電話</th>
@@ -28,7 +27,6 @@
                 @forelse ($suppliers as $supplier)
                     <tr class="hover:bg-accent-light/40 transition-colors">
                         <td class="px-4 py-3 font-medium">{{ $supplier->name }}</td>
-                        <td class="px-4 py-3 text-gray-500">{{ $supplier->code ?: '—' }}</td>
                         <td class="px-4 py-3">{{ $supplier->contact_person ?: '—' }}</td>
                         <td class="px-4 py-3">{{ $supplier->orderMethodLabel() ?? '—' }}</td>
                         <td class="px-4 py-3 text-gray-500 whitespace-nowrap">
@@ -49,7 +47,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="8" class="px-4 py-8 text-center text-gray-400">業者がまだありません。</td></tr>
+                    <tr><td colspan="7" class="px-4 py-8 text-center text-gray-400">業者がまだありません。</td></tr>
                 @endforelse
             </tbody>
         </table>

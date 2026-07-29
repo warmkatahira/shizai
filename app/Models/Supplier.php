@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * 業者（仕入先）モデル。
  */
-#[Fillable(['name', 'code', 'contact_person', 'phone', 'fax', 'email', 'order_method', 'is_active'])]
+#[Fillable(['name', 'contact_person', 'phone', 'fax', 'email', 'order_method', 'is_active'])]
 class Supplier extends Model
 {
     /** 発注方法（業者ごとに決まる） */
