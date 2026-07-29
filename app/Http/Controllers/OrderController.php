@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\Supplier;
 use App\Models\User;
 use App\Http\Controllers\Concerns\FiltersByPeriod;
+use App\Http\Controllers\Concerns\RemembersLastSearch;
 use App\Support\OrderNotifier;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -20,10 +21,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class OrderController extends Controller
 {
-    use FiltersByPeriod;
-
-    /** 直前の検索条件をセッションに覚えておくキー（詳細から一覧に戻るときに使う） */
-    private const LAST_SEARCH_KEY = 'orders.last_search';
+    use FiltersByPeriod, RemembersLastSearch;
 
     /** 一覧の1ページあたりの件数 */
     private const PER_PAGE = 50;
@@ -36,12 +34,8 @@ class OrderController extends Controller
     {
         $this->applyDefaultFilters($request);
 
-        // 詳細から「一覧に戻る」で同じ検索結果に戻れるよう、検索条件を覚えておく。
-        //
-        // 配列ではなくクエリ文字列のまま持つ。配列だと「ステータス＝すべて（空）」が
-        // null に変換されてURL組み立て時に消え、条件なし＝初回表示とみなされて
-        // 既定値（当月・総務承認待ち）が再適用されてしまうため。
-        $request->session()->put(self::LAST_SEARCH_KEY, $request->getQueryString());
+        // 詳細から「一覧に戻る」で同じ検索結果に戻れるよう、検索条件を覚えておく
+        $this->rememberSearch($request);
 
         // 件数が増えても重くならないようページ送りにする。
         // withQueryString() で検索条件をページリンクに引き継ぐ。
@@ -516,9 +510,7 @@ class OrderController extends Controller
     /** 「一覧に戻る」先＝直前の検索結果（メールのリンクなどから直接来た場合は素の一覧） */
     private function backUrl(Request $request): string
     {
-        $lastSearch = $request->session()->get(self::LAST_SEARCH_KEY);
-
-        return route('orders.index') . ($lastSearch ? '?' . $lastSearch : '');
+        return $this->lastSearchUrl($request, 'orders.index');
     }
 
     /** 営業所ユーザーは自分の営業所の申請しか見られない */

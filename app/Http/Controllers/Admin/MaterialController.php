@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Concerns\RemembersLastSearch;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Material;
@@ -17,10 +18,15 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class MaterialController extends Controller
 {
+    use RemembersLastSearch;
+
     /** 資材一覧（カテゴリ順 → 品名順。業者・カテゴリ・品名・状態で絞り込み） */
     public function index(Request $request): View
     {
         $this->applyDefaultStatus($request);
+
+        // 編集画面から戻ったとき・保存したときに同じ絞り込みへ戻れるよう覚えておく
+        $this->rememberSearch($request);
 
         return view('admin.materials.index', [
             'materials' => $this->filteredMaterials($request)->get(),
@@ -66,10 +72,11 @@ class MaterialController extends Controller
     }
 
     /** 新規作成フォーム */
-    public function create(): View
+    public function create(Request $request): View
     {
         return view('admin.materials.create', [
             'material' => new Material(),
+            'backUrl' => $this->backUrl($request),
         ] + $this->formOptions());
     }
 
@@ -84,14 +91,15 @@ class MaterialController extends Controller
 
         Material::create($data);
 
-        return redirect()->route('admin.materials.index')->with('status', '資材を登録しました。');
+        return redirect($this->backUrl($request))->with('status', '資材を登録しました。');
     }
 
     /** 編集フォーム */
-    public function edit(Material $material): View
+    public function edit(Request $request, Material $material): View
     {
         return view('admin.materials.edit', [
             'material' => $material,
+            'backUrl' => $this->backUrl($request),
         ] + $this->formOptions());
     }
 
@@ -112,16 +120,26 @@ class MaterialController extends Controller
 
         $material->update($data);
 
-        return redirect()->route('admin.materials.index')->with('status', '資材を更新しました。');
+        return redirect($this->backUrl($request))->with('status', '資材を更新しました。');
     }
 
     /** 削除 */
-    public function destroy(Material $material): RedirectResponse
+    public function destroy(Request $request, Material $material): RedirectResponse
     {
         $this->deleteImage($material->image_path);
         $material->delete();
 
-        return redirect()->route('admin.materials.index')->with('status', '資材を削除しました。');
+        return redirect($this->backUrl($request))->with('status', '資材を削除しました。');
+    }
+
+    /**
+     * 一覧へ戻る先＝直前の絞り込み結果。
+     * 編集画面の「キャンセル」と、登録・更新・削除・CSV取り込み後のリダイレクトで使う。
+     * 素の一覧に戻すと、状態の初期値「有効」が再適用されて絞り込みが消えてしまう。
+     */
+    private function backUrl(Request $request): string
+    {
+        return $this->lastSearchUrl($request, 'admin.materials.index');
     }
 
     /**
@@ -215,7 +233,7 @@ class MaterialController extends Controller
 
         $result = MaterialCsv::import($request->file('file')->getRealPath());
 
-        return redirect()->route('admin.materials.index')->with(
+        return redirect($this->backUrl($request))->with(
             'status',
             "CSVを取り込みました（新規 {$result['created']} 件 / 更新 {$result['updated']} 件）。",
         );

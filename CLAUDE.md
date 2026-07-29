@@ -218,6 +218,9 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
 - `Material::scopeSortedByCategory()` / `scopeActive()` … 資材一覧の並び順・有効判定。3画面で共有
 - `App\Models\Concerns\DescribesMaterial` … 寸法・最低ロットの表示整形。Material と OrderItem が同じ列を持つため共有
 - `App\Http\Controllers\Concerns\FiltersByPeriod` … 検索期間の初期値（当月）。発注一覧と集計で共有
+- `App\Http\Controllers\Concerns\RemembersLastSearch` … 直前の検索条件をセッションに覚えて一覧へ戻す。
+  発注一覧（詳細から「一覧に戻る」）と資材マスタ（編集のキャンセル・保存後の戻り先）で共有。
+  **条件はクエリ文字列のまま持つ**（配列だと「すべて＝空」が null になって消え、既定値が再適用される）
 - `Material::validationRules()` / `attributeNames()` … 資材1件の入力チェック。編集フォームとCSV取り込みで共有
 - `App\Support\Money::yen()` … 金額表示（小数がある時だけ小数を出す）
 - `App\Support\OrderNotifier` … 通知先の振り分け

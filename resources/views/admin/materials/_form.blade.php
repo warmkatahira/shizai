@@ -134,6 +134,7 @@
 
     <div class="flex items-center gap-3 pt-2">
         <button type="submit" class="bg-accent hover:bg-accent-dark text-ink text-sm px-5 py-2 rounded-md">保存</button>
-        <a href="{{ route('admin.materials.index') }}" class="text-sm text-gray-500 hover:underline">キャンセル</a>
+        {{-- 直前の絞り込み結果に戻す（素の一覧に戻すと検索条件が消えるため。$backUrl は MaterialController） --}}
+        <a href="{{ $backUrl }}" class="text-sm text-gray-500 hover:underline">キャンセル</a>
     </div>
 </div>
