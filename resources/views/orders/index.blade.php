@@ -131,17 +131,18 @@
             {{-- スクロールしても列名が見えるよう固定する。枠内スクロール（overflow-auto）なので
                  sticky の基準はこの枠。マスタ系と同じく top-0 で枠の上端に貼り付ける --}}
             <thead class="bg-gray-50 text-gray-500 text-left sticky top-0 z-10 shadow-[0_1px_0_0_var(--color-gray-200)]">
+                {{-- 見出しを押すと並び替わる（判定・SQLは OrderController::applySort） --}}
                 <tr>
-                    <th class="px-4 py-3">申請番号</th>
-                    <th class="px-4 py-3">申請日</th>
-                    <th class="px-4 py-3">希望納期</th>
+                    @include('orders.partials.sort-header', ['key' => 'id', 'label' => '申請番号', 'default' => 'desc'])
+                    @include('orders.partials.sort-header', ['key' => 'created_at', 'label' => '申請日', 'default' => 'desc'])
+                    @include('orders.partials.sort-header', ['key' => 'desired_delivery_date', 'label' => '希望納期'])
                     @unless (auth()->user()->isSales())
-                        <th class="px-4 py-3">営業所</th>
+                        @include('orders.partials.sort-header', ['key' => 'office', 'label' => '営業所'])
                     @endunless
-                    <th class="px-4 py-3">発注業者</th>
-                    <th class="px-4 py-3">申請者</th>
-                    <th class="px-4 py-3 text-right">点数</th>
-                    <th class="px-4 py-3">状態</th>
+                    @include('orders.partials.sort-header', ['key' => 'supplier', 'label' => '発注業者'])
+                    @include('orders.partials.sort-header', ['key' => 'requester_name', 'label' => '申請者'])
+                    @include('orders.partials.sort-header', ['key' => 'items_count', 'label' => '点数', 'default' => 'desc', 'align' => 'right'])
+                    @include('orders.partials.sort-header', ['key' => 'status', 'label' => '状態'])
                     <th class="px-4 py-3 text-right">操作</th>
                 </tr>
             </thead>

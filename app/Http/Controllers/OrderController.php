@@ -27,6 +27,24 @@ class OrderController extends Controller
     private const PER_PAGE = 50;
 
     /**
+     * 列見出しで並び替えできる列と、その初回の向き。
+     * 日付・申請番号は「新しいものから」見たいので desc、それ以外は asc から始める。
+     * ここに無いキーが来たら既定（申請日の新しい順）に落とす。
+     */
+    private const SORTS = [
+        'id' => 'desc',
+        'created_at' => 'desc',
+        'desired_delivery_date' => 'asc',
+        'office' => 'asc',
+        'supplier' => 'asc',
+        'requester_name' => 'asc',
+        'items_count' => 'desc',
+        'status' => 'asc',
+    ];
+
+    private const DEFAULT_SORT = 'created_at';
+
+    /**
      * 発注申請の一覧（検索・絞り込み対応）。
      * 営業所ユーザーは自分の営業所の申請のみ、総務・管理者は全件表示。
      */
@@ -40,15 +58,15 @@ class OrderController extends Controller
         // 件数が増えても重くならないようページ送りにする。
         // withQueryString() で検索条件をページリンクに引き継ぐ。
         // CSVは export 側で全件出すので、ここでの分割はダウンロードに影響しない。
-        $orders = $this->filteredOrders($request)
+        $orders = $this->applySort($this->filteredOrders($request), $request)
             ->with(['office', 'supplier', 'requester'])
             ->withCount('items')
-            ->latest()
             ->paginate(self::PER_PAGE)
             ->withQueryString();
 
         return view('orders.index', array_merge(
             compact('orders'),
+            $this->sortState($request),
             $this->filterOptions($request),
         ));
     }
@@ -58,9 +76,10 @@ class OrderController extends Controller
     {
         $this->applyDefaultFilters($request);
 
-        $orders = $this->filteredOrders($request)
+        // 並び順も画面と揃える（見えている順にそのままCSVへ出す）
+        $orders = $this->applySort($this->filteredOrders($request), $request)
             ->with(['office', 'supplier', 'requester', 'managerApprover', 'reviewer', 'orderedBy', 'rejectedBy', 'returnedBy', 'items'])
-            ->latest()
+            ->withCount('items')
             ->get();
 
         $filename = 'orders_' . now()->format('Ymd_His') . '.csv';
@@ -173,6 +192,55 @@ class OrderController extends Controller
                 fn ($q) => $q->whereDate('created_at', '>=', $request->input('date_from')))
             ->when($request->filled('date_to'),
                 fn ($q) => $q->whereDate('created_at', '<=', $request->input('date_to')));
+    }
+
+    /**
+     * いま効いている並び順。不正な値・未指定は既定（申請日の新しい順）に落とす。
+     *
+     * @return array{sort:string, direction:string}
+     */
+    private function sortState(Request $request): array
+    {
+        $sort = (string) $request->input('sort');
+        $sort = array_key_exists($sort, self::SORTS) ? $sort : self::DEFAULT_SORT;
+
+        // 向きの指定が無いときは、その列の初回の向きを使う
+        $direction = $request->input('direction') ?? self::SORTS[$sort];
+
+        return [
+            'sort' => $sort,
+            'direction' => $direction === 'asc' ? 'asc' : 'desc',
+        ];
+    }
+
+    /**
+     * 列見出しで指定された並び順を適用する。
+     *
+     * 営業所・業者は名前が別テーブルにあるが、join すると orders と同名の列
+     * （created_at / status など）が曖昧になって既存の絞り込みが壊れるので、
+     * サブクエリで並べる。
+     */
+    private function applySort(Builder $query, Request $request): Builder
+    {
+        ['sort' => $sort, 'direction' => $direction] = $this->sortState($request);
+
+        $query = match ($sort) {
+            // 営業所は名前の五十音ではなく、マスタで決めた表示順に合わせる
+            'office' => $query->orderBy(
+                Office::select('sort_order')->whereColumn('offices.id', 'orders.office_id'), $direction),
+            'supplier' => $query->orderBy(
+                Supplier::select('name')->whereColumn('suppliers.id', 'orders.supplier_id'), $direction),
+            // ステータスは文字列の並びに意味がないので、承認フローの順に並べる
+            'status' => $query->orderByRaw(
+                'FIELD(orders.status, ' . implode(',', array_fill(0, count(Order::STATUS_LABELS), '?')) . ') ' . $direction,
+                array_keys(Order::STATUS_LABELS)),
+            // withCount が付けた別名。orders の列ではないので修飾しない
+            'items_count' => $query->orderBy('items_count', $direction),
+            default => $query->orderBy('orders.' . $sort, $direction),
+        };
+
+        // 同じ値の申請が並んだときにページ送りで前後しないよう、最後は必ず申請番号で決める
+        return $sort === 'id' ? $query : $query->orderBy('orders.id', 'desc');
     }
 
     /** 絞り込みフォーム用の選択肢（営業所・業者・ステータス・現在の検索条件） */
