@@ -206,6 +206,29 @@
             document.querySelectorAll('[data-countup]').forEach(animateCountUp);
         }
 
+        // 「画面に入ったら動かす」演出。data-reveal を付けた要素が見えたときに is-in-view を付ける。
+        // ページ下部にあるもの（ダッシュボードの推移グラフ）は、読み込み直後に動かすと
+        // スクロールして見る頃には終わっているため。一度動かしたら監視をやめる。
+        //
+        // CSSの既定は「動き終わった状態」にしてあるので、JSが動かない環境や
+        // 動きを抑える設定の人には、静止した状態でそのまま見える。
+        if (! window.matchMedia('(prefers-reduced-motion: reduce)').matches && window.IntersectionObserver) {
+            const revealTargets = document.querySelectorAll('[data-reveal]');
+
+            if (revealTargets.length) {
+                const revealObserver = new IntersectionObserver((entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('is-in-view');
+                            revealObserver.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.25 });
+
+                revealTargets.forEach((el) => revealObserver.observe(el));
+            }
+        }
+
         // 画像の拡大表示（ライトボックス）
         const lightbox = document.getElementById('image-lightbox');
         const lightboxImg = lightbox ? lightbox.querySelector('img') : null;

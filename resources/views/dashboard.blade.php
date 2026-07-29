@@ -19,7 +19,30 @@
     {{-- 対応が必要なもの（役割別）。件数が0のものも出すが、0のときは控えめに見せる。
          タイルは全部同じ大きさ（grid-cols-2 に揃え、中身の量で高さが変わらないよう h-full） --}}
     @if (! empty($todos))
+        @php
+            $todoTotal = array_sum(array_column($todos, 'count'));
+        @endphp
+
         <h2 class="text-sm font-bold text-gray-500 mb-3">対応が必要なもの</h2>
+
+        @if ($todoTotal === 0)
+            {{-- 全部0件のとき。0件のタイルを並べても押した先は空の一覧なので、
+                 片付いていることだけを1枚で伝える。
+                 チェックマークはフラッシュメッセージと同じで、丸→レ点の順に線が引かれる --}}
+            <div class="stagger mb-10">
+                <div class="flex items-center gap-3 bg-white rounded-2xl ring-1 ring-ink/5 px-6 py-5">
+                    <svg class="w-7 h-7 shrink-0 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle class="check-circle" cx="12" cy="12" r="10" opacity="0.35"/>
+                        <path class="check-mark" d="M7.2 12.4l3.3 3.3L16.9 9.3"/>
+                    </svg>
+                    <div>
+                        <p class="text-sm font-bold text-ink">対応が必要なものはありません</p>
+                        <p class="text-xs text-gray-500 mt-0.5">承認待ち・差し戻しはすべて片付いています。</p>
+                    </div>
+                </div>
+            </div>
+        @else
         <div class="stagger grid gap-4 sm:grid-cols-2 mb-10">
             @foreach ($todos as $todo)
                 {{-- 残っているものだけ、読み込み直後にリングを3回だけ広げて気づかせる（pulse-ring） --}}
@@ -41,6 +64,7 @@
                 </a>
             @endforeach
         </div>
+        @endif
     @endif
 
     {{-- 当月KPI ＋ 月別の発注金額推移。対応事項より下の階層なので、数字は控えめに出す --}}
@@ -105,7 +129,9 @@
                 <p class="text-[10px] text-gray-400 tabular-nums">最大 {{ \App\Support\Money::yen($trendMax) }}</p>
             </div>
 
-            <div class="relative h-44">
+            {{-- data-reveal … 画面に入ってから線を引く（ページ下部なので、読み込み直後だと
+                 スクロールして見る頃には描き終わっている）。付け外しは layouts/app.blade.php --}}
+            <div class="trend-chart relative h-44" data-reveal>
                 <svg viewBox="0 0 {{ $chartW }} 180" preserveAspectRatio="none" class="w-full h-full" aria-hidden="true">
                     <defs>
                         {{-- 折れ線の下をアクセント色のグラデーションで塗る --}}
