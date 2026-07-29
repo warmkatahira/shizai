@@ -9,24 +9,28 @@ use Illuminate\Database\Seeder;
  * 業者（仕入先）マスタ。
  * 担当者・連絡先・発注方法は業者ごとに決まるので、資材ではなくここに持つ。
  * 連絡先は発注書のヘッダーにも印字される。
- * ※ 業者名は MaterialSeeder から引くキーになっているので、変更するときは両方直すこと。
+ * 名前は2つ持つ。`name`＝短い表示名（画面・集計・明細のスナップショット）、
+ * `formal_name`＝「株式会社」まで入った正式名称（発注書の宛名だけ）。
+ * ※ `name` は MaterialSeeder と OrderSeeder から引くキーになっている（どちらも
+ *    Supplier::where('name', ...)->firstOrFail()）。変えるときは両方直すこと。
  */
 class SupplierSeeder extends Seeder
 {
     public function run(): void
     {
-        // [業者名, 担当者, TEL, FAX, 発注方法]
+        // [業者名（短い表示名）, 正式名称（発注書の宛名用）, 担当者, TEL, FAX, 発注方法]
         $suppliers = [
-            ['セッツカートン', '岡部', '048-218-0111', '048-218-0113', 'mail'],
-            ['共立', '江崎', '047-379-5970', null, 'mail'],
-            ['フレックス', '大原', '03-3875-5075', '048-997-0100', 'fax'],
-            ['アイセカンド', '西坂', '048-557-2211', '048-557-1962', 'fax'],
-            ['イクソブ', '橋本', '0296-48-1331', null, 'web'],
+            ['セッツカートン', 'セッツカートン株式会社', '岡部', '048-218-0111', '048-218-0113', 'mail'],
+            ['共立', '株式会社共立', '江崎', '047-379-5970', null, 'mail'],
+            ['フレックス', '株式会社フレックス', '大原', '03-3875-5075', '048-997-0100', 'fax'],
+            ['アイセカンド', '株式会社アイ・セカンド', '西坂', '048-557-2211', '048-557-1962', 'fax'],
+            ['イクソブ', 'イクソブ株式会社', '橋本', '0296-48-1331', null, 'web'],
         ];
 
-        foreach ($suppliers as [$name, $person, $phone, $fax, $orderMethod]) {
+        foreach ($suppliers as [$name, $formalName, $person, $phone, $fax, $orderMethod]) {
             Supplier::create([
                 'name' => $name,
+                'formal_name' => $formalName,
                 'contact_person' => $person,
                 'phone' => $phone,
                 'fax' => $fax,

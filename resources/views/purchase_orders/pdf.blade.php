@@ -69,7 +69,8 @@
 <table class="header">
     <tr>
         <td class="left">
-            <div class="org-name">{{ $supplier->name }} 御中</div>
+            {{-- 宛名だけは正式名称（株式会社まで）。未入力なら表示名を使う --}}
+            <div class="org-name">{{ $supplier->formalName() }} 御中</div>
             <div class="org-detail">TEL：{{ $supplier->phone ?: '—' }}</div>
             <div class="org-detail">FAX：{{ $supplier->fax ?? '—' }}</div>
         </td>

@@ -3,6 +3,19 @@
         <label for="name" class="block text-sm font-medium text-gray-700 mb-1">業者名 <span class="text-red-500">*</span></label>
         <input autocomplete="off" id="name" name="name" type="text" value="{{ old('name', $supplier->name) }}" required
                class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
+        <p class="text-xs text-gray-400 mt-1">
+            一覧・発注申請・集計に出る名前です。「株式会社」は付けず短めにしてください。
+        </p>
+    </div>
+
+    <div>
+        <label for="formal_name" class="block text-sm font-medium text-gray-700 mb-1">正式名称</label>
+        <input autocomplete="off" id="formal_name" name="formal_name" type="text" value="{{ old('formal_name', $supplier->formal_name) }}"
+               placeholder="例：株式会社フレックス"
+               class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
+        <p class="text-xs text-gray-400 mt-1">
+            発注書の宛名（〜御中）だけに使います。空のままなら業者名がそのまま宛名になります。
+        </p>
     </div>
 
     <div>

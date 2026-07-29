@@ -71,7 +71,10 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
 - `users`（login_id・email・role・office_id・is_manager を保持）
   - **ログインは `login_id`**（メールではない）。営業所の申請用アカウントは共通で使い回すため、実在のメールを持たない
   - `email` は **null 許容の「通知先」**。無ければそのユーザーには通知を送らないだけで、ログインには影響しない
-- `suppliers`（業者マスタ） … name/contact_person/phone/fax/email/order_method/is_active。`materials.supplier_id` で参照
+- `suppliers`（業者マスタ） … name/formal_name/contact_person/phone/fax/email/order_method/is_active。`materials.supplier_id` で参照
+  - **名前は2つ持つ**。`name`＝短い表示名（「フレックス」）、`formal_name`＝正式名称（「株式会社フレックス」・任意）
+    - 画面・集計・発注明細のスナップショットはすべて `name`。「株式会社」まで出すと一覧が長くなって邪魔なため
+    - **`formal_name` を使うのは発注書の宛名（〜御中）だけ**。空なら `name` を使う（`Supplier::formalName()`）
   - **担当者名・連絡先・発注方法は業者ごとに決まる**ので、資材ではなくここに持つ（資材側に持つと同じ値が何十行も重複する）
   - `order_method` は `mail` / `phone` / `fax` / `web` の4択（`Supplier::ORDER_METHODS`）。サイボウズ・ロジレスなどの専用システムは `web`
 - `categories`（商品カテゴリマスタ） … name/sort_order/is_active。`materials.category_id` で参照
@@ -84,7 +87,7 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
   - **明細は申請時点の情報をスナップショット保存**（material_name / category_name / supplier_name / unit / unit_price / 寸法 / 最低ロット）。マスタが後で変わっても過去の申請・集計・発注書は不変。
   - `orders.supplier_id`＝発注先の業者（1申請＝1業者）／`orders.requester_name`＝発注者の氏名（手入力）
   - 備考は2種類。`note`＝**社内メモ**（所長・総務向け。発注書には出ない） / `supplier_note`＝**業者への連絡事項**（発注書の備考欄に印字）
-  - `desired_delivery_date`＝納入希望日（申請時に入力し、発注書に印字）
+  - `desired_delivery_date`＝納入希望日（申請時に**必須**。発注書に印字）。列は `nullable`（必須にする前のデータが残るため）
   - 差し戻しは `return_reason` / `returned_by` / `returned_at`。再申請しても消さない（経緯の記録）
 
 ### 見た目（色・フォント）
@@ -142,8 +145,9 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
   - 発注者の氏名は、**所長アカウントなら本人の氏名を初期値**に入れる（所長は個人アカウントのため）
   - **発注者の氏名は手入力**（`orders.requester_name`）。営業所のアカウントは共通で使い回すため、ログインアカウント（`requested_by`）とは別に持つ
   - 納入希望日（`desired_delivery_date`）は発注単位で1つ。全品目に適用され、発注書の「希望納期」列に印字される
+    - **入力必須**。空だと総務が発注の優先順位を判断できず、一覧の希望納期も意味をなさないため
     - **明日以降しか選べない**（当日納品は業者の締めに間に合わないため）。画面は `min` 属性、`store`/`update` は `after:today` で検証。
-      差し戻しの再申請で元の希望日が過去になっている場合は、初期値を空にして選び直させる
+      差し戻しの再申請で元の希望日が過去になっている場合は、初期値を空にして選び直させる（必須なので選び直しになる）
 - `/orders/{order}/edit` 差し戻された申請の修正・再申請（営業所ユーザー。`Order::canBeEditedBy` で自営業所＋差し戻し中のみ）
   - 画面は新規申請と同じ（`orders/_form.blade.php` を共有）。**業者も選び直せる**（差し戻しの理由が「業者違い」のこともあるため）。
     業者を変えると数量はクリアされる（他業者の資材は混ぜられないので当然そうなる）
@@ -160,6 +164,7 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
     （GETだとブラウザの先読みや誤クリックで発注済になってしまう）
   - 発注NO＝`orders.id`（`Order::purchaseOrderNo()`）／発注日＝`ordered_at`／自社の連絡先＝`config/company.php`（本社）
   - 納入先＝発注元の営業所。備考欄＝`orders.supplier_note`（**業者向け**。社内メモの `orders.note` は印字しない）
+  - 宛名は `Supplier::formalName()`＝正式名称（`formal_name`。空なら `name`）。**正式名称を使うのはここだけ**
   - PDFは **mPDF**。日本語フォントは `storage/fonts/ipaexg.ttf`（IPAexゴシック / IPAフォントライセンス）をリポジトリに同梱し、サブセット埋め込みしている
 - `/reports` 発注集計（`ReportController`）
   - 集計軸をプルダウンで切替：カテゴリ別／業者別／営業所別／資材別

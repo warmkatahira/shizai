@@ -26,7 +26,13 @@
             <tbody class="divide-y divide-gray-100">
                 @forelse ($suppliers as $supplier)
                     <tr class="hover:bg-accent-light/40 transition-colors">
-                        <td class="px-4 py-3 font-medium">{{ $supplier->name }}</td>
+                        {{-- 正式名称は発注書の宛名にしか出ないので、確認できるよう小さく添える --}}
+                        <td class="px-4 py-3 font-medium">
+                            {{ $supplier->name }}
+                            @if ($supplier->formal_name)
+                                <span class="block text-xs font-normal text-gray-400">{{ $supplier->formal_name }}</span>
+                            @endif
+                        </td>
                         <td class="px-4 py-3">{{ $supplier->contact_person ?: '—' }}</td>
                         <td class="px-4 py-3">{{ $supplier->orderMethodLabel() ?? '—' }}</td>
                         <td class="px-4 py-3 text-gray-500 whitespace-nowrap">
