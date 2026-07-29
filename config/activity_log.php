@@ -58,6 +58,8 @@ return [
         'admin.users.store' => ['action' => 'user.created', 'label' => 'ユーザーの登録', 'category' => 'user', 'default' => true],
         'admin.users.update' => ['action' => 'user.updated', 'label' => 'ユーザーの更新', 'category' => 'user', 'default' => true],
         'admin.users.destroy' => ['action' => 'user.deleted', 'label' => 'ユーザーの削除', 'category' => 'user', 'default' => true],
+        // 本人によるパスワード変更（パスワードそのものは残さない）
+        'password.update' => ['action' => 'user.password_changed', 'label' => 'パスワードの変更（本人）', 'category' => 'user', 'default' => true],
 
         // ダウンロード（既定オフ。必要になったら設定画面でオンにする）
         'orders.export' => ['action' => 'order.list_exported', 'label' => '発注一覧CSVのダウンロード', 'category' => 'order', 'default' => false],

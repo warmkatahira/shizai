@@ -122,12 +122,16 @@
 
         {{-- ログイン中のユーザー --}}
         <div class="ml-auto flex items-center gap-2">
-            <div class="hidden sm:flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 py-1 pl-1 pr-3.5">
+            {{-- 名前を押すとパスワード変更へ（他に本人が変えられる設定が無いので、専用ページは作らない） --}}
+            <a href="{{ route('password.edit') }}" title="パスワードの変更"
+               class="hidden sm:flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 py-1 pl-1 pr-3.5
+                      transition hover:border-accent-dark hover:bg-accent-light/40
+                      {{ request()->routeIs('password.*') ? 'border-accent-dark bg-accent-light' : '' }}">
                 <span class="grid place-items-center w-7 h-7 rounded-full bg-accent-light text-accent-strong text-xs font-bold">
                     {{ mb_substr($user->name, 0, 1) }}
                 </span>
                 <span class="text-xs font-medium text-ink">{{ $user->name }}</span>
-            </div>
+            </a>
 
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
@@ -190,6 +194,13 @@
                         <a href="{{ route('admin.logs.index') }}"
                            class="block rounded-lg px-3 py-2 text-sm mt-1 {{ $current['logs'] ? 'bg-accent-light text-accent-strong font-medium' : 'text-gray-600 hover:bg-gray-50' }}">操作ログ</a>
                     @endif
+
+                    {{-- パスワード変更（PCでは右上の名前から入る） --}}
+                    <a href="{{ route('password.edit') }}"
+                       class="block rounded-lg px-3 py-2 text-sm mt-1 border-t border-gray-100 pt-3
+                              {{ request()->routeIs('password.*') ? 'bg-accent-light text-accent-strong font-medium' : 'text-gray-600 hover:bg-gray-50' }}">
+                        パスワードの変更
+                    </a>
                 </div>
             </details>
         </div>

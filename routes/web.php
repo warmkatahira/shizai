@@ -12,6 +12,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrderApprovalController;
 use App\Http\Controllers\MaterialCatalogController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
@@ -31,6 +32,11 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // 本人によるパスワード変更（権限は問わない）。
+    // 他人のパスワードを変えるのは管理者のユーザー管理（/admin/users）
+    Route::get('/password', [PasswordController::class, 'edit'])->name('password.edit');
+    Route::put('/password', [PasswordController::class, 'update'])->name('password.update');
 
     // ----- 発注申請 -----
     // 一覧・詳細は全ログインユーザー、作成は営業所ユーザーのみ
