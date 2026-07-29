@@ -31,7 +31,7 @@
             {{-- ドラッグ＆ドロップ用の枠。label で input を包んでいるので、
                  JSが動かなくてもクリックでファイル選択ダイアログが開く。
                  ドロップの処理は layouts/app.blade.php の共通スクリプト --}}
-            <label data-dropzone
+            <label data-dropzone data-dropzone-reject="CSVファイル（.csv）を落としてください。"
                    class="dropzone flex flex-col items-center justify-center gap-1 w-full px-6 py-8 mb-3
                           border-2 border-dashed border-gray-300 rounded-lg cursor-pointer text-center
                           hover:border-accent-dark hover:bg-accent-light/30 transition-colors">

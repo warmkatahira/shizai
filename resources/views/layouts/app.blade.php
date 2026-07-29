@@ -229,24 +229,58 @@
             }
         }
 
-        // CSV取り込みのドラッグ＆ドロップ（マスタ管理の取り込みパネル）。
+        // ファイルのドラッグ＆ドロップ（マスタのCSV取り込み・資材の画像）。
         // 枠は <label> が <input type="file"> を包んでいるので、クリックでの選択と
         // 「JSが動かないときは今までどおり」はHTMLだけで成立している。
-        // ここでやるのは「落とされたファイルを input に入れる」ことと、選んだ名前の表示だけ。
+        // ここでやるのは「落とされたファイルを input に入れる」ことと、選んだものの表示だけ。
         const dropzones = document.querySelectorAll('[data-dropzone]');
+
+        // input の accept 属性に合うファイルかどうか。「.csv」も「image/*」も見る
+        const isAccepted = (file, accept) => {
+            if (! accept) {
+                return true;
+            }
+
+            return accept.split(',').map((a) => a.trim().toLowerCase()).some((rule) => {
+                if (rule.startsWith('.')) {
+                    return file.name.toLowerCase().endsWith(rule);
+                }
+                if (rule.endsWith('/*')) {
+                    return file.type.startsWith(rule.slice(0, -1));
+                }
+
+                return file.type.toLowerCase() === rule;
+            });
+        };
 
         dropzones.forEach((zone) => {
             const input = zone.querySelector('input[type="file"]');
             const label = zone.querySelector('[data-dropzone-label]');
+            const thumb = zone.querySelector('[data-dropzone-thumb]');
+            const icon = zone.querySelector('[data-dropzone-icon]');
             const defaultText = label.textContent.trim();
 
-            const showFileName = () => {
+            const showPicked = () => {
                 const file = input.files[0];
                 label.textContent = file ? file.name : defaultText;
                 zone.classList.toggle('is-filled', Boolean(file));
+
+                // 画像の枠なら、選んだ絵をその場で出す（何を入れたか目で確かめられるように）
+                if (thumb) {
+                    if (file) {
+                        // 前に作ったURLは解放する（開きっぱなしにしない）
+                        if (thumb.dataset.objectUrl) {
+                            URL.revokeObjectURL(thumb.dataset.objectUrl);
+                        }
+                        thumb.dataset.objectUrl = URL.createObjectURL(file);
+                        thumb.src = thumb.dataset.objectUrl;
+                    }
+                    thumb.classList.toggle('hidden', ! file);
+                    icon && icon.classList.toggle('hidden', Boolean(file));
+                }
             };
 
-            input.addEventListener('change', showFileName);
+            input.addEventListener('change', showPicked);
 
             ['dragenter', 'dragover'].forEach((type) => {
                 zone.addEventListener(type, (e) => {
@@ -271,8 +305,8 @@
                     return;
                 }
 
-                if (! /\.csv$/i.test(file.name)) {
-                    label.textContent = 'CSVファイル（.csv）を落としてください。';
+                if (! isAccepted(file, input.accept)) {
+                    label.textContent = zone.dataset.dropzoneReject || 'この形式のファイルは選べません。';
 
                     return;
                 }
@@ -281,7 +315,7 @@
                 const picked = new DataTransfer();
                 picked.items.add(file);
                 input.files = picked.files;
-                showFileName();
+                showPicked();
             });
         });
 
