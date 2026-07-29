@@ -43,13 +43,12 @@ class UserSeeder extends Seeder
             'role' => User::ROLE_ADMIN,
         ]);
 
-        // 総務。承認待ちの通知はメールがある人にだけ届く。
-        // 大泉さんは通知が不要なので、権限は総務のままメールを持たせない（null）
+        // 総務。承認待ちの通知はメールがある人にだけ届く（全員に届く）
         $generalAffairs = [
-            ['大泉 一弘', 'ooizumi', null],
-            ['並木 拓', 'namiki', 'anamiki@warm.co.jp'],
-            ['堀内 正智', 'm.horiuchi', 'am.horiuchi@warm.co.jp'],
-            ['岡野 麻由子', 'm.okano', 'am.okano@gmail.com'],
+            ['大泉 一弘', 'ooizumi', 'ooizumi@warm.co.jp'],
+            ['並木 拓', 'namiki', 'namiki@warm.co.jp'],
+            ['堀内 正智', 'm.horiuchi', 'm.horiuchi@warm.co.jp'],
+            ['岡野 麻由子', 'm.okano', 'm.okano@gmail.com'],
         ];
 
         foreach ($generalAffairs as [$name, $loginId, $email]) {

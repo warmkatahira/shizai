@@ -45,7 +45,7 @@ class OrderSeeder extends Seeder
 
     /**
      * 承認者・発注者・却下者・差し戻し者に使わない総務のログインID。
-     * 大泉さんは承認業務を担当しない（承認待ちの通知も受け取らない。UserSeeder 参照）。
+     * 大泉さんは承認業務を担当しないため、テストデータでも担当者にしない。
      */
     private const NON_REVIEWER_AFFAIRS = ['ooizumi'];
 
