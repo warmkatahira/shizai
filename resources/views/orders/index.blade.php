@@ -134,6 +134,7 @@
                 <tr>
                     <th class="px-4 py-3">申請番号</th>
                     <th class="px-4 py-3">申請日</th>
+                    <th class="px-4 py-3">希望納期</th>
                     @unless (auth()->user()->isSales())
                         <th class="px-4 py-3">営業所</th>
                     @endunless
@@ -151,6 +152,26 @@
                         class="cursor-pointer hover:bg-accent-light/40 transition-colors">
                         <td class="px-4 py-3 font-medium">#{{ $order->id }}</td>
                         <td class="px-4 py-3 text-gray-500">{{ $order->created_at->format('Y/m/d H:i') }}</td>
+                        {{-- 希望納期。まだ発注していないもののうち、過ぎているもの・迫っているものだけ
+                             色を付けて気づかせる（判定は Order::deliveryUrgency）。
+                             発注済・却下は手を動かす必要が無いので色を付けない --}}
+                        <td class="px-4 py-3 whitespace-nowrap">
+                            @php
+                                $urgency = $order->deliveryUrgency();
+                            @endphp
+                            @if ($order->desired_delivery_date)
+                                <span class="{{ match ($urgency) {
+                                    'over' => 'text-red-600 font-bold',
+                                    'soon' => 'text-orange-600 font-bold',
+                                    default => 'text-gray-500',
+                                } }}">{{ $order->desired_delivery_date->format('Y/m/d') }}</span>
+                                @if ($urgency === 'over')
+                                    <span class="ml-1 text-xs text-red-600">超過</span>
+                                @endif
+                            @else
+                                <span class="text-gray-300">—</span>
+                            @endif
+                        </td>
                         @unless (auth()->user()->isSales())
                             <td class="px-4 py-3">{{ $order->office->name }}</td>
                         @endunless
@@ -163,7 +184,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="8" class="px-4 py-8 text-center text-gray-400">発注申請がありません。</td></tr>
+                    <tr><td colspan="9" class="px-4 py-8 text-center text-gray-400">発注申請がありません。</td></tr>
                 @endforelse
             </tbody>
         </table>

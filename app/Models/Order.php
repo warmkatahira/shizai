@@ -40,6 +40,9 @@ class Order extends Model
         self::STATUS_REJECTED => '却下',
     ];
 
+    /** 納入希望日が「近い」とみなす日数（deliveryUrgency） */
+    private const DELIVERY_SOON_DAYS = 3;
+
     protected function casts(): array
     {
         return [
@@ -254,6 +257,27 @@ class Order extends Model
     public function isReturned(): bool
     {
         return $this->status === self::STATUS_RETURNED;
+    }
+
+    /**
+     * 納入希望日の切迫度（表示専用）。'over'＝過ぎている / 'soon'＝3日以内 / null＝それ以外。
+     *
+     * まだ業者へ発注していないものだけが対象。発注済・却下は手を動かす必要が
+     * 無いので、日付が過ぎていても色は付けない。
+     */
+    public function deliveryUrgency(): ?string
+    {
+        if (! $this->desired_delivery_date || $this->isOrdered() || $this->isRejected()) {
+            return null;
+        }
+
+        $daysLeft = today()->diffInDays($this->desired_delivery_date, false);
+
+        return match (true) {
+            $daysLeft < 0 => 'over',
+            $daysLeft <= self::DELIVERY_SOON_DAYS => 'soon',
+            default => null,
+        };
     }
 
     // ---- 誰が何をできるか ----
