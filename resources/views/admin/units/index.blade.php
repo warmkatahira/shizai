@@ -5,9 +5,23 @@
 @section('content')
     <div class="flex items-center justify-between mb-6">
         <h1 class="text-xl font-bold">単位マスタ管理</h1>
-        <a href="{{ route('admin.units.create') }}"
-           class="bg-accent hover:bg-accent-dark text-ink text-sm px-4 py-2 rounded-md">＋ 新規単位</a>
+        <div class="flex items-center gap-3">
+            <a href="{{ route('admin.units.export') }}" data-no-loader
+               class="bg-green-600 hover:bg-green-700 text-white text-sm px-4 py-2 rounded-md">📥 CSVダウンロード</a>
+            <a href="{{ route('admin.units.create') }}"
+               class="bg-accent hover:bg-accent-dark text-ink text-sm px-4 py-2 rounded-md">＋ 新規単位</a>
+        </div>
     </div>
+
+    @include('admin.partials.errors')
+
+    @include('admin.partials.csv-panel', [
+        'label' => '単位',
+        'importUrl' => route('admin.units.import'),
+        'extraNotes' => [
+            '単位名は資材CSVから引くキーです。<span class="font-medium">名前を変えると</span>、その名前で書かれた資材CSVは取り込めなくなります。',
+        ],
+    ])
 
     <div class="bg-white shadow rounded-lg overflow-auto max-h-[70vh]">
         <table class="w-full text-sm">

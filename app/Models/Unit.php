@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Validation\Rule;
 
 /**
  * 単位マスタ（枚・ケース・本 など）。資材の単位を一元管理する。
@@ -15,6 +16,29 @@ class Unit extends Model
     protected function casts(): array
     {
         return ['is_active' => 'boolean'];
+    }
+
+    /**
+     * 単位1件の入力チェック。編集フォームとCSV取り込みで共有する。
+     * $ignoreId は更新する単位のID（自分自身を unique の対象から外す）。
+     */
+    public static function validationRules(?int $ignoreId = null): array
+    {
+        return [
+            'name' => ['required', 'string', 'max:20', Rule::unique('units', 'name')->ignore($ignoreId)],
+            'sort_order' => ['nullable', 'integer', 'min:0', 'max:9999'],
+            'is_active' => ['boolean'],
+        ];
+    }
+
+    /** 入力チェックのメッセージに出す項目名 */
+    public static function attributeNames(): array
+    {
+        return [
+            'name' => '単位名',
+            'sort_order' => '表示順',
+            'is_active' => '有効',
+        ];
     }
 
     /** この単位を使う資材 */

@@ -5,9 +5,20 @@
 @section('content')
     <div class="flex items-center justify-between mb-6">
         <h1 class="text-xl font-bold">業者マスタ管理</h1>
-        <a href="{{ route('admin.suppliers.create') }}"
-           class="bg-accent hover:bg-accent-dark text-ink text-sm px-4 py-2 rounded-md">＋ 新規業者</a>
+        <div class="flex items-center gap-3">
+            <a href="{{ route('admin.suppliers.export') }}" data-no-loader
+               class="bg-green-600 hover:bg-green-700 text-white text-sm px-4 py-2 rounded-md">📥 CSVダウンロード</a>
+            <a href="{{ route('admin.suppliers.create') }}"
+               class="bg-accent hover:bg-accent-dark text-ink text-sm px-4 py-2 rounded-md">＋ 新規業者</a>
+        </div>
     </div>
+
+    @include('admin.partials.errors')
+
+    @include('admin.partials.csv-panel', [
+        'label' => '業者',
+        'importUrl' => route('admin.suppliers.import'),
+    ])
 
     <div class="bg-white shadow rounded-lg overflow-auto max-h-[70vh]">
         <table class="w-full text-sm">

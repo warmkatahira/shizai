@@ -181,15 +181,27 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
 - `/admin/{offices,suppliers,categories,materials}` マスタ管理（**管理者と総務**）
   - 資材の **状態は初期値が「有効」**（普段使うのは有効な資材だけ）。CSV出力にも同じ初期値がかかる。
     「すべて」は空文字で送られて `null` になるので、値ではなく**キーの有無**で初回表示か判定する（`applyDefaultStatus`）
-  - 資材だけ **CSV出力・CSV取り込み**ができる（`/admin/materials-export` / `/admin/materials-import`。ロジックは `App\Support\MaterialCsv`）
+  - **5つのマスタすべてが CSV出力・CSV取り込みに対応**（`/admin/{名前}-export` / `-import`）。
+    **ユーザーマスタだけは対象外**（権限の付与を伴うため、画面から1件ずつ操作する）
+    - 共通処理は `App\Support\MasterCsv`（抽象クラス）。マスタごとの差分は継承先
+      （`OfficeCsv` / `SupplierCsv` / `CategoryCsv` / `UnitCsv` / `MaterialCsv`）が
+      `headers()` / `row()` / `attributes()` で持つ
+    - 入口は `Concerns\HandlesMasterCsv`（`streamCsv()` / `importCsv()`）。各コントローラーの export/import はこれを呼ぶだけ
     - **出したCSVをExcelで直して戻す**運用。突合は**1列目のID**：IDが入っていれば更新、空なら新規追加
-      （品名で突合すると、品名を直したいときに「別の資材の新規追加」になってしまうため）
-    - カテゴリ・発注業者は**名前**で書く。マスタに無い名前は**エラー**（自動作成すると誤字がマスタに入る）
+      （名前で突合すると、名前を直したいときに「別のものの新規追加」になってしまうため）
+    - 入力チェックは**モデルの `validationRules($ignoreId)` / `attributeNames()`**。編集フォームと同じものを使う。
+      `$ignoreId` は更新行を unique の対象から外すため（名前を変えずに他の列だけ直せるように）
+    - 資材のカテゴリ・発注業者・単位は**名前**で書く。マスタに無い名前は**エラー**（自動作成すると誤字がマスタに入る）
+    - 業者の発注方法は**ラベル**（メール／電話／FAX／web）で出す。取り込みは保存値（`mail` など）でも受ける
     - **1行でもエラーがあれば1件も取り込まない**（トランザクション）。エラーは「3行目：〜」と行番号つきで全部出す
-    - CSVに無い資材は消えない（削除はしない）。外すときは「有効」を いいえ にする
+    - **CSVの中での重複も先に弾く**（`uniqueColumns()`）。DBの unique に任せると取り込みの途中で落ちて行番号が出ないため
+    - CSVに無い行は消えない（削除はしない）。外すときは「有効」を いいえ にする
     - ExcelがCP932で保存したCSVも取り込める（UTF-8でなければ SJIS-win から変換する）。数量の「1,000」も読める
+    - 取り込みパネルは `admin/partials/csv-panel.blade.php` で共有。**ドラッグ＆ドロップ対応**
+      （`<label>` が `<input type="file">` を包んでいるので、JSが動かなくてもクリックで選べる。
+      落とされたファイルを input に入れる処理だけ `layouts/app.blade.php` の共通スクリプトにある）
 - `/admin/users` ユーザー管理（**管理者のみ**。権限の付与・パスワード変更ができるため）
-- CSVは `OrderController@export` / `ReportController@export` / `Admin\MaterialController@export`（BOM付きUTF-8、Excel対応）
+- CSVは `OrderController@export` / `ReportController@export` / 各マスタの `export`（BOM付きUTF-8、Excel対応）
 
 ## テスト用アカウント（**ログインIDで**ログイン。パスワードは管理者以外すべて `password`）
 | ログインID | 役割 |
@@ -221,7 +233,12 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
 - `App\Http\Controllers\Concerns\RemembersLastSearch` … 直前の検索条件をセッションに覚えて一覧へ戻す。
   発注一覧（詳細から「一覧に戻る」）と資材マスタ（編集のキャンセル・保存後の戻り先）で共有。
   **条件はクエリ文字列のまま持つ**（配列だと「すべて＝空」が null になって消え、既定値が再適用される）
-- `Material::validationRules()` / `attributeNames()` … 資材1件の入力チェック。編集フォームとCSV取り込みで共有
+- `{Office,Supplier,Category,Unit,Material}::validationRules($ignoreId)` / `attributeNames()` …
+  マスタ1件の入力チェック。**編集フォームとCSV取り込みで共有**（コントローラーに規則を書かない）
+- `App\Support\MasterCsv` … マスタCSVの共通処理（読み込み・ID突合・検証・重複チェック・トランザクション）。
+  マスタごとの列と変換だけ継承先が持つ
+- `App\Http\Controllers\Concerns\HandlesMasterCsv` … CSV出力・取り込みの入口。5つのマスタで共有
+- `resources/views/admin/partials/csv-panel.blade.php` … CSV取り込みパネル（説明文＋ドロップ枠）。5つのマスタで共有
 - `App\Support\Money::yen()` … 金額表示（小数がある時だけ小数を出す）
 - `App\Support\OrderNotifier` … 通知先の振り分け
 - `OrderController::validateOrderInput()` / `buildItemSnapshots()` … 申請フォームの検証と明細の組み立て。新規申請（`store`）と再申請（`update`）で共有

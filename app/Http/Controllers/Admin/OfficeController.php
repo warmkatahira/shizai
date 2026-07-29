@@ -2,14 +2,19 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Concerns\HandlesMasterCsv;
 use App\Http\Controllers\Controller;
 use App\Models\Office;
+use App\Support\OfficeCsv;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class OfficeController extends Controller
 {
+    use HandlesMasterCsv;
+
     /** 営業所一覧 */
     public function index(): View
     {
@@ -59,27 +64,29 @@ class OfficeController extends Controller
         return redirect()->route('admin.offices.index')->with('status', '営業所を削除しました。');
     }
 
-    /** バリデーション */
+    /** 営業所マスタをCSVでダウンロード（Excel対応のBOM付きUTF-8） */
+    public function export(): StreamedResponse
+    {
+        return $this->streamCsv(OfficeCsv::class, Office::orderBy('sort_order')->orderBy('id')->get(), 'offices');
+    }
+
+    /**
+     * CSVを取り込んで営業所を追加・更新する。
+     * IDが入っている行は更新、空の行は新規追加。1行でもエラーがあれば何も取り込まない。
+     */
+    public function import(Request $request): RedirectResponse
+    {
+        return $this->importCsv($request, OfficeCsv::class, route('admin.offices.index'), '営業所');
+    }
+
+    /** バリデーション（規則はモデルに集約。CSV取り込みと同じものを使う） */
     private function validateData(Request $request, ?Office $office = null): array
     {
-        return $request->validate([
-            'name' => ['required', 'string', 'max:100'],
-            'code' => ['nullable', 'string', 'max:20', 'unique:offices,code' . ($office ? ",{$office->id}" : '')],
-            'postal_code' => ['nullable', 'string', 'max:8'],
-            'address' => ['nullable', 'string', 'max:255'],
-            'tel' => ['nullable', 'string', 'max:20'],
-            'fax' => ['nullable', 'string', 'max:20'],
-            'sort_order' => ['nullable', 'integer', 'min:0', 'max:9999'],
-            'is_active' => ['boolean'],
-        ], [], [
-            'name' => '営業所名',
-            'code' => '営業所コード',
-            'postal_code' => '郵便番号',
-            'address' => '住所',
-            'tel' => '電話番号',
-            'fax' => 'FAX番号',
-            'sort_order' => '表示順',
-        ]) + [
+        return $request->validate(
+            Office::validationRules($office?->id),
+            [],
+            Office::attributeNames(),
+        ) + [
             'sort_order' => (int) $request->input('sort_order', 0),
             'is_active' => $request->boolean('is_active'),
         ];

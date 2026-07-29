@@ -2,15 +2,19 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Concerns\HandlesMasterCsv;
 use App\Http\Controllers\Controller;
 use App\Models\Unit;
+use App\Support\UnitCsv;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class UnitController extends Controller
 {
+    use HandlesMasterCsv;
+
     /** 単位一覧 */
     public function index(): View
     {
@@ -62,17 +66,29 @@ class UnitController extends Controller
         return redirect()->route('admin.units.index')->with('status', '単位を削除しました。');
     }
 
-    /** バリデーション */
+    /** 単位マスタをCSVでダウンロード（Excel対応のBOM付きUTF-8） */
+    public function export(): StreamedResponse
+    {
+        return $this->streamCsv(UnitCsv::class, Unit::orderBy('sort_order')->orderBy('name')->get(), 'units');
+    }
+
+    /**
+     * CSVを取り込んで単位を追加・更新する。
+     * IDが入っている行は更新、空の行は新規追加。1行でもエラーがあれば何も取り込まない。
+     */
+    public function import(Request $request): RedirectResponse
+    {
+        return $this->importCsv($request, UnitCsv::class, route('admin.units.index'), '単位');
+    }
+
+    /** バリデーション（規則はモデルに集約。CSV取り込みと同じものを使う） */
     private function validateData(Request $request, ?Unit $unit = null): array
     {
-        return $request->validate([
-            'name' => ['required', 'string', 'max:20', Rule::unique('units', 'name')->ignore($unit)],
-            'sort_order' => ['nullable', 'integer', 'min:0', 'max:9999'],
-            'is_active' => ['boolean'],
-        ], [], [
-            'name' => '単位名',
-            'sort_order' => '表示順',
-        ]) + [
+        return $request->validate(
+            Unit::validationRules($unit?->id),
+            [],
+            Unit::attributeNames(),
+        ) + [
             'sort_order' => (int) $request->input('sort_order', 0),
             'is_active' => $request->boolean('is_active'),
         ];

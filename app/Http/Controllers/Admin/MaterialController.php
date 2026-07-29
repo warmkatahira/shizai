@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Concerns\HandlesMasterCsv;
 use App\Http\Controllers\Concerns\RemembersLastSearch;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
@@ -18,7 +19,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class MaterialController extends Controller
 {
-    use RemembersLastSearch;
+    use HandlesMasterCsv, RemembersLastSearch;
 
     /** 資材一覧（カテゴリ順 → 品名順。業者・カテゴリ・品名・状態で絞り込み） */
     public function index(Request $request): View
@@ -202,23 +203,7 @@ class MaterialController extends Controller
         // 画面で見えているものがそのままCSVに出るよう、一覧と同じ初期値を適用する
         $this->applyDefaultStatus($request);
 
-        $materials = $this->filteredMaterials($request)->get();
-
-        $filename = 'materials_' . now()->format('Ymd_His') . '.csv';
-
-        return response()->streamDownload(function () use ($materials) {
-            $out = fopen('php://output', 'w');
-            // ExcelでUTF-8を正しく開くためのBOM
-            fwrite($out, "\xEF\xBB\xBF");
-
-            fputcsv($out, MaterialCsv::HEADERS);
-
-            foreach ($materials as $material) {
-                fputcsv($out, MaterialCsv::row($material));
-            }
-
-            fclose($out);
-        }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);
+        return $this->streamCsv(MaterialCsv::class, $this->filteredMaterials($request)->get(), 'materials');
     }
 
     /**
@@ -227,15 +212,7 @@ class MaterialController extends Controller
      */
     public function import(Request $request): RedirectResponse
     {
-        $request->validate([
-            'file' => ['required', 'file', 'max:5120'],
-        ], [], ['file' => 'CSVファイル']);
-
-        $result = MaterialCsv::import($request->file('file')->getRealPath());
-
-        return redirect($this->backUrl($request))->with(
-            'status',
-            "CSVを取り込みました（新規 {$result['created']} 件 / 更新 {$result['updated']} 件）。",
-        );
+        // 取り込み後も、いま絞り込んでいる一覧に戻す
+        return $this->importCsv($request, MaterialCsv::class, $this->backUrl($request), '資材');
     }
 }

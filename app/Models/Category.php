@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Validation\Rule;
 
 /**
  * 商品カテゴリマスタモデル。
@@ -16,6 +17,29 @@ class Category extends Model
     {
         return [
             'is_active' => 'boolean',
+        ];
+    }
+
+    /**
+     * カテゴリ1件の入力チェック。編集フォームとCSV取り込みで共有する。
+     * $ignoreId は更新するカテゴリのID（自分自身を unique の対象から外す）。
+     */
+    public static function validationRules(?int $ignoreId = null): array
+    {
+        return [
+            'name' => ['required', 'string', 'max:50', Rule::unique('categories', 'name')->ignore($ignoreId)],
+            'sort_order' => ['nullable', 'integer', 'min:0', 'max:9999'],
+            'is_active' => ['boolean'],
+        ];
+    }
+
+    /** 入力チェックのメッセージに出す項目名 */
+    public static function attributeNames(): array
+    {
+        return [
+            'name' => 'カテゴリ名',
+            'sort_order' => '表示順',
+            'is_active' => '有効',
         ];
     }
 

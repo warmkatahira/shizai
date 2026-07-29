@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Validation\Rule;
 
 /**
  * 営業所モデル。
@@ -16,6 +17,39 @@ class Office extends Model
     {
         return [
             'is_active' => 'boolean',
+        ];
+    }
+
+    /**
+     * 営業所1件の入力チェック。編集フォームとCSV取り込みで共有する。
+     * $ignoreId は更新する営業所のID（自分自身を unique の対象から外す）。
+     */
+    public static function validationRules(?int $ignoreId = null): array
+    {
+        return [
+            'name' => ['required', 'string', 'max:100'],
+            'code' => ['nullable', 'string', 'max:20', Rule::unique('offices', 'code')->ignore($ignoreId)],
+            'postal_code' => ['nullable', 'string', 'max:8'],
+            'address' => ['nullable', 'string', 'max:255'],
+            'tel' => ['nullable', 'string', 'max:20'],
+            'fax' => ['nullable', 'string', 'max:20'],
+            'sort_order' => ['nullable', 'integer', 'min:0', 'max:9999'],
+            'is_active' => ['boolean'],
+        ];
+    }
+
+    /** 入力チェックのメッセージに出す項目名 */
+    public static function attributeNames(): array
+    {
+        return [
+            'name' => '営業所名',
+            'code' => '営業所コード',
+            'postal_code' => '郵便番号',
+            'address' => '住所',
+            'tel' => '電話番号',
+            'fax' => 'FAX番号',
+            'sort_order' => '表示順',
+            'is_active' => '有効',
         ];
     }
 

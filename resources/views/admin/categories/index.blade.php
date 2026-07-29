@@ -5,9 +5,23 @@
 @section('content')
     <div class="flex items-center justify-between mb-6">
         <h1 class="text-xl font-bold">カテゴリマスタ管理</h1>
-        <a href="{{ route('admin.categories.create') }}"
-           class="bg-accent hover:bg-accent-dark text-ink text-sm px-4 py-2 rounded-md">＋ 新規カテゴリ</a>
+        <div class="flex items-center gap-3">
+            <a href="{{ route('admin.categories.export') }}" data-no-loader
+               class="bg-green-600 hover:bg-green-700 text-white text-sm px-4 py-2 rounded-md">📥 CSVダウンロード</a>
+            <a href="{{ route('admin.categories.create') }}"
+               class="bg-accent hover:bg-accent-dark text-ink text-sm px-4 py-2 rounded-md">＋ 新規カテゴリ</a>
+        </div>
     </div>
+
+    @include('admin.partials.errors')
+
+    @include('admin.partials.csv-panel', [
+        'label' => 'カテゴリ',
+        'importUrl' => route('admin.categories.import'),
+        'extraNotes' => [
+            'カテゴリ名は資材CSVから引くキーです。<span class="font-medium">名前を変えると</span>、その名前で書かれた資材CSVは取り込めなくなります。',
+        ],
+    ])
 
     <div class="bg-white shadow rounded-lg overflow-auto max-h-[70vh]">
         <table class="w-full text-sm">

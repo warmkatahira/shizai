@@ -331,6 +331,25 @@
     background: var(--color-accent-light);
 }
 
+/* CSV取り込みのドラッグ＆ドロップ枠。状態は layouts/app.blade.php のスクリプトが付け外しする */
+.dropzone.is-dragover {
+    border-color: var(--color-accent-dark);
+    border-style: solid;
+    background: var(--color-accent-light);
+}
+
+/* ファイルを選んだあと。選べたことが分かるよう実線＋薄い色にする */
+.dropzone.is-filled {
+    border-color: var(--color-accent-dark);
+    border-style: solid;
+    background: var(--color-gray-50);
+}
+
+.dropzone.is-filled [data-dropzone-label] {
+    font-weight: bold;
+    color: var(--color-ink);
+}
+
 /* 表の行にカーソルを乗せたら、左端にアクセント色のバーを出す（動きの設定に関係なく出す） */
 tbody tr td:first-child {
     transition: box-shadow 0.15s ease;

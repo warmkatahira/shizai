@@ -2,15 +2,19 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Concerns\HandlesMasterCsv;
 use App\Http\Controllers\Controller;
 use App\Models\Supplier;
+use App\Support\SupplierCsv;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SupplierController extends Controller
 {
+    use HandlesMasterCsv;
+
     /** 業者一覧 */
     public function index(): View
     {
@@ -59,27 +63,28 @@ class SupplierController extends Controller
         return redirect()->route('admin.suppliers.index')->with('status', '業者を削除しました。');
     }
 
-    /** バリデーション */
+    /** 業者マスタをCSVでダウンロード（Excel対応のBOM付きUTF-8） */
+    public function export(): StreamedResponse
+    {
+        return $this->streamCsv(SupplierCsv::class, Supplier::orderBy('name')->get(), 'suppliers');
+    }
+
+    /**
+     * CSVを取り込んで業者を追加・更新する。
+     * IDが入っている行は更新、空の行は新規追加。1行でもエラーがあれば何も取り込まない。
+     */
+    public function import(Request $request): RedirectResponse
+    {
+        return $this->importCsv($request, SupplierCsv::class, route('admin.suppliers.index'), '業者');
+    }
+
+    /** バリデーション（規則はモデルに集約。CSV取り込みと同じものを使う） */
     private function validateData(Request $request, ?Supplier $supplier = null): array
     {
-        return $request->validate([
-            'name' => ['required', 'string', 'max:100'],
-            // 発注書の宛名だけに使う。空なら name をそのまま使う（Supplier::formalName）
-            'formal_name' => ['nullable', 'string', 'max:100'],
-            'contact_person' => ['nullable', 'string', 'max:50'],
-            'phone' => ['nullable', 'string', 'max:30'],
-            'fax' => ['nullable', 'string', 'max:30'],
-            'order_method' => ['nullable', Rule::in(array_keys(Supplier::ORDER_METHODS))],
-            'email' => ['nullable', 'email', 'max:255'],
-            'is_active' => ['boolean'],
-        ], [], [
-            'name' => '業者名',
-            'formal_name' => '正式名称',
-            'contact_person' => '担当者名',
-            'phone' => '電話番号',
-            'fax' => 'FAX番号',
-            'order_method' => '発注方法',
-            'email' => 'メールアドレス',
-        ]) + ['is_active' => $request->boolean('is_active')];
+        return $request->validate(
+            Supplier::validationRules($supplier?->id),
+            [],
+            Supplier::attributeNames(),
+        ) + ['is_active' => $request->boolean('is_active')];
     }
 }

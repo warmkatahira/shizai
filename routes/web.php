@@ -78,11 +78,24 @@ Route::middleware('auth')->group(function () {
     Route::prefix('admin')->name('admin.')->group(function () {
         // 管理者・総務が編集できる
         Route::middleware('role:admin,general_affairs')->group(function () {
+            // 各マスタのCSV出力・取り込み（取り込みはIDで突合。詳細は App\Support\MasterCsv とその継承先）。
+            // ユーザーマスタは権限の付与を伴うので対象外
+            Route::get('offices-export', [OfficeController::class, 'export'])->name('offices.export');
+            Route::post('offices-import', [OfficeController::class, 'import'])->name('offices.import');
             Route::resource('offices', OfficeController::class)->except('show');
+
+            Route::get('suppliers-export', [SupplierController::class, 'export'])->name('suppliers.export');
+            Route::post('suppliers-import', [SupplierController::class, 'import'])->name('suppliers.import');
             Route::resource('suppliers', SupplierController::class)->except('show');
+
+            Route::get('categories-export', [CategoryController::class, 'export'])->name('categories.export');
+            Route::post('categories-import', [CategoryController::class, 'import'])->name('categories.import');
             Route::resource('categories', CategoryController::class)->except('show');
+
+            Route::get('units-export', [UnitController::class, 'export'])->name('units.export');
+            Route::post('units-import', [UnitController::class, 'import'])->name('units.import');
             Route::resource('units', UnitController::class)->except('show');
-            // 資材マスタのCSV出力・取り込み（取り込みはIDで突合。詳細は App\Support\MaterialCsv）
+
             Route::get('materials-export', [MaterialController::class, 'export'])->name('materials.export');
             Route::post('materials-import', [MaterialController::class, 'import'])->name('materials.import');
             Route::resource('materials', MaterialController::class)->except('show');

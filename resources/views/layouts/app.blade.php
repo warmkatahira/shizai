@@ -229,6 +229,74 @@
             }
         }
 
+        // CSV取り込みのドラッグ＆ドロップ（マスタ管理の取り込みパネル）。
+        // 枠は <label> が <input type="file"> を包んでいるので、クリックでの選択と
+        // 「JSが動かないときは今までどおり」はHTMLだけで成立している。
+        // ここでやるのは「落とされたファイルを input に入れる」ことと、選んだ名前の表示だけ。
+        const dropzones = document.querySelectorAll('[data-dropzone]');
+
+        dropzones.forEach((zone) => {
+            const input = zone.querySelector('input[type="file"]');
+            const label = zone.querySelector('[data-dropzone-label]');
+            const defaultText = label.textContent.trim();
+
+            const showFileName = () => {
+                const file = input.files[0];
+                label.textContent = file ? file.name : defaultText;
+                zone.classList.toggle('is-filled', Boolean(file));
+            };
+
+            input.addEventListener('change', showFileName);
+
+            ['dragenter', 'dragover'].forEach((type) => {
+                zone.addEventListener(type, (e) => {
+                    e.preventDefault();
+                    zone.classList.add('is-dragover');
+                });
+            });
+
+            zone.addEventListener('dragleave', (e) => {
+                // 枠の中の要素をまたぐときにも dragleave が飛ぶので、本当に外へ出たときだけ戻す
+                if (! zone.contains(e.relatedTarget)) {
+                    zone.classList.remove('is-dragover');
+                }
+            });
+
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('is-dragover');
+
+                const file = e.dataTransfer.files[0];
+                if (! file) {
+                    return;
+                }
+
+                if (! /\.csv$/i.test(file.name)) {
+                    label.textContent = 'CSVファイル（.csv）を落としてください。';
+
+                    return;
+                }
+
+                // 複数落とされても1つだけ受け取る
+                const picked = new DataTransfer();
+                picked.items.add(file);
+                input.files = picked.files;
+                showFileName();
+            });
+        });
+
+        // 枠を外して落としたときに、ブラウザがそのファイルを開いて画面が消えるのを防ぐ。
+        // 取り込みパネルがあるページだけで効かせる
+        if (dropzones.length) {
+            ['dragover', 'drop'].forEach((type) => {
+                document.addEventListener(type, (e) => {
+                    if (! e.target.closest('[data-dropzone]')) {
+                        e.preventDefault();
+                    }
+                });
+            });
+        }
+
         // 画像の拡大表示（ライトボックス）
         const lightbox = document.getElementById('image-lightbox');
         const lightboxImg = lightbox ? lightbox.querySelector('img') : null;
