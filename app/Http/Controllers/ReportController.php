@@ -46,18 +46,22 @@ class ReportController extends Controller
         ] + $this->filterOptions($request));
     }
 
-    /** 集計結果をCSVでダウンロード（Excel対応のBOM付きUTF-8） */
+    /**
+     * 集計結果をCSVでダウンロード（Excel対応のBOM付きUTF-8）。
+     *
+     * 合計行は出さない。Excel側で並べ替え・フィルタ・ピボットにかけたときに
+     * 合計行まで1件のデータとして混ざってしまうため（合計は画面で見られる）。
+     */
     public function export(Request $request): StreamedResponse
     {
         $this->applyDefaultPeriod($request);
         $axis = $this->axis($request);
         $axisLabel = self::AXES[$axis][0];
         $rows = $this->aggregate($request, $axis);
-        $totals = $this->totals($request);
 
         $filename = 'report_' . $axis . '_' . now()->format('Ymd_His') . '.csv';
 
-        return response()->streamDownload(function () use ($rows, $axisLabel, $totals) {
+        return response()->streamDownload(function () use ($rows, $axisLabel) {
             $out = fopen('php://output', 'w');
             // ExcelでUTF-8を正しく開くためのBOM
             fwrite($out, "\xEF\xBB\xBF");
@@ -73,14 +77,6 @@ class ReportController extends Controller
                     $row->amount,
                 ]);
             }
-
-            fputcsv($out, [
-                '合計',
-                $totals->order_count,
-                $totals->item_count,
-                $totals->quantity,
-                $totals->amount,
-            ]);
 
             fclose($out);
         }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);
