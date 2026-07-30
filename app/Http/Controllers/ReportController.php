@@ -31,17 +31,29 @@ class ReportController extends Controller
         'material' => ['資材別', 'order_items.material_name'],
     ];
 
+    /**
+     * 2軸（クロス集計）。縦＝営業所 / 横＝業者で、どの営業所がどの業者にいくら発注したかを見る。
+     * 1列でグループ化する単軸とは表の形が違うので、AXES とは別に扱う。
+     */
+    private const CROSS_AXIS = 'office_supplier';
+
+    private const CROSS_LABEL = '営業所×業者';
+
     /** 集計画面 */
     public function index(Request $request): View
     {
         $this->applyDefaultPeriod($request);
         $axis = $this->axis($request);
+        $isCross = $axis === self::CROSS_AXIS;
 
         return view('reports.index', [
             'axis' => $axis,
-            'axisLabel' => self::AXES[$axis][0],
-            'axes' => collect(self::AXES)->map(fn ($a) => $a[0]),
-            'rows' => $this->aggregate($request, $axis),
+            'axisLabel' => $isCross ? self::CROSS_LABEL : self::AXES[$axis][0],
+            'axes' => $this->axisOptions(),
+            'isCross' => $isCross,
+            // 単軸なら1列の集計、クロスなら営業所×業者のマトリクス
+            'rows' => $isCross ? collect() : $this->aggregate($request, $axis),
+            'matrix' => $isCross ? $this->crossMatrix($request) : null,
             'totals' => $this->totals($request),
         ] + $this->filterOptions($request));
     }
@@ -56,6 +68,11 @@ class ReportController extends Controller
     {
         $this->applyDefaultPeriod($request);
         $axis = $this->axis($request);
+
+        if ($axis === self::CROSS_AXIS) {
+            return $this->exportCross($request);
+        }
+
         $axisLabel = self::AXES[$axis][0];
         $rows = $this->aggregate($request, $axis);
 
@@ -82,12 +99,111 @@ class ReportController extends Controller
         }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);
     }
 
+    /**
+     * 営業所×業者のマトリクスをCSVで出す。
+     *
+     * 合計行は単軸のCSVと同じく出さない（Excelでの並べ替え・ピボットに1件のデータとして
+     * 混ざってしまうため。合計は画面で見られる）。営業所ごとの合計列だけは並べ替えの邪魔に
+     * ならないので残す。値は金額だけ。数量は資材が違えば足しても意味がないため出さない。
+     */
+    private function exportCross(Request $request): StreamedResponse
+    {
+        $matrix = $this->crossMatrix($request);
+        $filename = 'report_' . self::CROSS_AXIS . '_' . now()->format('Ymd_His') . '.csv';
+
+        return response()->streamDownload(function () use ($matrix) {
+            $out = fopen('php://output', 'w');
+            // ExcelでUTF-8を正しく開くためのBOM
+            fwrite($out, "\xEF\xBB\xBF");
+
+            fputcsv($out, array_merge(['営業所'], $matrix['suppliers'], ['合計']));
+
+            foreach ($matrix['offices'] as $office) {
+                // 発注が無い組み合わせは空欄ではなく0（Excelでそのまま計算できるように）
+                $cells = array_map(
+                    fn (string $supplier) => $matrix['amounts'][$office][$supplier] ?? 0,
+                    $matrix['suppliers'],
+                );
+
+                fputcsv($out, array_merge([$office], $cells, [$matrix['rowTotals'][$office]]));
+            }
+
+            fclose($out);
+        }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
+    /** 集計軸プルダウンの選択肢。単軸4つ＋クロス集計 */
+    private function axisOptions(): Collection
+    {
+        return collect(self::AXES)
+            ->map(fn ($a) => $a[0])
+            ->put(self::CROSS_AXIS, self::CROSS_LABEL);
+    }
+
     /** リクエストの集計軸（不正な値は カテゴリ別 にフォールバック） */
     private function axis(Request $request): string
     {
         $axis = (string) $request->input('axis', 'category');
 
-        return array_key_exists($axis, self::AXES) ? $axis : 'category';
+        return $this->axisOptions()->has($axis) ? $axis : 'category';
+    }
+
+    /**
+     * 営業所（縦）×業者（横）のマトリクスを組み立てる。
+     *
+     * SQLは営業所×業者で1回 GROUP BY するだけ（返る行数は 営業所数×業者数 程度）。
+     * 行・列・合計はPHP側で並べ替える。
+     *
+     * 業者は明細のスナップショット（`order_items.supplier_name`）でまとめる。
+     * 単軸の業者別と同じ扱いで、業者マスタを改名・削除しても過去の実績は動かない。
+     *
+     * @return array{offices:list<string>, suppliers:list<string>, amounts:array<string,array<string,float>>,
+     *               counts:array<string,array<string,int>>, rowTotals:array<string,float>,
+     *               colTotals:array<string,float>, total:float}
+     */
+    private function crossMatrix(Request $request): array
+    {
+        $rows = $this->filteredItems($request)
+            ->selectRaw('offices.name as office')
+            // 行の並びは営業所の sort_order（グループ化した列ではないので集約して取る）
+            ->selectRaw('MIN(offices.sort_order) as office_sort')
+            ->selectRaw("COALESCE(order_items.supplier_name, '（未設定）') as supplier")
+            ->selectRaw('COUNT(DISTINCT orders.id) as order_count')
+            ->selectRaw('SUM(order_items.unit_price * order_items.quantity) as amount')
+            ->groupBy('office', 'supplier')
+            ->get();
+
+        $amounts = [];
+        $counts = [];
+        $rowTotals = [];
+        $colTotals = [];
+        $officeSort = [];
+        $total = 0.0;
+
+        foreach ($rows as $row) {
+            $amount = (float) $row->amount;
+
+            $amounts[$row->office][$row->supplier] = $amount;
+            // 発注件数はセルの中だけの数（1申請＝1業者なので、この数は営業所×業者で重複しない）。
+            // ただし行・列の合計は金額だけにしてある（件数は母集合で DISTINCT した $totals を見る）
+            $counts[$row->office][$row->supplier] = (int) $row->order_count;
+            $rowTotals[$row->office] = ($rowTotals[$row->office] ?? 0) + $amount;
+            $colTotals[$row->supplier] = ($colTotals[$row->supplier] ?? 0) + $amount;
+            $officeSort[$row->office] = (int) $row->office_sort;
+            $total += $amount;
+        }
+
+        return [
+            // 営業所の並び順はどこでも sort_order
+            'offices' => collect($officeSort)->sort()->keys()->all(),
+            // 業者はマスタに並び順が無いので、金額の大きい順（よく使う業者が左に来る）
+            'suppliers' => collect($colTotals)->sortDesc()->keys()->all(),
+            'amounts' => $amounts,
+            'counts' => $counts,
+            'rowTotals' => $rowTotals,
+            'colTotals' => $colTotals,
+            'total' => $total,
+        ];
     }
 
     /**

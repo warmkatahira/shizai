@@ -83,13 +83,13 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
 - `materials`（資材マスタ） … 社内の「資材発注 詳細確認リスト」の項目に対応
   - name（品名） / category_id / supplier_id（発注業者）
   - length_mm / width_mm / height_mm（縦・横・高）
-  - unit（単位） / unit_price（単価） / min_lot_qty ＋ min_lot_unit（最低ロット。「2700枚」を数量と単位に分けて保持）
-  - has_imprint（名入れフラグ） / note（備考） / is_active
     - **3辺計は列に持たない**。縦横高から求まるので `DescribesMaterial::girthMm()` / `girthText()` で計算して出す
       （列にすると寸法を直したときにズレる）。入力がある値だけを足すので、厚みを入れていない袋は縦＋横になる。
       表示は資材マスタ一覧・資材一覧・編集フォーム（入力に合わせてJSで再計算）、CSVは**出力だけ**（取り込みでは読み飛ばす）
   - shipping_size（発送時サイズ。「60サイズ」「80サイズ」など**実際に運送会社で測られたサイズ**）
     - 3辺計から機械的に決まるものではなく運用で分かる値なので**手入力**。任意（`nullable` / 10文字）
+  - unit（単位） / unit_price（単価） / min_lot_qty ＋ min_lot_unit（最低ロット。「2700枚」を数量と単位に分けて保持）
+  - has_imprint（名入れフラグ） / note（備考） / is_active
 - `orders`（発注ヘッダー） + `order_items`（明細）
   - **明細は申請時点の情報をスナップショット保存**（material_name / category_name / supplier_name / unit / unit_price / 寸法 / 最低ロット）。マスタが後で変わっても過去の申請・集計・発注書は不変。
   - `orders.supplier_id`＝発注先の業者（1申請＝1業者）／`orders.requester_name`＝発注者の氏名（手入力）
@@ -183,7 +183,15 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
   - 宛名は `Supplier::formalName()`＝正式名称（`formal_name`。空なら `name`）。**正式名称を使うのはここだけ**
   - PDFは **mPDF**。日本語フォントは `storage/fonts/ipaexg.ttf`（IPAexゴシック / IPAフォントライセンス）をリポジトリに同梱し、サブセット埋め込みしている
 - `/reports` 発注集計（`ReportController`）
-  - 集計軸をプルダウンで切替：カテゴリ別／業者別／営業所別／資材別
+  - 集計軸をプルダウンで切替：カテゴリ別／業者別／営業所別／資材別／**営業所×業者（クロス集計）**
+    - クロス集計は**縦＝営業所（`sort_order` 順）／横＝業者（金額の大きい順）**で、どの営業所がどの業者にいくら発注したかを見る。
+      セルは金額とその組み合わせの発注件数。**数量は出さない**（資材が違うと足しても意味がない）
+    - SQLは営業所×業者で1回 `GROUP BY` するだけ（`ReportController::crossMatrix()`）。行・列・合計の並べ替えはPHP側
+    - CSVは画面と同じマトリクス（1列目＝営業所、以降が業者、末尾に営業所ごとの合計列）。
+      **合計行は単軸のCSVと同じく出さない**（Excelでの並べ替え・ピボットに1件のデータとして混ざるため。合計は画面で見る）。
+      合計列は並べ替えの邪魔にならないので残している
+    - 発注が無い組み合わせは画面は「—」、CSVは `0`（Excelでそのまま計算できるように）
+    - 表の切り替えは `reports/partials/axis-table.blade.php` / `cross-table.blade.php`。条件・サマリーは共通のまま
   - 絞り込み：期間（**発注日** = `orders.ordered_at` ＝ 発注書を出した日）／営業所／カテゴリ／業者。CSVダウンロード付き
   - **期間の初期値は当月**（全期間スキャンを既定にしない）。日付を空にして送信すれば全期間。
     日付パラメータが1つも無いときだけ当月を入れる（`applyDefaultPeriod`）ので、フォーム送信時は空欄が尊重される
@@ -203,6 +211,8 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
       （`OfficeCsv` / `SupplierCsv` / `CategoryCsv` / `UnitCsv` / `MaterialCsv`）が
       `headers()` / `row()` / `attributes()` で持つ
     - 入口は `Concerns\HandlesMasterCsv`（`streamCsv()` / `importCsv()`）。各コントローラーの export/import はこれを呼ぶだけ
+    - 列の位置で読むので、**見出し行がCSV出力と違うファイルは取り込まない**（`MasterCsv::assertHeaderRow`）。
+      列を足す前の古いCSVを読んで隣の列を取り込んでしまうのを防ぐ。列を足したときは出し直してもらう
     - **出したCSVをExcelで直して戻す**運用。突合は**1列目のID**：IDが入っていれば更新、空なら新規追加
       （名前で突合すると、名前を直したいときに「別のものの新規追加」になってしまうため）
     - 入力チェックは**モデルの `validationRules($ignoreId)` / `attributeNames()`**。編集フォームと同じものを使う。
@@ -213,8 +223,6 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
     - **CSVの中での重複も先に弾く**（`uniqueColumns()`）。DBの unique に任せると取り込みの途中で落ちて行番号が出ないため
     - CSVに無い行は消えない（削除はしない）。外すときは「有効」を いいえ にする
     - ExcelがCP932で保存したCSVも取り込める（UTF-8でなければ SJIS-win から変換する）。数量の「1,000」も読める
-    - 列の位置で読むので、**見出し行がCSV出力と違うファイルは取り込まない**（`MasterCsv::assertHeaderRow`）。
-      列を足す前の古いCSVを読んで隣の列を取り込んでしまうのを防ぐ。列を足したときは出し直してもらう
     - 取り込みパネルは `admin/partials/csv-panel.blade.php` で共有。**ドラッグ＆ドロップ対応**
       （`<label>` が `<input type="file">` を包んでいるので、JSが動かなくてもクリックで選べる。
       落とされたファイルを input に入れる処理だけ `layouts/app.blade.php` の共通スクリプトにある）

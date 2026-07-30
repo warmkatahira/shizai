@@ -66,7 +66,7 @@ Route::middleware('auth')->group(function () {
     // ----- 資材一覧（閲覧のみ。全ログインユーザー。編集は /admin/materials で管理者のみ） -----
     Route::get('/materials', [MaterialCatalogController::class, 'index'])->name('materials.index');
 
-    // ----- 発注集計（カテゴリ別・業者別・営業所別・資材別）。総務・管理者のみ -----
+    // ----- 発注集計（カテゴリ別・業者別・営業所別・資材別＋営業所×業者のクロス集計）。総務・管理者のみ -----
     Route::middleware('role:admin,general_affairs')->group(function () {
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
         Route::get('/reports-export', [ReportController::class, 'export'])->name('reports.export');
