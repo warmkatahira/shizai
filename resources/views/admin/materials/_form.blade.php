@@ -56,6 +56,37 @@
                        class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
             </div>
         </div>
+        {{-- 3辺計は縦横高の合計。入力するものではないので、入力に合わせて出すだけ（保存しない） --}}
+        <p class="text-xs text-gray-500 mt-2">3辺計：<span data-girth class="font-medium text-ink">—</span></p>
+    </div>
+
+    {{-- 入力中の縦横高から3辺計を出す。値はDBに持たず、表示・CSVはサーバー側で同じ計算をする --}}
+    <script>
+        (function () {
+            const inputs = ['length_mm', 'width_mm', 'height_mm'].map((id) => document.getElementById(id));
+            const output = document.querySelector('[data-girth]');
+
+            function show() {
+                const values = inputs
+                    .map((input) => (input.value.trim() === '' ? null : parseInt(input.value, 10)))
+                    .filter((v) => v !== null && !Number.isNaN(v));
+
+                output.textContent = values.length === 0
+                    ? '—'
+                    : values.reduce((a, b) => a + b, 0).toLocaleString('ja-JP') + ' mm';
+            }
+
+            inputs.forEach((input) => input.addEventListener('input', show));
+            show();
+        })();
+    </script>
+
+    <div>
+        <label for="shipping_size" class="block text-sm font-medium text-gray-700 mb-1">発送時サイズ</label>
+        <input autocomplete="off" id="shipping_size" name="shipping_size" type="text" maxlength="10"
+               value="{{ old('shipping_size', $material->shipping_size) }}" placeholder="例：60サイズ"
+               class="w-40 rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
+        <p class="text-xs text-gray-400 mt-1">この資材で発送したときに運送会社で測られるサイズ。分かるものだけ入れてください（空欄可）。</p>
     </div>
 
     <div>

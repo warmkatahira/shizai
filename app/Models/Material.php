@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Storage;
  */
 #[Fillable([
     'name', 'category_id', 'supplier_id',
-    'length_mm', 'width_mm', 'height_mm', 'size_text',
+    'length_mm', 'width_mm', 'height_mm', 'shipping_size', 'size_text',
     'unit_id', 'unit_price', 'min_lot_qty', 'has_imprint', 'note', 'is_active', 'image_path',
 ])]
 class Material extends Model
@@ -43,6 +43,8 @@ class Material extends Model
             'length_mm' => ['nullable', 'integer', 'min:0', 'max:99999'],
             'width_mm' => ['nullable', 'integer', 'min:0', 'max:99999'],
             'height_mm' => ['nullable', 'integer', 'min:0', 'max:99999'],
+            // 実際に運送会社で測られるサイズ（「60サイズ」など）。運用で分かる値なので手入力
+            'shipping_size' => ['nullable', 'string', 'max:10'],
             'size_text' => ['nullable', 'string', 'max:100'],
             'unit_id' => ['required', 'exists:units,id'],
             'unit_price' => ['nullable', 'numeric', 'min:0', 'max:99999999'],
@@ -63,6 +65,7 @@ class Material extends Model
             'length_mm' => '縦',
             'width_mm' => '横',
             'height_mm' => '高さ',
+            'shipping_size' => '発送時サイズ',
             'size_text' => 'サイズ',
             'unit_id' => '単位',
             'unit_price' => '単価',

@@ -83,6 +83,11 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
   - length_mm / width_mm / height_mm（縦・横・高）
   - unit（単位） / unit_price（単価） / min_lot_qty ＋ min_lot_unit（最低ロット。「2700枚」を数量と単位に分けて保持）
   - has_imprint（名入れフラグ） / note（備考） / is_active
+    - **3辺計は列に持たない**。縦横高から求まるので `DescribesMaterial::girthMm()` / `girthText()` で計算して出す
+      （列にすると寸法を直したときにズレる）。入力がある値だけを足すので、厚みを入れていない袋は縦＋横になる。
+      表示は資材マスタ一覧・資材一覧・編集フォーム（入力に合わせてJSで再計算）、CSVは**出力だけ**（取り込みでは読み飛ばす）
+  - shipping_size（発送時サイズ。「60サイズ」「80サイズ」など**実際に運送会社で測られたサイズ**）
+    - 3辺計から機械的に決まるものではなく運用で分かる値なので**手入力**。任意（`nullable` / 10文字）
 - `orders`（発注ヘッダー） + `order_items`（明細）
   - **明細は申請時点の情報をスナップショット保存**（material_name / category_name / supplier_name / unit / unit_price / 寸法 / 最低ロット）。マスタが後で変わっても過去の申請・集計・発注書は不変。
   - `orders.supplier_id`＝発注先の業者（1申請＝1業者）／`orders.requester_name`＝発注者の氏名（手入力）
@@ -206,6 +211,8 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
     - **CSVの中での重複も先に弾く**（`uniqueColumns()`）。DBの unique に任せると取り込みの途中で落ちて行番号が出ないため
     - CSVに無い行は消えない（削除はしない）。外すときは「有効」を いいえ にする
     - ExcelがCP932で保存したCSVも取り込める（UTF-8でなければ SJIS-win から変換する）。数量の「1,000」も読める
+    - 列の位置で読むので、**見出し行がCSV出力と違うファイルは取り込まない**（`MasterCsv::assertHeaderRow`）。
+      列を足す前の古いCSVを読んで隣の列を取り込んでしまうのを防ぐ。列を足したときは出し直してもらう
     - 取り込みパネルは `admin/partials/csv-panel.blade.php` で共有。**ドラッグ＆ドロップ対応**
       （`<label>` が `<input type="file">` を包んでいるので、JSが動かなくてもクリックで選べる。
       落とされたファイルを input に入れる処理だけ `layouts/app.blade.php` の共通スクリプトにある）

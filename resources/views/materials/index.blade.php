@@ -68,6 +68,9 @@
                     <th class="px-4 py-3">発注業者</th>
                     <th class="px-4 py-3">発注方法</th>
                     <th class="px-4 py-3">寸法(mm)</th>
+                    {{-- 3辺計は縦横高の合計。列には持たず計算して出す（DescribesMaterial::girthMm）--}}
+                    <th class="px-4 py-3 text-right">3辺計(mm)</th>
+                    <th class="px-4 py-3">発送時サイズ</th>
                     <th class="px-4 py-3">単位</th>
                     <th class="px-4 py-3 text-right">単価</th>
                     <th class="px-4 py-3 text-right">最低ロット</th>
@@ -99,13 +102,15 @@
                         <td class="px-4 py-3">{{ $material->supplier?->name ?? '—' }}</td>
                         <td class="px-4 py-3 text-gray-500">{{ $material->supplier?->orderMethodLabel() ?? '—' }}</td>
                         <td class="px-4 py-3 text-gray-500">{{ $material->sizeText() ?? '—' }}</td>
+                        <td class="px-4 py-3 text-right text-gray-500">{{ $material->girthText() ?? '—' }}</td>
+                        <td class="px-4 py-3 text-gray-500">{{ $material->shipping_size ?: '—' }}</td>
                         <td class="px-4 py-3 text-gray-500">{{ $material->unit?->name ?? '—' }}</td>
                         <td class="px-4 py-3 text-right">{{ \App\Support\Money::yen($material->unit_price) }}</td>
                         <td class="px-4 py-3 text-right text-gray-500">{{ $material->minLotText() ?? '—' }}</td>
                         <td class="px-4 py-3 text-gray-500">{{ $material->has_imprint ? 'あり' : '—' }}</td>
                     </tr>
                 @empty
-                    <tr><td colspan="9" class="px-4 py-8 text-center text-gray-400">該当する資材がありません。</td></tr>
+                    <tr><td colspan="11" class="px-4 py-8 text-center text-gray-400">該当する資材がありません。</td></tr>
                 @endforelse
             </tbody>
         </table>

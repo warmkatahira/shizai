@@ -119,6 +119,9 @@
                     <th class="px-4 py-3 text-right">縦(mm)</th>
                     <th class="px-4 py-3 text-right">横(mm)</th>
                     <th class="px-4 py-3 text-right">高さ(mm)</th>
+                    {{-- 3辺計は縦横高の合計。列には持たず計算して出す（DescribesMaterial::girthMm）--}}
+                    <th class="px-4 py-3 text-right">3辺計(mm)</th>
+                    <th class="px-4 py-3">発送時サイズ</th>
                     <th class="px-4 py-3">サイズ</th>
                     <th class="px-4 py-3">単位</th>
                     <th class="px-4 py-3 text-right">単価</th>
@@ -154,6 +157,8 @@
                         <td class="px-4 py-3 text-right text-gray-500">{{ $material->length_mm ?? '—' }}</td>
                         <td class="px-4 py-3 text-right text-gray-500">{{ $material->width_mm ?? '—' }}</td>
                         <td class="px-4 py-3 text-right text-gray-500">{{ $material->height_mm ?? '—' }}</td>
+                        <td class="px-4 py-3 text-right text-gray-500">{{ $material->girthText() ?? '—' }}</td>
+                        <td class="px-4 py-3 text-gray-500">{{ $material->shipping_size ?: '—' }}</td>
                         <td class="px-4 py-3 text-gray-500">{{ $material->size_text ?: '—' }}</td>
                         <td class="px-4 py-3">{{ $material->unit?->name ?? '—' }}</td>
                         <td class="px-4 py-3 text-right">{{ \App\Support\Money::yen($material->unit_price) }}</td>
@@ -172,7 +177,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="13" class="px-4 py-8 text-center text-gray-400">資材がまだありません。</td></tr>
+                    <tr><td colspan="15" class="px-4 py-8 text-center text-gray-400">資材がまだありません。</td></tr>
                 @endforelse
             </tbody>
         </table>

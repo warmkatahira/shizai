@@ -34,6 +34,31 @@ trait DescribesMaterial
         return $parts === [] ? null : implode('×', $parts);
     }
 
+    /**
+     * 3辺計（縦＋横＋高、mm）。宅配便のサイズ区分を見るための値。
+     *
+     * **列には持たない**。縦横高から必ず求まるので、持つと寸法を直したときにズレる。
+     * 入力がある値だけを足す（sizeText() と同じ扱い。厚みを入れていない袋などは
+     * 縦＋横になる）。1つも入っていなければ null。
+     */
+    public function girthMm(): ?int
+    {
+        $parts = array_filter(
+            [$this->length_mm, $this->width_mm, $this->height_mm],
+            fn (?int $mm) => $mm !== null,
+        );
+
+        return $parts === [] ? null : (int) array_sum($parts);
+    }
+
+    /** 3辺計の表示（例：1,000）。無ければ null */
+    public function girthText(): ?string
+    {
+        $girth = $this->girthMm();
+
+        return $girth === null ? null : number_format($girth);
+    }
+
     /** 最低ロット（例：2,700枚）。数量が無ければ null */
     public function minLotText(): ?string
     {

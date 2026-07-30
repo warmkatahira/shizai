@@ -157,7 +157,9 @@ abstract class MasterCsv
             $lineNo++;
 
             if ($lineNo === 1) {
-                continue; // 見出し行
+                static::assertHeaderRow($row); // 見出し行。列がずれたCSVはここで止める
+
+                continue;
             }
 
             // 空行（すべての列が空）は読み飛ばす
@@ -171,6 +173,35 @@ abstract class MasterCsv
         fclose($stream);
 
         return $rows;
+    }
+
+    /**
+     * 見出し行が想定どおりか確かめる。
+     *
+     * 取り込みは**列の位置**で読むので、列を足す前の古いCSVや、列を消したCSVを
+     * そのまま読むと隣の列の値を取り込んでしまう。中身を読む前にここで止める。
+     *
+     * @throws ValidationException
+     */
+    protected static function assertHeaderRow(array $row): void
+    {
+        $expected = static::headers();
+        $actual = array_map(fn ($v) => trim((string) $v), $row);
+
+        // Excelが末尾に空の列を付けることがあるので、後ろの空欄は無視する
+        while ($actual !== [] && end($actual) === '') {
+            array_pop($actual);
+        }
+
+        if ($actual === $expected) {
+            return;
+        }
+
+        throw ValidationException::withMessages([
+            'csv' => '1行目（見出し行）がCSV出力の形と違います。列を足したり消したり並べ替えたりせず、'
+                . 'CSVダウンロードしたファイルをそのまま編集して取り込んでください'
+                . '（想定：' . implode(' / ', $expected) . '）。',
+        ]);
     }
 
     /**
