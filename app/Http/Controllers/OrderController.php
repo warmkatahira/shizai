@@ -537,11 +537,21 @@ class OrderController extends Controller
             'post_order_note' => '発注者メモ',
         ]);
 
+        $note = $validated['post_order_note'] ?? null;
+
+        // 中身が変わっていなければ通知しない（保存を押し直しただけでメールが飛ばないように）
+        $changed = $note !== $order->post_order_note;
+
         $order->update([
-            'post_order_note' => $validated['post_order_note'] ?? null,
+            'post_order_note' => $note,
             'post_order_note_updated_by' => $user->id,
             'post_order_note_updated_at' => now(),
         ]);
+
+        if ($changed) {
+            $order->loadMissing(['office', 'supplier', 'requester']);
+            OrderNotifier::notifyPostOrderNoteUpdated($order, $user);
+        }
 
         return redirect()->route('orders.show', $order)
             ->with('status', '発注者メモを更新しました。');

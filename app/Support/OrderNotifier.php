@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\User;
 use App\Notifications\OrderPendingApprovalNotification;
 use App\Notifications\OrderResultNotification;
+use App\Notifications\PostOrderNoteUpdatedNotification;
 use Illuminate\Notifications\Notification as BaseNotification;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
@@ -35,10 +36,7 @@ class OrderNotifier
         }
 
         if ($order->isPendingAffairs()) {
-            $affairs = self::withEmail(
-                User::where('role', User::ROLE_GENERAL_AFFAIRS)->where('is_active', true)->get()
-            );
-            self::dispatch($affairs, new OrderPendingApprovalNotification($order, 'affairs'), $order);
+            self::dispatch(self::withEmail(self::generalAffairs()), new OrderPendingApprovalNotification($order, 'affairs'), $order);
         }
     }
 
@@ -55,6 +53,30 @@ class OrderNotifier
         )->unique('id');
 
         self::dispatch($recipients, new OrderResultNotification($order), $order);
+    }
+
+    /**
+     * 発注者メモの更新を通知する。
+     *
+     * 宛先は「その営業所の所長 ＋ 申請者 ＋ 総務全員」。
+     * 申請者が所長本人なら重複するので、unique で1通にまとまる（＝所長だけに届く）。
+     * 所長を必ず入れるのは、申請用アカウントがアドレスを持たないことがあるため。
+     */
+    public static function notifyPostOrderNoteUpdated(Order $order, User $updater): void
+    {
+        $recipients = self::withEmail(
+            $order->office->managers()->get()
+                ->push($order->requester)
+                ->concat(self::generalAffairs())
+        )->unique('id');
+
+        self::dispatch($recipients, new PostOrderNoteUpdatedNotification($order, $updater), $order);
+    }
+
+    /** 総務ユーザー（有効なもの）全員 */
+    private static function generalAffairs(): Collection
+    {
+        return User::where('role', User::ROLE_GENERAL_AFFAIRS)->where('is_active', true)->get();
     }
 
     /** 通知先メールアドレスを持つユーザーだけに絞る */
