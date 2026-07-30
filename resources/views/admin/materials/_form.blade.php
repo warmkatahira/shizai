@@ -94,7 +94,7 @@
         <label for="min_lot_qty" class="block text-sm font-medium text-gray-700 mb-1">最低ロット数量</label>
         <input autocomplete="off" id="min_lot_qty" name="min_lot_qty" type="number" min="0" value="{{ old('min_lot_qty', $material->min_lot_qty) }}"
                class="w-40 rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
-        <p class="text-xs text-gray-400 mt-1">単位は上の「単位」を使います（この数量の倍数でのみ発注可）。空欄ならロット制限なし。</p>
+        <p class="text-xs text-gray-400 mt-1">単位は上の「単位」を使います（この数量以上でのみ発注可。端数はOK）。空欄ならロット制限なし。</p>
     </div>
 
     <div>

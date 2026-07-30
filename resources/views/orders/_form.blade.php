@@ -55,7 +55,7 @@
             @endif
             <input type="hidden" name="supplier_id" value="{{ $supplier->id }}">
 
-            {{-- ステップ2：数量を入力。最低ロットがある資材はロットの倍数でしか入力できない --}}
+            {{-- ステップ2：数量を入力。最低ロットがある資材はその数量以上でしか入力できない --}}
             <div class="bg-white shadow rounded-lg overflow-hidden mb-6">
                 {{-- 資材が多いと探すのが大変なので、その場で絞り込めるようにする。
                      どちらの入力欄にも name を付けていないので、申請の内容としては送信されない --}}
@@ -113,12 +113,12 @@
                                 <td class="px-4 py-3 text-right text-gray-500">{{ $material->minLotText() ?? '—' }}</td>
                                 <td class="px-4 py-3 text-gray-500">{{ $material->unit?->name ?? '—' }}</td>
                                 <td class="px-4 py-3">
-                                    {{-- ロット単位で増減するボタン。手打ちでロット違反を起こしにくくする --}}
+                                    {{-- ロット単位で増減するボタン。最低ロットまで一気に入れられるようにするため --}}
                                     <div class="flex items-center gap-1">
                                         <button type="button" data-step="-1" tabindex="-1" aria-label="減らす"
                                                 class="grid place-items-center w-7 h-7 shrink-0 rounded-md border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-ink">−</button>
-                                        <input autocomplete="off" type="number" min="0" max="999999"
-                                               step="{{ $lot ?: 1 }}"
+                                        {{-- ロットは「以上」の条件なので step は 1。0（未入力）も許すため min も 0 のまま --}}
+                                        <input autocomplete="off" type="number" min="0" max="999999" step="1"
                                                name="quantities[{{ $material->id }}]"
                                                value="{{ $qty }}"
                                                data-qty
@@ -129,7 +129,7 @@
                                                 class="grid place-items-center w-7 h-7 shrink-0 rounded-md border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-ink">＋</button>
                                     </div>
                                     @if ($lot)
-                                        <span class="block text-xs text-gray-400 mt-1">{{ number_format($lot) }}{{ $material->unit?->name }}単位</span>
+                                        <span class="block text-xs text-gray-400 mt-1">{{ number_format($lot) }}{{ $material->unit?->name }}以上</span>
                                     @endif
                                 </td>
                                 <td class="px-4 py-3 text-right" data-subtotal>—</td>
@@ -218,7 +218,7 @@
             </div>
         </form>
 
-        {{-- 数量を入れるたびに小計・合計を計算し、ロットの倍数でない入力をその場で知らせる --}}
+        {{-- 数量を入れるたびに小計・合計を計算し、最低ロットに満たない入力をその場で知らせる --}}
         <script>
             (function () {
                 const yen = (v) => '¥' + (Math.round(v * 100) / 100).toLocaleString('ja-JP');
@@ -238,11 +238,11 @@
                         const row = input.closest('tr');
                         const cell = row.querySelector('[data-subtotal]');
 
-                        // ロットの倍数でなければ申請できないので、その場で赤くして知らせる
-                        const invalid = lot > 0 && qty > 0 && qty % lot !== 0;
+                        // 最低ロットに満たなければ申請できないので、その場で赤くして知らせる
+                        const invalid = lot > 0 && qty > 0 && qty < lot;
                         input.classList.toggle('border-red-500', invalid);
                         input.setCustomValidity(
-                            invalid ? `${lot.toLocaleString('ja-JP')} の倍数で入力してください。` : ''
+                            invalid ? `${lot.toLocaleString('ja-JP')} 以上で入力してください。` : ''
                         );
 
                         // 数量を入れた行は地色を変えて、何を選んだか一目で分かるようにする
@@ -255,7 +255,7 @@
                             cell.textContent = yen(subtotal);
                             cell.classList.remove('text-gray-400');
                         } else {
-                            cell.textContent = invalid ? 'ロット違反' : '—';
+                            cell.textContent = invalid ? 'ロット未満' : '—';
                             cell.classList.toggle('text-gray-400', !invalid);
                             cell.classList.toggle('text-red-600', invalid);
                         }
@@ -269,13 +269,20 @@
                 recalc(); // 入力エラーで戻ってきたときや、再申請で数量が入っているときも計算し直す
 
                 // ── ロット単位の増減ボタン ────────────────────────────────
-                // 最低ロットがある資材は、その倍数だけ増減する（手打ちでの違反を減らす）
+                // 最低ロットがある資材は、そのぶんだけまとめて増減する（1ずつ押させない）。
+                // 端数の手入力は許すが、ボタンでロット未満の中途半端な値にはしない
                 document.querySelectorAll('[data-step]').forEach((button) => {
                     button.addEventListener('click', () => {
                         const input = button.closest('td').querySelector('[data-qty]');
                         const lot = parseInt(input.dataset.lot, 10) || 1;
+                        const up = parseInt(button.dataset.step, 10) > 0;
                         const current = parseInt(input.value, 10) || 0;
-                        const next = current + lot * parseInt(button.dataset.step, 10);
+                        let next = current + (up ? lot : -lot);
+
+                        // ロット未満に落ちたら、増やすときは最低ロット、減らすときは 0 にする
+                        if (next > 0 && next < lot) {
+                            next = up ? lot : 0;
+                        }
 
                         input.value = Math.min(999999, Math.max(0, next)) || '';
                         recalc();

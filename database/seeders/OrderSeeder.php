@@ -14,7 +14,7 @@ use Illuminate\Database\Seeder;
  *
  * 実際の申請と同じルールで作る：
  * - 1申請＝1業者。明細はその業者の資材だけ
- * - 数量は最低ロットの倍数
+ * - 数量は最低ロット以上
  * - 明細は申請時点の資材情報をスナップショット保存
  *
  * ステータスは6種類（所長承認待ち・総務承認待ち・発注待ち・発注済・差し戻し・却下）を網羅し、
@@ -109,7 +109,7 @@ class OrderSeeder extends Seeder
             ]);
 
             foreach ($materials as $n => $material) {
-                // 最低ロットの倍数にする（ロット未設定なら適当な数量）
+                // 最低ロット以上にする（ロット未設定なら適当な数量）
                 $lot = $material->min_lot_qty;
                 $quantity = $lot ? $lot * ($n + 1) : 100 * ($n + 1);
 

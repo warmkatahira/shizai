@@ -460,7 +460,7 @@ class OrderController extends Controller
     /**
      * 入力された数量から、発注明細（申請時点のスナップショット）を組み立てる。
      * 新規申請・再申請で共通。フォームを細工されても通らないよう、ここでも
-     * 「選んだ業者の資材か」「最低ロットの倍数か」を検証する。
+     * 「選んだ業者の資材か」「最低ロット以上か」を検証する。
      */
     private function buildItemSnapshots(array $validated): array
     {
@@ -488,7 +488,7 @@ class OrderController extends Controller
             ]);
         }
 
-        // 最低ロットがある資材は、ロットの倍数でしか発注できない（画面側でも弾いている）
+        // 最低ロットがある資材は、その数量以上であれば端数でも発注できる（画面側でも弾いている）
         $lotErrors = [];
         $items = [];
 
@@ -500,9 +500,9 @@ class OrderController extends Controller
 
             $lot = $material->min_lot_qty;
 
-            if ($lot && (int) $qty % $lot !== 0) {
+            if ($lot && (int) $qty < $lot) {
                 $lotErrors[] = sprintf(
-                    '「%s」は %s%s 単位で発注してください（入力値：%s）。',
+                    '「%s」は %s%s 以上で発注してください（入力値：%s）。',
                     $material->name,
                     number_format($lot),
                     $material->unit?->name ?? '',
