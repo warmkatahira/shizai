@@ -48,7 +48,7 @@
                         <td class="px-4 py-3">{{ $supplier->orderMethodLabel() ?? '—' }}</td>
                         <td class="px-4 py-3 text-gray-500 whitespace-nowrap">
                             {{ $supplier->phone ?: '—' }}
-                            <span class="block text-xs text-gray-400">FAX {{ $supplier->fax ?: '—' }}</span>
+                            <span class="block text-xs text-gray-400">携帯 {{ $supplier->mobile_phone ?: '—' }} ／ FAX {{ $supplier->fax ?: '—' }}</span>
                         </td>
                         <td class="px-4 py-3 text-right">{{ $supplier->materials_count }} 件</td>
                         <td class="px-4 py-3">

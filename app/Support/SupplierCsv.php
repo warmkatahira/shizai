@@ -15,7 +15,7 @@ use Illuminate\Validation\ValidationException;
 class SupplierCsv extends MasterCsv
 {
     public const HEADERS = [
-        'ID', '業者名', '正式名称', '担当者名', '電話番号', 'FAX番号', 'メールアドレス', '発注方法', '有効',
+        'ID', '業者名', '正式名称', '担当者名', '固定電話番号', '携帯電話番号', 'FAX番号', 'メールアドレス', '発注方法', '有効',
     ];
 
     public static function headers(): array
@@ -41,6 +41,7 @@ class SupplierCsv extends MasterCsv
             $supplier->formal_name,
             $supplier->contact_person,
             $supplier->phone,
+            $supplier->mobile_phone,
             $supplier->fax,
             $supplier->email,
             $supplier->orderMethodLabel(),
@@ -55,11 +56,12 @@ class SupplierCsv extends MasterCsv
             'formal_name' => self::nullableText($cols[2]),
             'contact_person' => self::nullableText($cols[3]),
             'phone' => self::nullableText($cols[4]),
-            'fax' => self::nullableText($cols[5]),
-            'email' => self::nullableText($cols[6]),
-            'order_method' => self::parseOrderMethod($cols[7]),
+            'mobile_phone' => self::nullableText($cols[5]),
+            'fax' => self::nullableText($cols[6]),
+            'email' => self::nullableText($cols[7]),
+            'order_method' => self::parseOrderMethod($cols[8]),
             // 有効列が空欄なら「有効」として扱う（新規追加の行をいちいち書かなくて済むように）
-            'is_active' => self::parseBool($cols[8], default: true),
+            'is_active' => self::parseBool($cols[9], default: true),
         ];
     }
 

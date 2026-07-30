@@ -14,7 +14,7 @@ use Illuminate\Validation\Rule;
  * - `name`        … 短い表示名。画面・集計・発注明細のスナップショットはすべてこちら
  * - `formal_name` … 「株式会社」まで入った正式名称。発注書の宛名（〜御中）だけで使う（任意）
  */
-#[Fillable(['name', 'formal_name', 'contact_person', 'phone', 'fax', 'email', 'order_method', 'is_active'])]
+#[Fillable(['name', 'formal_name', 'contact_person', 'phone', 'mobile_phone', 'fax', 'email', 'order_method', 'is_active'])]
 class Supplier extends Model
 {
     /** 発注方法（業者ごとに決まる） */
@@ -43,7 +43,9 @@ class Supplier extends Model
             // 発注書の宛名だけに使う。空なら name をそのまま使う（Supplier::formalName）
             'formal_name' => ['nullable', 'string', 'max:100'],
             'contact_person' => ['nullable', 'string', 'max:50'],
+            // 電話は固定と携帯を別に持つ（担当者が外に出ている業者は携帯にかける）
             'phone' => ['nullable', 'string', 'max:30'],
+            'mobile_phone' => ['nullable', 'string', 'max:30'],
             'fax' => ['nullable', 'string', 'max:30'],
             'email' => ['nullable', 'email', 'max:255'],
             'order_method' => ['nullable', Rule::in(array_keys(self::ORDER_METHODS))],
@@ -58,7 +60,8 @@ class Supplier extends Model
             'name' => '業者名',
             'formal_name' => '正式名称',
             'contact_person' => '担当者名',
-            'phone' => '電話番号',
+            'phone' => '固定電話番号',
+            'mobile_phone' => '携帯電話番号',
             'fax' => 'FAX番号',
             'email' => 'メールアドレス',
             'order_method' => '発注方法',

@@ -71,11 +71,13 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
 - `users`（login_id・email・role・office_id・is_manager を保持）
   - **ログインは `login_id`**（メールではない）。営業所の申請用アカウントは共通で使い回すため、実在のメールを持たない
   - `email` は **null 許容の「通知先」**。無ければそのユーザーには通知を送らないだけで、ログインには影響しない
-- `suppliers`（業者マスタ） … name/formal_name/contact_person/phone/fax/email/order_method/is_active。`materials.supplier_id` で参照
+- `suppliers`（業者マスタ） … name/formal_name/contact_person/phone/mobile_phone/fax/email/order_method/is_active。`materials.supplier_id` で参照
   - **名前は2つ持つ**。`name`＝短い表示名（「フレックス」）、`formal_name`＝正式名称（「株式会社フレックス」・任意）
     - 画面・集計・発注明細のスナップショットはすべて `name`。「株式会社」まで出すと一覧が長くなって邪魔なため
     - **`formal_name` を使うのは発注書の宛名（〜御中）だけ**。空なら `name` を使う（`Supplier::formalName()`）
   - **担当者名・連絡先・発注方法は業者ごとに決まる**ので、資材ではなくここに持つ（資材側に持つと同じ値が何十行も重複する）
+  - **電話は2つ持つ**。`phone`＝固定電話 / `mobile_phone`＝携帯電話（担当者が外に出ている業者にかけるため。どちらも任意）
+    - 発注書に印字するのは固定電話とFAX。**携帯は入っているときだけ**その下に添える
   - `order_method` は `mail` / `phone` / `fax` / `web` の4択（`Supplier::ORDER_METHODS`）。サイボウズ・ロジレスなどの専用システムは `web`
 - `categories`（商品カテゴリマスタ） … name/sort_order/is_active。`materials.category_id` で参照
 - `materials`（資材マスタ） … 社内の「資材発注 詳細確認リスト」の項目に対応

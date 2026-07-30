@@ -25,9 +25,15 @@
     </div>
 
     <div class="grid grid-cols-2 gap-4">
+        {{-- 電話は固定と携帯を別に持つ。発注書に出るのは固定電話（とFAX） --}}
         <div>
-            <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">電話番号</label>
+            <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">固定電話</label>
             <input autocomplete="off" id="phone" name="phone" type="text" value="{{ old('phone', $supplier->phone) }}"
+                   class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
+        </div>
+        <div>
+            <label for="mobile_phone" class="block text-sm font-medium text-gray-700 mb-1">携帯電話</label>
+            <input autocomplete="off" id="mobile_phone" name="mobile_phone" type="text" value="{{ old('mobile_phone', $supplier->mobile_phone) }}"
                    class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
         </div>
         <div>

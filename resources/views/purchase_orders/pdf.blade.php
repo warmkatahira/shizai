@@ -72,6 +72,10 @@
             {{-- 宛名だけは正式名称（株式会社まで）。未入力なら表示名を使う --}}
             <div class="org-name">{{ $supplier->formalName() }} 御中</div>
             <div class="org-detail">TEL：{{ $supplier->phone ?: '—' }}</div>
+            {{-- 携帯は入っている業者だけ添える（固定電話が無い業者もあるため） --}}
+            @if ($supplier->mobile_phone)
+                <div class="org-detail">携帯：{{ $supplier->mobile_phone }}</div>
+            @endif
             <div class="org-detail">FAX：{{ $supplier->fax ?? '—' }}</div>
         </td>
         <td class="right">
