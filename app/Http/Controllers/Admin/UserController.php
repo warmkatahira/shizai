@@ -89,12 +89,16 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:50'],
             // ログインIDで認証する。メールは通知先なので任意
-            'login_id' => ['required', 'string', 'max:50', 'alpha_dash', Rule::unique('users', 'login_id')->ignore($user?->id)],
+            // 半角英数字と . _ - だけ。ドットを許すのは `t.katahira` のように
+            // 姓名を区切ったIDを実際に使っているため（alpha_dash はドットを弾く）
+            'login_id' => ['required', 'string', 'max:50', 'regex:/\A[A-Za-z0-9._-]+\z/', Rule::unique('users', 'login_id')->ignore($user?->id)],
             'email' => ['nullable', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user?->id)],
             'role' => ['required', Rule::in(array_keys(User::ROLE_LABELS))],
             'office_id' => ['nullable', 'exists:offices,id'],
             'password' => $passwordRule,
-        ], [], [
+        ], [
+            'login_id.regex' => 'ログインIDは半角英数字と . _ - だけで入力してください。',
+        ], [
             'name' => '氏名',
             'login_id' => 'ログインID',
             'email' => 'メールアドレス',

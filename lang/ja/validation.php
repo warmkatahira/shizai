@@ -25,6 +25,11 @@ return [
     'in' => '選択された :attribute は正しくありません。',
     'file' => ':attribute はファイルを選択してください。',
     'mimes' => ':attribute は :values 形式のファイルにしてください。',
+    'image' => ':attribute は画像ファイルを選択してください。',
+    'regex' => ':attribute の形式が正しくありません。',
+    'alpha_dash' => ':attribute は半角英数字とハイフン・アンダースコアで入力してください。',
+    'current_password' => '現在のパスワードが違います。',
+    'different' => ':attribute は :other と違うものにしてください。',
 
     'min' => [
         'numeric' => ':attribute は :min 以上にしてください。',
