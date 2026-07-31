@@ -116,10 +116,11 @@
                     <th class="px-4 py-3">品名</th>
                     <th class="px-4 py-3">カテゴリ</th>
                     <th class="px-4 py-3">発注業者</th>
-                    <th class="px-4 py-3 text-right">縦(mm)</th>
-                    <th class="px-4 py-3 text-right">横(mm)</th>
-                    <th class="px-4 py-3 text-right">高さ(mm)</th>
-                    {{-- 3辺計は縦横高の合計。列には持たず計算して出す（DescribesMaterial::girthMm）--}}
+                    {{-- 寸法は W（幅長）→ D（奥行巾）→ H（高さ）の順。列は width_mm / length_mm / height_mm --}}
+                    <th class="px-4 py-3 text-right" title="幅長">W(mm)</th>
+                    <th class="px-4 py-3 text-right" title="奥行巾">D(mm)</th>
+                    <th class="px-4 py-3 text-right" title="高さ">H(mm)</th>
+                    {{-- 3辺計はW・D・Hの合計。列には持たず計算して出す（DescribesMaterial::girthMm）--}}
                     <th class="px-4 py-3 text-right">3辺計(mm)</th>
                     <th class="px-4 py-3">発送時サイズ</th>
                     <th class="px-4 py-3">サイズ</th>
@@ -154,8 +155,8 @@
                         </td>
                         <td class="px-4 py-3 text-gray-500">{{ $material->category?->name ?? '—' }}</td>
                         <td class="px-4 py-3">{{ $material->supplier?->name ?? '—' }}</td>
-                        <td class="px-4 py-3 text-right text-gray-500">{{ $material->length_mm ?? '—' }}</td>
                         <td class="px-4 py-3 text-right text-gray-500">{{ $material->width_mm ?? '—' }}</td>
+                        <td class="px-4 py-3 text-right text-gray-500">{{ $material->length_mm ?? '—' }}</td>
                         <td class="px-4 py-3 text-right text-gray-500">{{ $material->height_mm ?? '—' }}</td>
                         <td class="px-4 py-3 text-right text-gray-500">{{ $material->girthText() ?? '—' }}</td>
                         <td class="px-4 py-3 text-gray-500">{{ $material->shipping_size ?: '—' }}</td>

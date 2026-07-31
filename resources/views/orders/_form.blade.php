@@ -77,7 +77,7 @@
                         <tr>
                             <th class="px-4 py-3">品名</th>
                             <th class="px-4 py-3">カテゴリ</th>
-                            <th class="px-4 py-3">寸法(mm)</th>
+                            <th class="px-4 py-3">寸法 W×D×H(mm)</th>
                             <th class="px-4 py-3 text-right">単価</th>
                             <th class="px-4 py-3 text-right">最低ロット</th>
                             <th class="px-4 py-3">単位</th>

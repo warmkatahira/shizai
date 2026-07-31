@@ -40,30 +40,31 @@
     <div>
         <span class="block text-sm font-medium text-gray-700 mb-1">寸法（mm）</span>
         <div class="grid grid-cols-3 gap-4">
+            {{-- 並びは W（幅長）→ D（奥行巾）→ H（高さ）。列は width_mm / length_mm / height_mm --}}
             <div>
-                <label for="length_mm" class="block text-xs text-gray-500 mb-1">縦</label>
-                <input autocomplete="off" id="length_mm" name="length_mm" type="number" min="0" value="{{ old('length_mm', $material->length_mm) }}"
-                       class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
-            </div>
-            <div>
-                <label for="width_mm" class="block text-xs text-gray-500 mb-1">横</label>
+                <label for="width_mm" class="block text-xs text-gray-500 mb-1">W（幅長）</label>
                 <input autocomplete="off" id="width_mm" name="width_mm" type="number" min="0" value="{{ old('width_mm', $material->width_mm) }}"
                        class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
             </div>
             <div>
-                <label for="height_mm" class="block text-xs text-gray-500 mb-1">高</label>
+                <label for="length_mm" class="block text-xs text-gray-500 mb-1">D（奥行巾）</label>
+                <input autocomplete="off" id="length_mm" name="length_mm" type="number" min="0" value="{{ old('length_mm', $material->length_mm) }}"
+                       class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
+            </div>
+            <div>
+                <label for="height_mm" class="block text-xs text-gray-500 mb-1">H（高さ）</label>
                 <input autocomplete="off" id="height_mm" name="height_mm" type="number" min="0" value="{{ old('height_mm', $material->height_mm) }}"
                        class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
             </div>
         </div>
-        {{-- 3辺計は縦横高の合計。入力するものではないので、入力に合わせて出すだけ（保存しない） --}}
+        {{-- 3辺計は W・D・H の合計。入力するものではないので、入力に合わせて出すだけ（保存しない） --}}
         <p class="text-xs text-gray-500 mt-2">3辺計：<span data-girth class="font-medium text-ink">—</span></p>
     </div>
 
-    {{-- 入力中の縦横高から3辺計を出す。値はDBに持たず、表示・CSVはサーバー側で同じ計算をする --}}
+    {{-- 入力中の W・D・H から3辺計を出す。値はDBに持たず、表示・CSVはサーバー側で同じ計算をする --}}
     <script>
         (function () {
-            const inputs = ['length_mm', 'width_mm', 'height_mm'].map((id) => document.getElementById(id));
+            const inputs = ['width_mm', 'length_mm', 'height_mm'].map((id) => document.getElementById(id));
             const output = document.querySelector('[data-girth]');
 
             function show() {
@@ -94,7 +95,7 @@
         <input autocomplete="off" id="size_text" name="size_text" type="text" value="{{ old('size_text', $material->size_text) }}"
                placeholder="例：粒外袋 W200×H300"
                class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
-        <p class="text-xs text-gray-400 mt-1">規格名つきの表記など、縦横高とは別に自由に書けます。</p>
+        <p class="text-xs text-gray-400 mt-1">規格名つきの表記など、W・D・H とは別に自由に書けます。</p>
     </div>
 
     <div class="grid grid-cols-2 gap-4">

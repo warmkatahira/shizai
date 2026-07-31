@@ -62,9 +62,10 @@ class Material extends Model
             'name' => '品名',
             'category_id' => '商品カテゴリ',
             'supplier_id' => '発注業者',
-            'length_mm' => '縦',
-            'width_mm' => '横',
-            'height_mm' => '高さ',
+            // W＝幅長 / D＝奥行巾 / H＝高さ。列名と文字の対応が違うので注意
+            'length_mm' => 'D（奥行巾）',
+            'width_mm' => 'W（幅長）',
+            'height_mm' => 'H（高さ）',
             'shipping_size' => '発送時サイズ',
             'size_text' => 'サイズ',
             'unit_id' => '単位',

@@ -67,8 +67,8 @@
                     <th class="px-4 py-3">カテゴリ</th>
                     <th class="px-4 py-3">発注業者</th>
                     <th class="px-4 py-3">発注方法</th>
-                    <th class="px-4 py-3">寸法(mm)</th>
-                    {{-- 3辺計は縦横高の合計。列には持たず計算して出す（DescribesMaterial::girthMm）--}}
+                    <th class="px-4 py-3">寸法 W×D×H(mm)</th>
+                    {{-- 3辺計は W・D・H の合計。列には持たず計算して出す（DescribesMaterial::girthMm）--}}
                     <th class="px-4 py-3 text-right">3辺計(mm)</th>
                     <th class="px-4 py-3">発送時サイズ</th>
                     <th class="px-4 py-3">単位</th>

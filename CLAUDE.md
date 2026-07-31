@@ -85,7 +85,10 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
 - `categories`（商品カテゴリマスタ） … name/sort_order/is_active。`materials.category_id` で参照
 - `materials`（資材マスタ） … 社内の「資材発注 詳細確認リスト」の項目に対応
   - name（品名） / category_id / supplier_id（発注業者）
-  - length_mm / width_mm / height_mm（縦・横・高）
+  - length_mm / width_mm / height_mm（**表示は W・D・H**）
+    - **列名と表示文字の対応が入れ替わっている**ので注意：**W（幅長）＝`width_mm` / D（奥行巾）＝`length_mm` / H（高さ）＝`height_mm`**
+    - **並びはどこでも W → D → H**（資材マスタ一覧・資材一覧・編集フォーム・CSV・`sizeText()` の `W×D×H`）。
+      列名を変えると発注明細のスナップショットまで移行が必要になるので、**列はそのままで表示だけ**を合わせている
     - **3辺計は列に持たない**。縦横高から求まるので `DescribesMaterial::girthMm()` / `girthText()` で計算して出す
       （列にすると寸法を直したときにズレる）。入力がある値だけを足すので、厚みを入れていない袋は縦＋横になる。
       表示は資材マスタ一覧・資材一覧・編集フォーム（入力に合わせてJSで再計算）、CSVは**出力だけ**（取り込みでは読み飛ばす）

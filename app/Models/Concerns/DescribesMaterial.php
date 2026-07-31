@@ -23,11 +23,16 @@ trait DescribesMaterial
         return $unit instanceof Model ? (string) ($unit->name ?? '') : (string) ($unit ?? '');
     }
 
-    /** 縦×横×高（mm）。入力がある値だけを × でつなぐ。1つも無ければ null */
+    /**
+     * W×D×H（mm）。入力がある値だけを × でつなぐ。1つも無ければ null。
+     *
+     * 表示は **W（幅長）→ D（奥行巾）→ H（高さ）** の順。
+     * 列名とは対応が違うので注意（W＝width_mm / D＝length_mm / H＝height_mm）。
+     */
     public function sizeText(): ?string
     {
         $parts = array_filter(
-            [$this->length_mm, $this->width_mm, $this->height_mm],
+            [$this->width_mm, $this->length_mm, $this->height_mm],
             fn (?int $mm) => $mm !== null,
         );
 
@@ -35,16 +40,16 @@ trait DescribesMaterial
     }
 
     /**
-     * 3辺計（縦＋横＋高、mm）。宅配便のサイズ区分を見るための値。
+     * 3辺計（W＋D＋H、mm）。宅配便のサイズ区分を見るための値。
      *
-     * **列には持たない**。縦横高から必ず求まるので、持つと寸法を直したときにズレる。
+     * **列には持たない**。W・D・Hから必ず求まるので、持つと寸法を直したときにズレる。
      * 入力がある値だけを足す（sizeText() と同じ扱い。厚みを入れていない袋などは
-     * 縦＋横になる）。1つも入っていなければ null。
+     * W＋D になる）。1つも入っていなければ null。
      */
     public function girthMm(): ?int
     {
         $parts = array_filter(
-            [$this->length_mm, $this->width_mm, $this->height_mm],
+            [$this->width_mm, $this->length_mm, $this->height_mm],
             fn (?int $mm) => $mm !== null,
         );
 
