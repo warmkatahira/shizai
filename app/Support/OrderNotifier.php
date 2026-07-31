@@ -89,22 +89,24 @@ class OrderNotifier
      * 通知を送る。メール送信は同期実行なので、宛先が存在しない・SMTPが落ちている等で
      * 例外が飛ぶと承認・申請の操作そのものがエラーになってしまう（DBは既にコミット済み）。
      * 送信失敗は業務を止めずログに残すだけにして、画面はエラーにしない。
+     *
+     * **1人ずつ送る**。まとめて渡すと最初の宛先で例外が出た時点でループが止まり、
+     * 後ろに並んでいた人全員が巻き添えで受け取れなくなるため
+     * （実際に、退職者の古いアドレスが1件混ざっていて全員に届かなくなった）。
      */
     private static function dispatch(Collection $recipients, BaseNotification $notification, Order $order): void
     {
-        if ($recipients->isEmpty()) {
-            return;
-        }
-
-        try {
-            Notification::send($recipients, $notification);
-        } catch (Throwable $e) {
-            Log::error('発注通知メールの送信に失敗しました', [
-                'order_id' => $order->id,
-                'notification' => $notification::class,
-                'recipients' => $recipients->pluck('email')->all(),
-                'error' => $e->getMessage(),
-            ]);
+        foreach ($recipients as $recipient) {
+            try {
+                Notification::send([$recipient], $notification);
+            } catch (Throwable $e) {
+                Log::error('発注通知メールの送信に失敗しました', [
+                    'order_id' => $order->id,
+                    'notification' => $notification::class,
+                    'recipient' => $recipient->email,
+                    'error' => $e->getMessage(),
+                ]);
+            }
         }
     }
 }
