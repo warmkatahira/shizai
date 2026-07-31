@@ -117,9 +117,9 @@
                     <th class="px-4 py-3">カテゴリ</th>
                     <th class="px-4 py-3">発注業者</th>
                     {{-- 寸法は W（幅長）→ D（奥行巾）→ H（高さ）の順。列は width_mm / length_mm / height_mm --}}
-                    <th class="px-4 py-3 text-right" title="幅長">W(mm)</th>
-                    <th class="px-4 py-3 text-right" title="奥行巾">D(mm)</th>
-                    <th class="px-4 py-3 text-right" title="高さ">H(mm)</th>
+                    <th class="px-4 py-3 text-right">W（幅長）</th>
+                    <th class="px-4 py-3 text-right">D（奥行巾）</th>
+                    <th class="px-4 py-3 text-right">H（高さ）</th>
                     {{-- 3辺計はW・D・Hの合計。列には持たず計算して出す（DescribesMaterial::girthMm）--}}
                     <th class="px-4 py-3 text-right">3辺計(mm)</th>
                     <th class="px-4 py-3">発送時サイズ</th>

@@ -20,7 +20,7 @@ class MaterialCsv extends MasterCsv
     public const HEADERS = [
         'ID', '品名', 'カテゴリ', '発注業者',
         // 寸法は W（幅長）→ D（奥行巾）→ H（高さ）の順。列は width_mm / length_mm / height_mm
-        'W(mm)', 'D(mm)', 'H(mm)', '3辺計(mm)', '発送時サイズ', 'サイズ',
+        'W（幅長）', 'D（奥行巾）', 'H（高さ）', '3辺計(mm)', '発送時サイズ', 'サイズ',
         '単位', '単価', '最低ロット数量',
         '名入れ', '備考', '有効',
     ];
