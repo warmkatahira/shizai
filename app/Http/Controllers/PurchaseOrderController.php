@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Mpdf\Mpdf;
@@ -13,38 +14,47 @@ use Mpdf\Mpdf;
  * 1申請＝1業者なので、発注書は1申請につき1枚。
  * 総務・管理者が「発注待ち」または「発注済」の申請から出せる。
  *
- * **発注書を出す＝実際に業者へ発注する**ので、初回のダウンロードで
- * 「発注待ち」→「発注済」に進み、発注日（ordered_at）が記録される。
- * ステータスが変わる操作なので、リンク（GET）ではなくボタン（POST）で受ける。
+ * **発注書を出す＝実際に業者へ発注する**ので、「発注済」に進める操作（issue）と
+ * PDFを出すだけの操作（download）を分けている。
+ * - issue（POST）… 状態を変えるのでボタン。発注済にしたあと詳細画面へ戻し、
+ *   戻った先でダウンロードを始める。**画面がその場で「発注済」に変わる**。
+ *   （PDFを直接返すと応答がファイルなのでページが遷移せず、更新するまで
+ *   画面が「発注待ち」のままに見えてしまう）
+ * - download（GET）… 発注済の申請のPDFを出すだけ。状態は変えないので、
+ *   ブラウザの先読みや誤クリックで発注済になる心配がない（再発行もこちら）。
  */
 class PurchaseOrderController extends Controller
 {
-    public function download(Request $request, Order $order): Response
+    /** 発注書を作成する（＝業者へ発注する）。発注済にして詳細画面へ戻す */
+    public function issue(Request $request, Order $order): RedirectResponse
     {
-        $user = $request->user();
+        $this->assertCanIssue($request, $order);
 
-        // 総務・管理者のみ
-        abort_unless($user->canIssuePurchaseOrder(), 403, '発注書を出力できるのは総務・管理者のみです。');
-
-        // 総務の承認が済んでいない申請の発注書は出せない
-        abort_unless(
-            $order->isPendingOrder() || $order->isOrdered(),
-            403,
-            '総務が承認した申請（発注待ち・発注済）のみ発注書を出力できます。',
-        );
-
-        $order->load(['office', 'supplier', 'items']);
-
-        abort_unless($order->supplier, 404, 'この発注申請には業者が設定されていません。');
-
-        // 初回のダウンロードで発注済にする。2回目以降は再発行なので状態は変えない
+        // 初回のみ発注済にする。2回目以降は再発行なので状態は変えない
         if ($order->isPendingOrder()) {
             $order->update([
                 'status' => Order::STATUS_ORDERED,
-                'ordered_by' => $user->id,
+                'ordered_by' => $request->user()->id,
                 'ordered_at' => now(),
             ]);
         }
+
+        // 戻った先の画面でダウンロードを始める（詳細画面の hidden iframe）
+        return redirect()->route('orders.show', $order)
+            ->with('download_purchase_order', true)
+            ->with('status', '発注書を作成しました。ダウンロードを開始します。');
+    }
+
+    /** 発注書PDFを出す（発注済のみ。状態は変えない） */
+    public function download(Request $request, Order $order): Response
+    {
+        $this->assertCanIssue($request, $order);
+
+        // PDFを出すだけの入口なので、まだ発注していないものは対象外
+        // （発注書を出す＝発注する、なので必ず issue を通ってから）
+        abort_unless($order->isOrdered(), 403, 'まだ発注していない申請の発注書は出力できません。');
+
+        $order->load(['office', 'supplier', 'items']);
 
         $html = view('purchase_orders.pdf', [
             'order' => $order,
@@ -52,8 +62,9 @@ class PurchaseOrderController extends Controller
             'items' => $order->items,
             'office' => $order->office,
             'company' => config('company'),
-            // 発注書を出した人が担当者
-            'personInCharge' => $user->name,
+            // 担当者＝いま出力した人。再発行なら再発行した人の氏名が入る
+            // （業者からの問い合わせ先は「その発注書を出した人」であってほしいため）
+            'personInCharge' => $request->user()->name,
         ])->render();
 
         $mpdf = new Mpdf([
@@ -89,5 +100,21 @@ class PurchaseOrderController extends Controller
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => "attachment; filename*=UTF-8''" . rawurlencode($filename),
         ]);
+    }
+
+    /** 発注書を扱える人・状態か（作成・ダウンロードで共通） */
+    private function assertCanIssue(Request $request, Order $order): void
+    {
+        // 総務・管理者のみ
+        abort_unless($request->user()->canIssuePurchaseOrder(), 403, '発注書を出力できるのは総務・管理者のみです。');
+
+        // 総務の承認が済んでいない申請の発注書は出せない
+        abort_unless(
+            $order->isPendingOrder() || $order->isOrdered(),
+            403,
+            '総務が承認した申請（発注待ち・発注済）のみ発注書を出力できます。',
+        );
+
+        abort_unless($order->supplier_id, 404, 'この発注申請には業者が設定されていません。');
     }
 }

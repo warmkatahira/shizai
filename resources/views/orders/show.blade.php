@@ -124,23 +124,34 @@
                 @endif
             </p>
             @if ($order->supplier)
-                <form method="POST" action="{{ route('orders.purchaseOrder', $order) }}" data-no-loader
-                      @if ($order->isPendingOrder())
-                          onsubmit="return confirm('発注書を作成します。この申請は「発注済」になります。よろしいですか？')"
-                      @endif>
-                    @csrf
-                    <button class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm px-4 py-2 rounded-md">
-                        @if ($order->isPendingOrder())
+                @if ($order->isPendingOrder())
+                    {{-- 状態が変わる操作なのでPOST。発注済にしてから詳細へ戻り、そこでダウンロードが始まる --}}
+                    <form method="POST" action="{{ route('orders.purchaseOrder', $order) }}"
+                          onsubmit="return confirm('発注書を作成します。この申請は「発注済」になります。よろしいですか？')">
+                        @csrf
+                        <button class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm px-4 py-2 rounded-md">
                             発注書を作成して発注する
-                        @else
-                            発注書を再ダウンロード
-                        @endif
-                    </button>
-                </form>
+                        </button>
+                    </form>
+                @else
+                    {{-- 再発行は状態を変えないのでGET。ページはそのままでダウンロードだけ始まる --}}
+                    <a href="{{ route('orders.purchaseOrder.file', $order) }}" data-no-loader
+                       class="inline-block bg-emerald-600 hover:bg-emerald-700 text-white text-sm px-4 py-2 rounded-md">
+                        発注書を再ダウンロード
+                    </a>
+                @endif
             @else
                 <p class="text-sm text-gray-400">業者が設定されていないため、発注書を作成できません。</p>
             @endif
         </div>
+    @endif
+
+    {{-- 発注書を作成した直後だけ、戻ってきたこの画面でダウンロードを始める。
+         画面はもう「発注済」で描かれているので、更新しなくても状態が合う。
+         iframe なのでページは遷移せず、JavaScript も要らない --}}
+    @if (session('download_purchase_order'))
+        <iframe src="{{ route('orders.purchaseOrder.file', $order) }}" title="発注書のダウンロード"
+                class="hidden" aria-hidden="true" tabindex="-1"></iframe>
     @endif
 
     {{-- 発注後メモ（発注済のみ）。業者から言われたこと等を残す。総務・管理者が更新、閲覧は全員 --}}

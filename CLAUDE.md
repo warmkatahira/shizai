@@ -176,11 +176,16 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
     段の組み立ては `Order::approvalSteps()`（表示専用。列に入っている日時と担当者を並べ替えているだけ）、
     描画は `orders/partials/approval-timeline.blade.php`。承認者と日時は基本情報から外してここに集約している
   - 特例承認・所長本人の申請は「省略」として理由つきで出す。**却下は日時の列を持たない**ので担当者と理由のみ
-- `/orders/{order}/purchase-order` 発注書PDF（`PurchaseOrderController`。**POST**）
+- `/orders/{order}/purchase-order` 発注書PDF（`PurchaseOrderController`）
   - **1申請＝1業者なので、発注書は1申請1枚**
-  - 出せるのは**発注待ち・発注済のみ・総務/管理者のみ**。担当者名はボタンを押した本人の氏名が入る
-  - **出力するとステータスが「発注済」に進む**ため、リンク（GET）ではなくボタン（POST）にしている
-    （GETだとブラウザの先読みや誤クリックで発注済になってしまう）
+  - 出せるのは**発注待ち・発注済のみ・総務/管理者のみ**。担当者名は**そのPDFを出力した本人**の氏名（毎回。
+    再発行なら再発行した人になる）。発注日・`ordered_by` は初回のまま変わらない
+  - **「発注済にする」（POST `issue`）と「PDFを出す」（GET `download`）を分けている**
+    - POSTは状態を変えるのでボタン。**発注済にしたあと詳細画面へリダイレクト**し、
+      戻った画面の hidden iframe が GET を呼んでダウンロードを始める（`session('download_purchase_order')`）。
+      PDFを直接返すとページが遷移せず、**更新するまで画面が「発注待ち」のままに見えてしまう**ため
+    - GETは**発注済のみ**・状態を変えない。だから先読みや誤クリックで発注済になる心配がない。再発行もこちら（ただのリンク）
+    - 発注待ちのままGETを直接叩いても403（発注書を出す＝発注する、なので必ずPOSTを通す）
   - 発注NO＝`orders.id`（`Order::purchaseOrderNo()`）／発注日＝`ordered_at`／自社の連絡先＝`config/company.php`（本社）
   - 納入先＝発注元の営業所。備考欄＝`orders.supplier_note`（**業者向け**。社内メモの `orders.note` は印字しない）
   - 宛名は `Supplier::formalName()`＝正式名称（`formal_name`。空なら `name`）。**正式名称を使うのはここだけ**

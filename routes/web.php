@@ -55,9 +55,14 @@ Route::middleware('auth')->group(function () {
     Route::delete('/orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
 
     // 発注書PDF（発注待ち・発注済のみ・総務/管理者）。1申請＝1業者なので1申請1枚。
-    // 出力すると「発注済」に進む（＝実際に業者へ発注した）ので、GETではなくPOSTで受ける
-    Route::post('/orders/{order}/purchase-order', [PurchaseOrderController::class, 'download'])
+    // 「発注済にする」（POST）と「PDFを出す」（GET）を分けている。
+    // POSTは状態を変えるのでボタン。詳細画面へ戻してから、その画面でGETを呼んで
+    // ダウンロードを始める（PDFを直接返すとページが遷移せず、画面が発注待ちのままに見えるため）。
+    // GETは状態を変えないので、先読み・誤クリックで発注済になる心配はない
+    Route::post('/orders/{order}/purchase-order', [PurchaseOrderController::class, 'issue'])
         ->name('orders.purchaseOrder');
+    Route::get('/orders/{order}/purchase-order', [PurchaseOrderController::class, 'download'])
+        ->name('orders.purchaseOrder.file');
 
     // 発注後メモの更新（発注済のみ・総務/管理者。判定は Order::canUpdatePostOrderNote）
     Route::patch('/orders/{order}/post-order-note', [OrderController::class, 'updatePostOrderNote'])
