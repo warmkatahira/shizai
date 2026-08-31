@@ -22,8 +22,8 @@ class UserSeeder extends Seeder
      */
     private const MANAGERS = [
         'honsha' => ['本社 所長（仮）', 'honsha-manager', null],
-        '1st' => ['里本 佳隆', 'ty01', 'aty01@warm.co.jp'],
-        '2nd' => ['曽根田 裕也', 'soneda', 'asoneda@warm.co.jp'],
+        '1st' => ['第1営業所 所長（仮）', '1st-manager', null],
+        '2nd' => ['第2営業所 所長（仮）', '2nd-manager', null],
         '3rd' => ['第3営業所 所長（仮）', '3rd-manager', null],
         'LS' => ['ロジステーション 所長（仮）', 'ls-manager', null],
         'LP' => ['ロジポート 所長（仮）', 'lp-manager', null],
