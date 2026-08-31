@@ -22,8 +22,8 @@ class UserSeeder extends Seeder
      */
     private const MANAGERS = [
         'honsha' => ['本社 所長（仮）', 'honsha-manager', null],
-        '1st' => ['里本 佳隆', 'ty01', 'ty01@warm.co.jp'],
-        '2nd' => ['曽根田 裕也', 'soneda', 'soneda@warm.co.jp'],
+        '1st' => ['里本 佳隆', 'ty01', 'aty01@warm.co.jp'],
+        '2nd' => ['曽根田 裕也', 'soneda', 'asoneda@warm.co.jp'],
         '3rd' => ['第3営業所 所長（仮）', '3rd-manager', null],
         'LS' => ['ロジステーション 所長（仮）', 'ls-manager', null],
         'LP' => ['ロジポート 所長（仮）', 'lp-manager', null],
@@ -47,9 +47,9 @@ class UserSeeder extends Seeder
         // 通知が要らない人は、権限は総務のままメールを null にしておく
         $generalAffairs = [
             ['大泉 一弘', 'ooizumi', null],
-            ['並木 拓', 'namiki', 'anamiki@warm.co.jp'],
-            ['堀内 正智', 'm.horiuchi', 'am.horiuchi@warm.co.jp'],
-            ['岡野 麻由子', 'm.okano', 'am.okano@warm.co.jp'],
+            ['並木 拓', 'namiki', 'namiki@warm.co.jp'],
+            ['堀内 正智', 'm.horiuchi', 'm.horiuchi@warm.co.jp'],
+            ['岡野 麻由子', 'm.okano', 'm.okano@warm.co.jp'],
         ];
 
         foreach ($generalAffairs as [$name, $loginId, $email]) {

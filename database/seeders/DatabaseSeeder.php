@@ -18,11 +18,11 @@ class DatabaseSeeder extends Seeder
         $this->call([
             OfficeSeeder::class,
             UserSeeder::class,      // 営業所が必要
-            CategorySeeder::class,
+            /* CategorySeeder::class,
             SupplierSeeder::class,
             UnitSeeder::class,
             MaterialSeeder::class,  // カテゴリ・業者・単位が必要
-            OrderSeeder::class,     // 営業所・ユーザー・資材が必要
+            OrderSeeder::class,     // 営業所・ユーザー・資材が必要 */
         ]);
     }
 }
