@@ -38,8 +38,10 @@ class PasswordController extends Controller
             'password' => '新しいパスワード',
         ]);
 
+        // 変更を強制されていた場合はここでフラグを下ろす（以後は普通に使える）
         $request->user()->update([
             'password' => Hash::make($request->input('password')),
+            'must_change_password' => false,
         ]);
 
         return redirect()->route('dashboard')->with('status', 'パスワードを変更しました。');

@@ -123,6 +123,9 @@ class UserController extends Controller
         }
 
         $validated['is_active'] = $request->boolean('is_active');
+        // 次回ログイン時にパスワードの変更を強制するか（EnsurePasswordChanged が見る）。
+        // 新規登録・パスワードの付け替えでは画面側で自動的にオンになる（外すこともできる）
+        $validated['must_change_password'] = $request->boolean('must_change_password');
         unset($validated['password']); // パスワードは呼び出し側で扱う
 
         return $validated;

@@ -63,6 +63,16 @@
     </div>
 
     @include('admin.partials.toggle', [
+        'name' => 'must_change_password',
+        'label' => '次回ログイン時に<span class="font-medium">パスワードの変更を求める</span>（変えるまで他の画面を開けない）',
+        'checked' => old('must_change_password', $isNew ? true : ($user->must_change_password ?? false)),
+    ])
+    <p class="text-xs text-gray-400 -mt-2">
+        管理者が決めたパスワードのまま使わせないための設定です。
+        営業所で共通のアカウントなど、本人に変えさせたくない場合はオフにしてください。
+    </p>
+
+    @include('admin.partials.toggle', [
         'name' => 'is_active',
         'label' => '有効にする（ログイン可能にする）',
         'checked' => old('is_active', $user->is_active ?? true),
@@ -73,3 +83,19 @@
         <a href="{{ route('admin.users.index') }}" class="text-sm text-gray-500 hover:underline">キャンセル</a>
     </div>
 </div>
+
+<script>
+    // パスワードを入力したら「次回ログイン時にパスワードの変更を求める」を自動でオンにする。
+    // 管理者が決めたパスワードのまま使われるのを防ぐため。手で外せば外したままになる。
+    (function () {
+        const password = document.getElementById('password');
+        const force = document.querySelector('input[name="must_change_password"]');
+        if (! password || ! force) return;
+
+        let touched = false;
+        force.addEventListener('change', () => { touched = true; });
+        password.addEventListener('input', () => {
+            if (! touched && password.value !== '') force.checked = true;
+        });
+    })();
+</script>

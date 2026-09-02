@@ -71,7 +71,7 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
 
 ## データモデル
 - `offices`（営業所・拠点） … name/code/postal_code/address/tel/fax/sort_order/is_active。社内の拠点マスタ（BaseSeeder）の9拠点を投入
-- `users`（login_id・email・role・office_id・is_manager を保持）
+- `users`（login_id・email・role・office_id・is_manager・must_change_password を保持）
   - **ログインは `login_id`**（メールではない）。営業所の申請用アカウントは共通で使い回すため、実在のメールを持たない
   - `email` は **null 許容の「通知先」**。無ければそのユーザーには通知を送らないだけで、ログインには影響しない
 - `suppliers`（業者マスタ） … name/formal_name/contact_person/phone/mobile_phone/fax/email/order_method/is_active。`materials.supplier_id` で参照
@@ -246,6 +246,16 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
   - **営業所の申請用アカウントは拠点で共通**なので、変更すると同じアカウントの全員が入れなくなる。
     そのアカウント（`isSales()` かつ 所長でない）で開いたときだけ画面に警告を出す
   - 操作ログに `user.password_changed` として残る（パスワードそのものは記録しない）
+  - **`users.must_change_password` が立っているユーザーは、変更するまでこの画面から出られない**
+    （`EnsurePasswordChanged` ミドルウェア。`auth` のルートグループ全体に掛けてあり、
+    通すのはこの画面とログアウトだけ）。変更に成功した時点でフラグを下ろす。
+    管理者が決めた初期パスワードのまま使わせないための仕組み。画面にはその旨の案内を出し、
+    戻り先が無いので「キャンセル」は出さない
+    - フラグを立てるのは**管理者のユーザー管理**。パスワードを入力すると
+      「次回ログイン時にパスワードの変更を求める」トグルが自動でオンになる（JS。手で外せる）。
+      新規登録は既定でオン。**営業所の共通アカウントは拠点で使い回すので、普通はオフにする**
+      （最初に入った1人が全員のパスワードを決めてしまうため）
+    - 既存ユーザーは `false`（今までどおり）。ユーザー一覧では「要変更」バッジで見える
 - CSVは `OrderController@export` / `ReportController@export` / 各マスタの `export`（BOM付きUTF-8、Excel対応）
 
 ## テスト用アカウント（**ログインIDで**ログイン。パスワードは管理者以外すべて `password`）

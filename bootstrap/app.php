@@ -15,6 +15,8 @@ return Application::configure(basePath: dirname(__DIR__))
         // 権限チェック用ミドルウェアのエイリアス登録
         $middleware->alias([
             'role' => \App\Http\Middleware\EnsureRole::class,
+            // パスワードの変更を強制されているユーザーを変更画面に留める
+            'password.changed' => \App\Http\Middleware\EnsurePasswordChanged::class,
         ]);
 
         // 操作ログを一元記録する（terminable。全 web リクエストの後に走る）

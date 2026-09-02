@@ -29,7 +29,9 @@ Route::middleware('guest')->group(function () {
 });
 
 // ----- ログイン必須 -----
-Route::middleware('auth')->group(function () {
+// must_change_password が立っているユーザーは、パスワードを変えるまで
+// パスワード変更画面とログアウト以外を開けない（EnsurePasswordChanged）
+Route::middleware(['auth', 'password.changed'])->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 

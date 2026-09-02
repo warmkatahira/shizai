@@ -38,6 +38,10 @@
                         <td class="px-4 py-3">{{ $user->office?->name ?? '—' }}</td>
                         <td class="px-4 py-3">
                             @include('admin.partials.status-badge', ['active' => $user->is_active])
+                            {{-- まだ初期パスワードのまま（次のログインで変更を求められる） --}}
+                            @if ($user->must_change_password)
+                                <span class="ml-1 inline-block px-1.5 py-0.5 rounded text-xs bg-blue-50 text-blue-700">要変更</span>
+                            @endif
                         </td>
                         <td class="px-4 py-3 text-right whitespace-nowrap">
                             <a href="{{ route('admin.users.edit', $user) }}" class="text-accent-strong hover:underline">編集</a>
