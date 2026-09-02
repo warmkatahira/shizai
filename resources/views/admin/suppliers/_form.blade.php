@@ -54,8 +54,8 @@
         <select id="order_method" name="order_method"
                 class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
             <option value="">（未設定）</option>
-            @foreach (\App\Models\Supplier::ORDER_METHODS as $value => $label)
-                <option value="{{ $value }}" {{ old('order_method', $supplier->order_method) === $value ? 'selected' : '' }}>{{ $label }}</option>
+            @foreach (\App\Models\Supplier::ORDER_METHODS as $methodValue => $methodLabel)
+                <option value="{{ $methodValue }}" {{ old('order_method', $supplier->order_method) === $methodValue ? 'selected' : '' }}>{{ $methodLabel }}</option>
             @endforeach
         </select>
         <p class="text-xs text-gray-400 mt-1">この業者への発注をどの手段で行うか。サイボウズ・ロジレスなどの専用システムは「web」を選んでください。</p>

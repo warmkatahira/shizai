@@ -25,8 +25,8 @@
         <label for="role" class="block text-sm font-medium text-gray-700 mb-1">権限 <span class="text-red-500">*</span></label>
         <select id="role" name="role" required
                 class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
-            @foreach (\App\Models\User::ROLE_LABELS as $value => $label)
-                <option value="{{ $value }}" {{ old('role', $user->role) === $value ? 'selected' : '' }}>{{ $label }}</option>
+            @foreach (\App\Models\User::ROLE_LABELS as $roleValue => $roleLabel)
+                <option value="{{ $roleValue }}" {{ old('role', $user->role) === $roleValue ? 'selected' : '' }}>{{ $roleLabel }}</option>
             @endforeach
         </select>
     </div>
