@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'login_id', 'email', 'password', 'role', 'office_id', 'is_manager', 'is_active', 'must_change_password', 'visible_masters'])]
+#[Fillable(['name', 'login_id', 'email', 'password', 'role', 'office_id', 'is_manager', 'is_active', 'must_change_password', 'visible_masters', 'editable_masters'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -58,6 +58,7 @@ class User extends Authenticatable
             'is_manager' => 'boolean',
             'must_change_password' => 'boolean',
             'visible_masters' => 'array',
+            'editable_masters' => 'array',
         ];
     }
 
@@ -106,7 +107,24 @@ class User extends Authenticatable
         }
 
         return $this->canManageMasters()
-            || in_array($master, $this->visible_masters ?? [], true);
+            || in_array($master, $this->visible_masters ?? [], true)
+            || $this->canEditMaster($master); // 編集できるなら当然見られる
+    }
+
+    /**
+     * そのマスタを編集できるか（登録・編集・削除・CSV出力・CSV取り込み）。
+     *
+     * 管理者・総務は常に全部。それ以外の権限は、ユーザー管理の「編集」を
+     * オンにしたマスタだけ、そのマスタに関して総務と同じ操作ができる。
+     */
+    public function canEditMaster(string $master): bool
+    {
+        if (! array_key_exists($master, self::MASTERS)) {
+            return false;
+        }
+
+        return $this->canManageMasters()
+            || in_array($master, $this->editable_masters ?? [], true);
     }
 
     /** 表示できるマスタが1つでもあるか（ナビにマスタのメニューを出すかの判定） */

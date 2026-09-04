@@ -1,9 +1,15 @@
 @php
     // トグルは未チェックだと送られてこないので、old() の有無ではなく
     // 「フォームを送ったあとか」で初期値を決める（送信後は入っているキーだけがオン）
-    $visibleMasters = old('_submitted')
+    $submitted = (bool) old('_submitted');
+
+    $visibleMasters = $submitted
         ? array_keys((array) old('visible_masters', []))
         : ($user->visible_masters ?? []);
+
+    $editableMasters = $submitted
+        ? array_keys((array) old('editable_masters', []))
+        : ($user->editable_masters ?? []);
 @endphp
 
 <div class="space-y-4">
@@ -81,26 +87,41 @@
         営業所で共通のアカウントなど、本人に変えさせたくない場合はオフにしてください。
     </p>
 
-    {{-- 表示するマスタ。管理者・総務は常に全部（編集もできる）なので、
-         実際に効くのはそれ以外の権限＝オンにしたマスタを「閲覧だけ」できる --}}
+    {{-- マスタごとの権限。管理者・総務は常に全部（閲覧も編集も）なので、
+         実際に効くのはそれ以外の権限。編集をオンにすると閲覧も自動でオンになる --}}
     <div id="master-toggles" class="rounded-md border border-gray-200 p-4 space-y-3">
-        <p class="text-sm font-medium text-gray-700">表示するマスタ</p>
+        <p class="text-sm font-medium text-gray-700">マスタの権限</p>
 
         <p class="text-xs text-gray-400" data-master-note="all">
-            管理者・総務は<span class="font-medium">すべてのマスタ</span>を編集できます。ここでは外せません。
+            管理者・総務は<span class="font-medium">すべてのマスタ</span>を閲覧・編集できます。ここでは外せません。
         </p>
         <p class="text-xs text-gray-400 hidden" data-master-note="pick">
-            オンにしたマスタを<span class="font-medium">閲覧だけ</span>できます（登録・編集・削除・CSVはできません）。
+            <span class="font-medium">閲覧</span>＝一覧を見るだけ。
+            <span class="font-medium">編集</span>＝登録・編集・削除・CSVまで（そのマスタは総務と同じ操作ができます）。
         </p>
 
-        @foreach (\App\Models\User::MASTERS as $masterKey => $masterLabel)
-            @include('admin.partials.toggle', [
-                'name' => "visible_masters[{$masterKey}]",
-                'label' => $masterLabel . 'マスタ',
-                'checked' => in_array($masterKey, $visibleMasters, true),
-                'between' => true,
-            ])
-        @endforeach
+        <div class="grid grid-cols-[1fr_auto_auto] items-center gap-x-8 gap-y-3">
+            <span></span>
+            <span class="text-xs text-gray-500 text-center">閲覧</span>
+            <span class="text-xs text-gray-500 text-center">編集</span>
+
+            @foreach (\App\Models\User::MASTERS as $masterKey => $masterLabel)
+                <span class="text-sm text-ink">{{ $masterLabel }}マスタ</span>
+
+                @include('admin.partials.toggle', [
+                    'name' => "visible_masters[{$masterKey}]",
+                    'label' => '<span class="sr-only">' . $masterLabel . 'マスタを閲覧できる</span>',
+                    'checked' => in_array($masterKey, $visibleMasters, true)
+                        || in_array($masterKey, $editableMasters, true),
+                ])
+
+                @include('admin.partials.toggle', [
+                    'name' => "editable_masters[{$masterKey}]",
+                    'label' => '<span class="sr-only">' . $masterLabel . 'マスタを編集できる</span>',
+                    'checked' => in_array($masterKey, $editableMasters, true),
+                ])
+            @endforeach
+        </div>
     </div>
 
     @include('admin.partials.toggle', [
@@ -131,6 +152,15 @@
         };
         const saved = new Map(); // 権限を戻したときに選択を復元する
 
+        // 同じマスタの閲覧トグルと編集トグルを組にする（name の [キー] で対応づけ）
+        const pairOf = (toggle) => {
+            const key = toggle.name.replace(/^[a-z_]+\[(.+)\]$/, '$1');
+            return {
+                view: box.querySelector(`input[name="visible_masters[${key}]"]`),
+                edit: box.querySelector(`input[name="editable_masters[${key}]"]`),
+            };
+        };
+
         const sync = () => {
             const full = FULL_ACCESS_ROLES.includes(role.value);
             toggles.forEach((toggle) => {
@@ -146,6 +176,18 @@
             notes.all.classList.toggle('hidden', ! full);
             notes.pick.classList.toggle('hidden', full);
         };
+
+        // 編集できるなら当然見られる。閲覧を外したら編集も外す
+        box.addEventListener('change', (event) => {
+            const toggle = event.target;
+            if (! toggles.length || toggle.type !== 'checkbox') return;
+
+            const pair = pairOf(toggle);
+            if (! pair.view || ! pair.edit) return;
+
+            if (toggle === pair.edit && toggle.checked) pair.view.checked = true;
+            if (toggle === pair.view && ! toggle.checked) pair.edit.checked = false;
+        });
 
         role.addEventListener('change', sync);
         sync();

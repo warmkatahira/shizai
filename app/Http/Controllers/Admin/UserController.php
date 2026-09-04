@@ -78,6 +78,15 @@ class UserController extends Controller
         return redirect()->route('admin.users.index')->with('status', 'ユーザーを削除しました。');
     }
 
+    /** トグルで送られてきたマスタのキーを、User::MASTERS にあるものだけ・その並び順で受け取る */
+    private function pickMasters(mixed $input): array
+    {
+        return array_values(array_intersect(
+            array_keys(User::MASTERS),
+            array_keys((array) $input)
+        ));
+    }
+
     /** バリデーション */
     private function validateData(Request $request, ?User $user = null): array
     {
@@ -122,14 +131,20 @@ class UserController extends Controller
             $validated['is_manager'] = false;
         }
 
-        // 表示するマスタ（一覧の閲覧だけを許す）。管理者・総務は常に全部なので画面のトグルも
+        // マスタごとの閲覧・編集。管理者・総務は常に全部なので画面のトグルも
         // 常時オン＋操作不可にしてある＝送られてこないので、ここで全部入れておく
-        $validated['visible_masters'] = $validated['role'] === User::ROLE_SALES
-            ? array_values(array_intersect(
+        if ($validated['role'] === User::ROLE_SALES) {
+            $editable = $this->pickMasters($request->input('editable_masters'));
+            // 編集できるなら当然見られる（画面のJSでも連動させているが、迂回されても揃うように）
+            $validated['editable_masters'] = $editable;
+            $validated['visible_masters'] = array_values(array_intersect(
                 array_keys(User::MASTERS),
-                array_keys((array) $request->input('visible_masters', []))
-            ))
-            : array_keys(User::MASTERS);
+                array_merge($this->pickMasters($request->input('visible_masters')), $editable)
+            ));
+        } else {
+            $validated['visible_masters'] = array_keys(User::MASTERS);
+            $validated['editable_masters'] = array_keys(User::MASTERS);
+        }
 
         $validated['is_active'] = $request->boolean('is_active');
         // 次回ログイン時にパスワードの変更を強制するか（EnsurePasswordChanged が見る）。

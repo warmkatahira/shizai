@@ -7,19 +7,24 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * そのマスタを閲覧できるユーザーだけを通す。
- * 例: ->middleware('master:suppliers')
+ * そのマスタを扱えるユーザーだけを通す。
+ * 例: ->middleware('master:suppliers')      … 一覧の閲覧
+ *     ->middleware('master:suppliers,edit') … 登録・編集・削除・CSV
  *
  * 管理者・総務は常に通る。それ以外は、ユーザー管理の「表示するマスタ」で
- * オンにしたものだけ（一覧の閲覧のみ。登録・編集・削除・CSVは role ミドルウェアで別に塞ぐ）。
+ * アカウントごとにオンにしたものだけ通る。
  */
 class EnsureMasterVisible
 {
-    public function handle(Request $request, Closure $next, string $master): Response
+    public function handle(Request $request, Closure $next, string $master, ?string $mode = null): Response
     {
         $user = $request->user();
 
-        if (! $user || ! $user->canViewMaster($master)) {
+        $allowed = $user && ($mode === 'edit'
+            ? $user->canEditMaster($master)
+            : $user->canViewMaster($master));
+
+        if (! $allowed) {
             abort(403, 'この操作を行う権限がありません。');
         }
 

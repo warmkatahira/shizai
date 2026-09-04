@@ -31,8 +31,9 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
 - `admin`（管理者）… すべてのマスタ管理（**ユーザー管理は管理者だけ**）
 - `general_affairs`（総務）… 承認・特例承認・差し戻し・却下、発注書の作成、**マスタ管理（ユーザー以外の4つ）**
 - `sales`（営業所）… 発注申請。`is_manager=true` なら**所長**（自営業所の一次承認者。差し戻し・却下もできる）
-  - **アカウントごとにマスタを「閲覧だけ」開けられる**（`users.visible_masters`。ユーザー管理のトグル）。
-    編集は一切できない（登録・編集・削除・CSVは今までどおり管理者・総務だけ）
+  - **アカウントごとにマスタの権限を渡せる**（ユーザー管理のトグル）。
+    `users.visible_masters`＝一覧を閲覧できるマスタ / `users.editable_masters`＝編集までできるマスタ。
+    編集をオンにしたマスタは、そのマスタに関して総務と同じ操作（登録・編集・削除・CSV出力・取り込み）ができる
   - 一覧・集計は**自営業所のぶんだけ**見える（営業所プルダウンも出さない）。総務・管理者は全営業所
 
 ## 発注の承認フロー（Order.status）
@@ -216,12 +217,15 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
   - 営業所・総務が「どの業者に何がいくらであるか」を確認するための読み取り専用。編集は管理者のみ
   - ナビには管理者以外に表示（管理者はマスタ管理の「資材」から見られるため）
 - `/admin/{offices,suppliers,categories,units,materials}` マスタ管理（編集は**管理者と総務**）
-  - **一覧を見られる人はアカウントごとに決める**（`users.visible_masters`。判定は `User::canViewMaster()`）。
-    管理者・総務は常に全部。それ以外の権限は、ユーザー管理でオンにしたマスタだけ**閲覧できる**
-    - ルートは**一覧（`master:資材` などのミドルウェア）と編集系（`role:admin,general_affairs`）で分けてある**。
-      ナビから消すだけではURL直打ちで入れてしまうため。CSV出力・取り込みも編集系の側
+  - **誰が何をできるかはアカウントごとに決める**（判定は `User::canViewMaster()` / `canEditMaster()`）。
+    管理者・総務は常に全マスタを閲覧・編集できる。それ以外の権限は、ユーザー管理でオンにしたものだけ
+    - ルートは**マスタごとに「閲覧」と「編集」で分けてある**
+      （`master:suppliers` ＝一覧 / `master:suppliers,edit` ＝登録・編集・削除・CSV出力・取り込み）。
+      ナビや画面から消すだけではURL直打ちで通ってしまうため、ルートでも塞ぐ
     - 一覧の「新規登録」「編集」「削除」「CSVダウンロード」「CSV取り込み」は
-      `$canEditMasters`（＝`canManageMasters()`）で丸ごと隠す。見出しも閲覧時は「〜管理」と言わない
+      `$canEditMaster`（＝`canEditMaster('そのマスタ')`）で丸ごと隠す。見出しも閲覧だけなら「〜管理」と言わない
+    - **編集できるなら閲覧もできる**（`canViewMaster()` が `canEditMaster()` を含む）。
+      保存時も `editable_masters` を `visible_masters` に足すので、片方だけ立つことはない
   - **ユーザー管理はトグルの対象にしない**（管理者だけのまま。権限の付与ができるため）
   - 資材の **状態は初期値が「有効」**（普段使うのは有効な資材だけ）。CSV出力にも同じ初期値がかかる。
     「すべて」は空文字で送られて `null` になるので、値ではなく**キーの有無**で初回表示か判定する（`applyDefaultStatus`）
@@ -247,11 +251,13 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
       （`<label>` が `<input type="file">` を包んでいるので、JSが動かなくてもクリックで選べる。
       落とされたファイルを input に入れる処理だけ `layouts/app.blade.php` の共通スクリプトにある）
 - `/admin/users` ユーザー管理（**管理者のみ**。権限の付与・パスワード変更ができるため）
-  - **「表示するマスタ」のトグル5つ**（資材・カテゴリ・単位・業者・営業所＝`User::MASTERS`）。
-    オンにしたマスタの一覧をそのアカウントが**閲覧だけ**できるようになる
-    - **管理者・総務のときは常時オン＋操作不可**（全マスタを編集できる立場なので外させない）。
+  - **「マスタの権限」のトグル**。5つのマスタ（資材・カテゴリ・単位・業者・営業所＝`User::MASTERS`）×
+    **閲覧・編集の2列**。閲覧＝一覧を見るだけ、編集＝そのマスタは総務と同じ操作ができる
+    - **管理者・総務のときは全部が常時オン＋操作不可**（全マスタを扱える立場なので外させない）。
       権限のプルダウンに合わせてJSで切り替える。送られてこないので保存側でも全部入れる（`UserController::validateData`）
-    - 新規作成の初期値は**全部オフ**。知らないキーが来ても `User::MASTERS` との積集合で捨てる
+    - **編集をオンにすると閲覧も自動でオン**、閲覧をオフにすると編集もオフ（JS）。
+      フォームを迂回されても揃うように、保存側でも `editable_masters` を `visible_masters` に足す
+    - 新規作成の初期値は**全部オフ**。知らないキーが来ても `User::MASTERS` との積集合で捨てる（`pickMasters()`）
     - チェックボックスは未チェックだと送られてこないので、`old()` は
       hidden の `_submitted` の有無で「送信後かどうか」を見てから読む
 - `/password` パスワードの変更（**本人が自分のものを変える**。全ログインユーザー。`PasswordController`）
@@ -315,7 +321,7 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
 - `App\Support\OrderNotifier` … 通知先の振り分け
 - `OrderController::validateOrderInput()` / `buildItemSnapshots()` … 申請フォームの検証と明細の組み立て。新規申請（`store`）と再申請（`update`）で共有
 - `resources/views/orders/_form.blade.php` … 発注申請の入力フォーム。新規申請と再申請で共有
-- 権限判定は `User` のメソッドに寄せる（`canManageMasters()` / `canViewMaster()` / `canIssuePurchaseOrder()` / `isBackOffice()` / `isManager()` など）。
+- 権限判定は `User` のメソッドに寄せる（`canManageMasters()` / `canViewMaster()` / `canEditMaster()` / `canIssuePurchaseOrder()` / `isBackOffice()` / `isManager()` など）。
   ビューやコントローラで `isAdmin() || isGeneralAffairs()` のように書かない
 - **申請1件ごとの「誰が何をできるか」は `Order` のメソッドに集約**（`canBeManagerApprovedBy()` / `canBeAffairsApprovedBy()` /
   `canBeSpecialApprovedBy()` / `canBeReturnedBy()` / `canBeRejectedBy()` / `canBeEditedBy()` / `canBeDeletedBy()`）。

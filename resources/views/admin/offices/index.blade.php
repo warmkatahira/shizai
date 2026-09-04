@@ -1,17 +1,17 @@
 @extends('layouts.app')
 
 {{-- 閲覧だけの人には「管理」と言わない --}}
-@section('title', auth()->user()->canManageMasters() ? '営業所管理' : '営業所一覧')
+@section('title', auth()->user()->canEditMaster('offices') ? '営業所管理' : '営業所一覧')
 
 @section('content')
     @php
-        // 登録・編集・削除・CSVは管理者・総務だけ。
-        // それ以外の権限は「表示するマスタ」でオンにされて見ているので、一覧を読むだけ
-        $canEditMasters = auth()->user()->canManageMasters();
+        // このマスタを編集できるか（管理者・総務は常に可。それ以外はユーザー管理の「編集」トグル）。
+        // オフの人は一覧を読むだけなので、登録・編集・削除・CSVは丸ごと出さない
+        $canEditMaster = auth()->user()->canEditMaster('offices');
     @endphp
     <div class="flex items-center justify-between mb-6">
-        <h1 class="text-xl font-bold">{{ $canEditMasters ? '営業所管理' : '営業所一覧' }}</h1>
-        @if ($canEditMasters)
+        <h1 class="text-xl font-bold">{{ $canEditMaster ? '営業所管理' : '営業所一覧' }}</h1>
+        @if ($canEditMaster)
         <div class="flex items-center gap-3">
             <a href="{{ route('admin.offices.export') }}" data-no-loader
                class="bg-green-600 hover:bg-green-700 text-white text-sm px-4 py-2 rounded-md">📥 CSVダウンロード</a>
@@ -23,7 +23,7 @@
 
     @include('admin.partials.errors')
 
-    @if ($canEditMasters)
+    @if ($canEditMaster)
     @include('admin.partials.csv-panel', [
         'label' => '営業所',
         'importUrl' => route('admin.offices.import'),
@@ -41,7 +41,7 @@
                     <th class="px-4 py-3 whitespace-nowrap">電話 / FAX</th>
                     <th class="px-4 py-3 whitespace-nowrap">所属人数</th>
                     <th class="px-4 py-3">状態</th>
-                    @if ($canEditMasters)
+                    @if ($canEditMaster)
                         <th class="px-4 py-3 text-right">操作</th>
                     @endif
                 </tr>
@@ -69,7 +69,7 @@
                         <td class="px-4 py-3">
                             @include('admin.partials.status-badge', ['active' => $office->is_active])
                         </td>
-                        @if ($canEditMasters)
+                        @if ($canEditMaster)
                         <td class="px-4 py-3 text-right whitespace-nowrap">
                             <a href="{{ route('admin.offices.edit', $office) }}" class="text-accent-strong hover:underline">編集</a>
                             <form method="POST" action="{{ route('admin.offices.destroy', $office) }}" class="inline"
@@ -81,7 +81,7 @@
                         @endif
                     </tr>
                 @empty
-                    <tr><td colspan="{{ $canEditMasters ? 7 : 6 }}" class="px-4 py-8 text-center text-gray-400">営業所がまだありません。</td></tr>
+                    <tr><td colspan="{{ $canEditMaster ? 7 : 6 }}" class="px-4 py-8 text-center text-gray-400">営業所がまだありません。</td></tr>
                 @endforelse
             </tbody>
         </table>

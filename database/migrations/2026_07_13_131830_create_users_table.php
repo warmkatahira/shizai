@@ -25,9 +25,10 @@ return new class extends Migration
             $table->string('role')->default('sales')->comment('権限: admin/general_affairs/sales');
             $table->foreignId('office_id')->nullable()->constrained('offices')->nullOnDelete()->comment('所属営業所');
             $table->boolean('is_manager')->default(false)->comment('所長フラグ');
-            // アカウントごとに閲覧を許可するマスタ（管理者・総務は常に全部なので参照しない）。
-            // 判定は User::canViewMaster
+            // アカウントごとに閲覧・編集を許可するマスタ（管理者・総務は常に全部なので参照しない）。
+            // 判定は User::canViewMaster / canEditMaster
             $table->json('visible_masters')->nullable()->comment('閲覧を許可するマスタのキー');
+            $table->json('editable_masters')->nullable()->comment('編集を許可するマスタのキー（閲覧も含む）');
             $table->boolean('is_active')->default(true)->comment('有効フラグ');
             // 立っているあいだは、パスワードを変えるまで他の画面を開けない
             // （App\Http\Middleware\EnsurePasswordChanged）

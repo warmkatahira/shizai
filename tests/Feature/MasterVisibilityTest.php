@@ -18,7 +18,7 @@ class MasterVisibilityTest extends TestCase
 {
     use RefreshDatabase;
 
-    private function user(string $role, array $visibleMasters = [], bool $withOffice = false): User
+    private function user(string $role, array $visibleMasters = [], bool $withOffice = false, array $editableMasters = []): User
     {
         return User::create([
             'name' => 'テスト',
@@ -28,6 +28,7 @@ class MasterVisibilityTest extends TestCase
             'password' => Hash::make('password'),
             'is_active' => true,
             'visible_masters' => $visibleMasters,
+            'editable_masters' => $editableMasters,
         ]);
     }
 
@@ -59,7 +60,7 @@ class MasterVisibilityTest extends TestCase
         }
     }
 
-    public function test_オンにしても登録編集削除とCSVはできない(): void
+    public function test_閲覧だけなら登録編集削除とCSVはできない(): void
     {
         $user = $this->user(User::ROLE_SALES, ['suppliers'], true);
 
@@ -96,23 +97,61 @@ class MasterVisibilityTest extends TestCase
             ->assertForbidden();
     }
 
+    public function test_編集をオンにするとそのマスタだけ登録編集削除とCSVができる(): void
+    {
+        $user = $this->user(User::ROLE_SALES, [], true, ['suppliers']);
+
+        // 編集できるマスタ
+        $this->actingAs($user)->get('/admin/suppliers')->assertOk();
+        $this->actingAs($user)->get('/admin/suppliers/create')->assertOk();
+        $this->actingAs($user)->get('/admin/suppliers-export')->assertOk();
+        $this->actingAs($user)->post('/admin/suppliers', [
+            'name' => 'テスト業者',
+            'is_active' => '1',
+        ])->assertRedirect(route('admin.suppliers.index'));
+
+        // 他のマスタは今までどおり触れない
+        $this->actingAs($user)->get('/admin/materials')->assertForbidden();
+        $this->actingAs($user)->get('/admin/materials/create')->assertForbidden();
+    }
+
+    public function test_編集をオンにすると閲覧もオンになる(): void
+    {
+        // visible には入れず editable だけ立てても一覧は開ける
+        $user = $this->user(User::ROLE_SALES, [], true, ['categories']);
+
+        $this->assertTrue($user->canViewMaster('categories'));
+        $this->actingAs($user)->get('/admin/categories')->assertOk();
+    }
+
+    public function test_編集できる人には一覧に編集のリンクとCSVが出る(): void
+    {
+        $this->actingAs($this->user(User::ROLE_SALES, [], true, ['categories']))
+            ->get('/admin/categories')
+            ->assertOk()
+            ->assertSee('新規カテゴリ')
+            ->assertSee('CSVから取り込む')
+            ->assertSee('CSVダウンロード');
+    }
+
     public function test_ユーザー管理の画面にマスタのトグルが出る(): void
     {
         $admin = $this->user(User::ROLE_ADMIN);
 
         $this->actingAs($admin)->get('/admin/users/create')
             ->assertOk()
-            ->assertSee('表示するマスタ')
-            ->assertSee('name="visible_masters[suppliers]"', false);
+            ->assertSee('マスタの権限')
+            ->assertSee('name="visible_masters[suppliers]"', false)
+            ->assertSee('name="editable_masters[suppliers]"', false);
 
         $target = $this->user(User::ROLE_SALES, ['offices'], true);
 
         $this->actingAs($admin)->get("/admin/users/{$target->id}/edit")
             ->assertOk()
-            ->assertSee('表示するマスタ');
+            ->assertSee('マスタの権限');
     }
 
-    public function test_ユーザー管理から表示するマスタを保存できる(): void
+    public function test_ユーザー管理から閲覧と編集を保存できる(): void
     {
         $admin = $this->user(User::ROLE_ADMIN);
         $office = Office::create(['name' => '保存テスト営業所', 'code' => 'SAVE']);
@@ -124,10 +163,15 @@ class MasterVisibilityTest extends TestCase
             'office_id' => $office->id,
             'password' => 'password',
             'visible_masters' => ['suppliers' => '1', 'categories' => '1', 'unknown' => '1'],
+            // 閲覧を送っていない資材も、編集がオンなら閲覧に入る
+            'editable_masters' => ['materials' => '1'],
         ])->assertRedirect(route('admin.users.index'));
 
+        $saved = User::where('login_id', 'sales-person')->first();
+
         // 知らないキーは捨てる。並びは User::MASTERS の順に揃える
-        $this->assertSame(['categories', 'suppliers'], User::where('login_id', 'sales-person')->value('visible_masters'));
+        $this->assertSame(['materials', 'categories', 'suppliers'], $saved->visible_masters);
+        $this->assertSame(['materials'], $saved->editable_masters);
     }
 
     public function test_管理者と総務は送られてこなくても全部オンで保存される(): void
@@ -141,9 +185,9 @@ class MasterVisibilityTest extends TestCase
             'password' => 'password',
         ])->assertRedirect(route('admin.users.index'));
 
-        $this->assertSame(
-            array_keys(User::MASTERS),
-            User::where('login_id', 'affairs-person')->value('visible_masters')
-        );
+        $saved = User::where('login_id', 'affairs-person')->first();
+
+        $this->assertSame(array_keys(User::MASTERS), $saved->visible_masters);
+        $this->assertSame(array_keys(User::MASTERS), $saved->editable_masters);
     }
 }
