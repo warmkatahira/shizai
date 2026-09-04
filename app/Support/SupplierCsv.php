@@ -11,11 +11,14 @@ use Illuminate\Validation\ValidationException;
  *
  * 発注方法は保存値（mail/phone/fax/web）ではなく**ラベル**（メール／電話／FAX／web）で
  * 書き出す。Excelで見て分かるようにするため。取り込みはどちらの書き方でも受け取る。
+ *
+ * 発注サイトのログインID・パスワードもそのまま出る（発注する人が見るための情報なので）。
+ * ダウンロードしたCSVの取り扱いには注意すること。
  */
 class SupplierCsv extends MasterCsv
 {
     public const HEADERS = [
-        'ID', '業者名', '正式名称', '担当者名', '固定電話番号', '携帯電話番号', 'FAX番号', 'メールアドレス', '発注方法', '有効',
+        'ID', '業者名', '正式名称', '担当者名', '固定電話番号', '携帯電話番号', 'FAX番号', 'メールアドレス', 'メールアドレス2', '発注方法', '発注サイトURL', 'ログインID', 'パスワード', '有効',
     ];
 
     public static function headers(): array
@@ -44,7 +47,11 @@ class SupplierCsv extends MasterCsv
             $supplier->mobile_phone,
             $supplier->fax,
             $supplier->email,
+            $supplier->email2,
             $supplier->orderMethodLabel(),
+            $supplier->web_url,
+            $supplier->web_login_id,
+            $supplier->web_password,
             self::boolText((bool) $supplier->is_active),
         ];
     }
@@ -59,9 +66,13 @@ class SupplierCsv extends MasterCsv
             'mobile_phone' => self::nullableText($cols[5]),
             'fax' => self::nullableText($cols[6]),
             'email' => self::nullableText($cols[7]),
-            'order_method' => self::parseOrderMethod($cols[8]),
+            'email2' => self::nullableText($cols[8]),
+            'order_method' => self::parseOrderMethod($cols[9]),
+            'web_url' => self::nullableText($cols[10]),
+            'web_login_id' => self::nullableText($cols[11]),
+            'web_password' => self::nullableText($cols[12]),
             // 有効列が空欄なら「有効」として扱う（新規追加の行をいちいち書かなくて済むように）
-            'is_active' => self::parseBool($cols[9], default: true),
+            'is_active' => self::parseBool($cols[13], default: true),
         ];
     }
 

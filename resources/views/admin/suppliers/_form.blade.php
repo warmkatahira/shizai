@@ -24,7 +24,7 @@
                class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
     </div>
 
-    <div class="grid grid-cols-2 gap-4">
+    <div class="grid grid-cols-3 gap-4">
         {{-- 電話は固定と携帯を別に持つ。発注書に出るのは固定電話（とFAX） --}}
         <div>
             <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">固定電話</label>
@@ -41,10 +41,20 @@
             <input autocomplete="off" id="fax" name="fax" type="text" value="{{ old('fax', $supplier->fax) }}"
                    class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
         </div>
+    </div>
+
+    {{-- メールは2つまで持てる（担当者と事務所の両方に送りたい業者があるため）。どちらも任意 --}}
+    <div class="grid grid-cols-2 gap-4">
         <div>
             <label for="email" class="block text-sm font-medium text-gray-700 mb-1">メールアドレス</label>
             <input autocomplete="off" id="email" name="email" type="email" value="{{ old('email', $supplier->email) }}"
                    class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
+        </div>
+        <div>
+            <label for="email2" class="block text-sm font-medium text-gray-700 mb-1">メールアドレス2</label>
+            <input autocomplete="off" id="email2" name="email2" type="email" value="{{ old('email2', $supplier->email2) }}"
+                   class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
+            <p class="text-xs text-gray-400 mt-1">送り先が2つある業者だけ入力してください。</p>
         </div>
     </div>
 
@@ -60,6 +70,65 @@
         </select>
         <p class="text-xs text-gray-400 mt-1">この業者への発注をどの手段で行うか。サイボウズ・ロジレスなどの専用システムは「web」を選んでください。</p>
     </div>
+
+    {{-- 発注方法が「web」のときだけ出す。発注サイトのURL・ログイン情報（すべて任意） --}}
+    <div data-web-fields class="rounded-md border border-gray-200 bg-gray-50 p-4 space-y-4">
+        <p class="text-sm font-medium text-gray-700">発注サイト</p>
+
+        <div>
+            <label for="web_url" class="block text-sm font-medium text-gray-700 mb-1">URL</label>
+            {{-- type="url" にすると、枠を隠しているとき（web以外）に不正な値が残っていると
+                 ブラウザが保存を止めてしまう（隠れた項目にフォーカスできないため）。形式はサーバー側で見る --}}
+            <input autocomplete="off" id="web_url" name="web_url" type="text" value="{{ old('web_url', $supplier->web_url) }}"
+                   placeholder="https://..."
+                   class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label for="web_login_id" class="block text-sm font-medium text-gray-700 mb-1">ログインID</label>
+                <input autocomplete="off" id="web_login_id" name="web_login_id" type="text" maxlength="100"
+                       value="{{ old('web_login_id', $supplier->web_login_id) }}"
+                       class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
+            </div>
+            <div>
+                <label for="web_password" class="block text-sm font-medium text-gray-700 mb-1">パスワード</label>
+                <div class="flex items-center gap-2">
+                    <input autocomplete="off" id="web_password" name="web_password" type="password" maxlength="100"
+                           value="{{ old('web_password', $supplier->web_password) }}"
+                           class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
+                    {{-- 入っている値を確かめられるように表示を切り替えられる（発注する人が見て入力するものなので） --}}
+                    <button type="button" data-toggle-password="web_password"
+                            class="shrink-0 text-xs text-accent-strong hover:underline">表示</button>
+                </div>
+            </div>
+        </div>
+
+        <p class="text-xs text-gray-400">発注する人が見るための控えです。分かるものだけ入れてください（すべて空欄でも保存できます）。</p>
+    </div>
+
+    {{-- 発注方法が「web」のときだけ発注サイトの枠を出す。入力済みの値は消さない（選び直しても残る） --}}
+    <script>
+        (function () {
+            const method = document.getElementById('order_method');
+            const fields = document.querySelector('[data-web-fields]');
+            const toggle = document.querySelector('[data-toggle-password]');
+            const password = document.getElementById(toggle.dataset.togglePassword);
+
+            function show() {
+                fields.hidden = method.value !== 'web';
+            }
+
+            toggle.addEventListener('click', function () {
+                const hiddenNow = password.type === 'password';
+                password.type = hiddenNow ? 'text' : 'password';
+                toggle.textContent = hiddenNow ? '隠す' : '表示';
+            });
+
+            method.addEventListener('change', show);
+            show();
+        })();
+    </script>
 
     @include('admin.partials.toggle', [
         'name' => 'is_active',
