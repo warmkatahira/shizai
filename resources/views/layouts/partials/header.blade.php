@@ -29,15 +29,21 @@
     $isCurrent = fn (array $item) => request()->routeIs(...$item['match'])
         && (empty($item['except']) || ! request()->routeIs(...$item['except']));
 
-    // マスタ管理のメニュー（管理者・総務）。ユーザー管理だけは権限を付与できるので管理者のみ
+    // マスタのメニュー。管理者・総務は全部、それ以外はユーザー管理でオンにしたものだけ（閲覧のみ）。
+    // ユーザー管理だけは権限を付与できるので管理者のみ（トグルの対象にしていない）
     $masters = collect([
-        ['label' => '資材', 'route' => 'admin.materials.index'],
-        ['label' => 'カテゴリ', 'route' => 'admin.categories.index'],
-        ['label' => '単位', 'route' => 'admin.units.index'],
-        ['label' => '業者', 'route' => 'admin.suppliers.index'],
-        ['label' => '営業所', 'route' => 'admin.offices.index'],
+        ['label' => '資材', 'route' => 'admin.materials.index', 'master' => 'materials'],
+        ['label' => 'カテゴリ', 'route' => 'admin.categories.index', 'master' => 'categories'],
+        ['label' => '単位', 'route' => 'admin.units.index', 'master' => 'units'],
+        ['label' => '業者', 'route' => 'admin.suppliers.index', 'master' => 'suppliers'],
+        ['label' => '営業所', 'route' => 'admin.offices.index', 'master' => 'offices'],
         ['label' => 'ユーザー', 'route' => 'admin.users.index', 'adminOnly' => true],
-    ])->reject(fn ($item) => ($item['adminOnly'] ?? false) && ! $user->isAdmin());
+    ])->reject(fn ($item) => isset($item['master'])
+        ? ! $user->canViewMaster($item['master'])
+        : (($item['adminOnly'] ?? false) && ! $user->isAdmin()));
+
+    // 編集できない人には「管理」と言わない（一覧を見るだけなので）
+    $mastersLabel = $user->canManageMasters() ? 'マスタ管理' : 'マスタ';
 @endphp
 
 {{-- 半透明＋ぼかしで、スクロールしても本文がうっすら透けて見える --}}
@@ -87,12 +93,12 @@
                    @if ($current['catalog']) aria-current="page" @endif>資材一覧</a>
             @endunless
 
-            @if ($user->canManageMasters())
+            @if ($masters->isNotEmpty())
                 {{-- マスタは5つあってナビが渋滞するので、ドロップダウンにまとめる（JSフレームワークは使わず details で） --}}
                 <details class="group relative" data-menu>
                     <summary class="list-none [&::-webkit-details-marker]:hidden cursor-pointer select-none
                                     flex items-center gap-1 px-3 py-1.5 rounded-full transition {{ $pill($current['masters']) }}">
-                        マスタ管理
+                        {{ $mastersLabel }}
                         <svg class="w-3.5 h-3.5 transition-transform duration-200 group-open:rotate-180"
                              viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                             <path fill-rule="evenodd" d="M5.2 7.5a.75.75 0 0 1 1.06 0L10 11.2l3.74-3.7a.75.75 0 1 1 1.06 1.06l-4.27 4.24a.75.75 0 0 1-1.06 0L5.2 8.56a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/>
@@ -176,8 +182,8 @@
                            class="block rounded-lg px-3 py-2 text-sm {{ $current['catalog'] ? 'bg-accent-light text-accent-strong font-medium' : 'text-gray-600 hover:bg-gray-50' }}">資材一覧</a>
                     @endunless
 
-                    @if ($user->canManageMasters())
-                        <p class="px-3 pt-3 pb-1 text-[10px] tracking-wide text-gray-400">マスタ管理</p>
+                    @if ($masters->isNotEmpty())
+                        <p class="px-3 pt-3 pb-1 text-[10px] tracking-wide text-gray-400">{{ $mastersLabel }}</p>
                         @foreach ($masters as $item)
                             <a href="{{ route($item['route']) }}"
                                class="block rounded-lg px-3 py-2 text-sm

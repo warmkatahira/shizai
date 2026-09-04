@@ -1,4 +1,13 @@
+@php
+    // トグルは未チェックだと送られてこないので、old() の有無ではなく
+    // 「フォームを送ったあとか」で初期値を決める（送信後は入っているキーだけがオン）
+    $visibleMasters = old('_submitted')
+        ? array_keys((array) old('visible_masters', []))
+        : ($user->visible_masters ?? []);
+@endphp
+
 <div class="space-y-4">
+    <input type="hidden" name="_submitted" value="1">
     <div>
         <label for="name" class="block text-sm font-medium text-gray-700 mb-1">氏名 <span class="text-red-500">*</span></label>
         <input autocomplete="off" id="name" name="name" type="text" value="{{ old('name', $user->name) }}" required
@@ -72,6 +81,28 @@
         営業所で共通のアカウントなど、本人に変えさせたくない場合はオフにしてください。
     </p>
 
+    {{-- 表示するマスタ。管理者・総務は常に全部（編集もできる）なので、
+         実際に効くのはそれ以外の権限＝オンにしたマスタを「閲覧だけ」できる --}}
+    <div id="master-toggles" class="rounded-md border border-gray-200 p-4 space-y-3">
+        <p class="text-sm font-medium text-gray-700">表示するマスタ</p>
+
+        <p class="text-xs text-gray-400" data-master-note="all">
+            管理者・総務は<span class="font-medium">すべてのマスタ</span>を編集できます。ここでは外せません。
+        </p>
+        <p class="text-xs text-gray-400 hidden" data-master-note="pick">
+            オンにしたマスタを<span class="font-medium">閲覧だけ</span>できます（登録・編集・削除・CSVはできません）。
+        </p>
+
+        @foreach (\App\Models\User::MASTERS as $masterKey => $masterLabel)
+            @include('admin.partials.toggle', [
+                'name' => "visible_masters[{$masterKey}]",
+                'label' => $masterLabel . 'マスタ',
+                'checked' => in_array($masterKey, $visibleMasters, true),
+                'between' => true,
+            ])
+        @endforeach
+    </div>
+
     @include('admin.partials.toggle', [
         'name' => 'is_active',
         'label' => '有効にする（ログイン可能にする）',
@@ -85,6 +116,41 @@
 </div>
 
 <script>
+    // 管理者・総務は全マスタを扱えるので、トグルは常にオンで操作させない。
+    // それ以外の権限のときだけ、1つずつ選ばせる（閲覧のみ）
+    (function () {
+        const FULL_ACCESS_ROLES = @json([\App\Models\User::ROLE_ADMIN, \App\Models\User::ROLE_GENERAL_AFFAIRS]);
+        const role = document.getElementById('role');
+        const box = document.getElementById('master-toggles');
+        if (! role || ! box) return;
+
+        const toggles = box.querySelectorAll('input[type="checkbox"]');
+        const notes = {
+            all: box.querySelector('[data-master-note="all"]'),
+            pick: box.querySelector('[data-master-note="pick"]'),
+        };
+        const saved = new Map(); // 権限を戻したときに選択を復元する
+
+        const sync = () => {
+            const full = FULL_ACCESS_ROLES.includes(role.value);
+            toggles.forEach((toggle) => {
+                if (full) {
+                    if (! saved.has(toggle.name)) saved.set(toggle.name, toggle.checked);
+                    toggle.checked = true;
+                } else if (saved.has(toggle.name)) {
+                    toggle.checked = saved.get(toggle.name);
+                    saved.delete(toggle.name);
+                }
+                toggle.disabled = full;
+            });
+            notes.all.classList.toggle('hidden', ! full);
+            notes.pick.classList.toggle('hidden', full);
+        };
+
+        role.addEventListener('change', sync);
+        sync();
+    })();
+
     // パスワードを入力したら「次回ログイン時にパスワードの変更を求める」を自動でオンにする。
     // 管理者が決めたパスワードのまま使われるのを防ぐため。手で外せば外したままになる。
     (function () {

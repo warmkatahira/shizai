@@ -15,6 +15,8 @@ return Application::configure(basePath: dirname(__DIR__))
         // 権限チェック用ミドルウェアのエイリアス登録
         $middleware->alias([
             'role' => \App\Http\Middleware\EnsureRole::class,
+            // アカウントごとに表示を許可したマスタだけを通す（管理者・総務は常に通る）
+            'master' => \App\Http\Middleware\EnsureMasterVisible::class,
             // パスワードの変更を強制されているユーザーを変更画面に留める
             'password.changed' => \App\Http\Middleware\EnsurePasswordChanged::class,
         ]);

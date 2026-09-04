@@ -47,9 +47,22 @@ return new class extends Migration
             $table->boolean('is_special_approval')->default(false)->comment('総務の特例承認フラグ');
             $table->text('special_reason')->nullable()->comment('特例承認の理由');
 
-            // 却下
+            // 却下（＝そこで終了。再申請はできない）
             $table->text('reject_reason')->nullable()->comment('却下理由');
             $table->foreignId('rejected_by')->nullable()->constrained('users')->nullOnDelete()->comment('却下者（所長・総務のどちらか）');
+
+            // 差し戻し（＝申請者まで戻して直させる）。再申請すると承認は最初からやり直しになるが、
+            // 「なぜ差し戻されたか」は経緯として残したいので、この3列は再申請後も消さない
+            $table->foreignId('returned_by')->nullable()->constrained('users')->nullOnDelete()->comment('差し戻した人（所長・総務のどちらか）');
+            $table->timestamp('returned_at')->nullable()->comment('差し戻した日時');
+            $table->text('return_reason')->nullable()->comment('差し戻しの理由');
+
+            // 発注後メモ。業者へ発注したあとに言われたこと等の自由記入。
+            // 更新できるのは総務・管理者だけだが、閲覧は全員できる。
+            // 複数人で編集しうるので、最後に更新した人と日時も持つ
+            $table->text('post_order_note')->nullable()->comment('発注後メモ（総務・管理者が更新、閲覧は全員）');
+            $table->foreignId('post_order_note_updated_by')->nullable()->constrained('users')->nullOnDelete()->comment('発注後メモを最後に更新した人');
+            $table->timestamp('post_order_note_updated_at')->nullable()->comment('発注後メモを最後に更新した日時');
 
             $table->timestamps();
 

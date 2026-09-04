@@ -122,6 +122,15 @@ class UserController extends Controller
             $validated['is_manager'] = false;
         }
 
+        // 表示するマスタ（一覧の閲覧だけを許す）。管理者・総務は常に全部なので画面のトグルも
+        // 常時オン＋操作不可にしてある＝送られてこないので、ここで全部入れておく
+        $validated['visible_masters'] = $validated['role'] === User::ROLE_SALES
+            ? array_values(array_intersect(
+                array_keys(User::MASTERS),
+                array_keys((array) $request->input('visible_masters', []))
+            ))
+            : array_keys(User::MASTERS);
+
         $validated['is_active'] = $request->boolean('is_active');
         // 次回ログイン時にパスワードの変更を強制するか（EnsurePasswordChanged が見る）。
         // 新規登録・パスワードの付け替えでは画面側で自動的にオンになる（外すこともできる）

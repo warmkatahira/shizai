@@ -31,6 +31,8 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
 - `admin`（管理者）… すべてのマスタ管理（**ユーザー管理は管理者だけ**）
 - `general_affairs`（総務）… 承認・特例承認・差し戻し・却下、発注書の作成、**マスタ管理（ユーザー以外の4つ）**
 - `sales`（営業所）… 発注申請。`is_manager=true` なら**所長**（自営業所の一次承認者。差し戻し・却下もできる）
+  - **アカウントごとにマスタを「閲覧だけ」開けられる**（`users.visible_masters`。ユーザー管理のトグル）。
+    編集は一切できない（登録・編集・削除・CSVは今までどおり管理者・総務だけ）
   - 一覧・集計は**自営業所のぶんだけ**見える（営業所プルダウンも出さない）。総務・管理者は全営業所
 
 ## 発注の承認フロー（Order.status）
@@ -213,7 +215,14 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
 - `/materials` 資材一覧（**閲覧のみ・全ログインユーザー**。`MaterialCatalogController`）
   - 営業所・総務が「どの業者に何がいくらであるか」を確認するための読み取り専用。編集は管理者のみ
   - ナビには管理者以外に表示（管理者はマスタ管理の「資材」から見られるため）
-- `/admin/{offices,suppliers,categories,materials}` マスタ管理（**管理者と総務**）
+- `/admin/{offices,suppliers,categories,units,materials}` マスタ管理（編集は**管理者と総務**）
+  - **一覧を見られる人はアカウントごとに決める**（`users.visible_masters`。判定は `User::canViewMaster()`）。
+    管理者・総務は常に全部。それ以外の権限は、ユーザー管理でオンにしたマスタだけ**閲覧できる**
+    - ルートは**一覧（`master:資材` などのミドルウェア）と編集系（`role:admin,general_affairs`）で分けてある**。
+      ナビから消すだけではURL直打ちで入れてしまうため。CSV出力・取り込みも編集系の側
+    - 一覧の「新規登録」「編集」「削除」「CSVダウンロード」「CSV取り込み」は
+      `$canEditMasters`（＝`canManageMasters()`）で丸ごと隠す。見出しも閲覧時は「〜管理」と言わない
+  - **ユーザー管理はトグルの対象にしない**（管理者だけのまま。権限の付与ができるため）
   - 資材の **状態は初期値が「有効」**（普段使うのは有効な資材だけ）。CSV出力にも同じ初期値がかかる。
     「すべて」は空文字で送られて `null` になるので、値ではなく**キーの有無**で初回表示か判定する（`applyDefaultStatus`）
   - **5つのマスタすべてが CSV出力・CSV取り込みに対応**（`/admin/{名前}-export` / `-import`）。
@@ -238,6 +247,13 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
       （`<label>` が `<input type="file">` を包んでいるので、JSが動かなくてもクリックで選べる。
       落とされたファイルを input に入れる処理だけ `layouts/app.blade.php` の共通スクリプトにある）
 - `/admin/users` ユーザー管理（**管理者のみ**。権限の付与・パスワード変更ができるため）
+  - **「表示するマスタ」のトグル5つ**（資材・カテゴリ・単位・業者・営業所＝`User::MASTERS`）。
+    オンにしたマスタの一覧をそのアカウントが**閲覧だけ**できるようになる
+    - **管理者・総務のときは常時オン＋操作不可**（全マスタを編集できる立場なので外させない）。
+      権限のプルダウンに合わせてJSで切り替える。送られてこないので保存側でも全部入れる（`UserController::validateData`）
+    - 新規作成の初期値は**全部オフ**。知らないキーが来ても `User::MASTERS` との積集合で捨てる
+    - チェックボックスは未チェックだと送られてこないので、`old()` は
+      hidden の `_submitted` の有無で「送信後かどうか」を見てから読む
 - `/password` パスワードの変更（**本人が自分のものを変える**。全ログインユーザー。`PasswordController`）
   - 管理者のユーザー管理とは別物。あちらは他人のパスワードを管理者が付け替えるもの
   - 現在のパスワードの入力を必須にしている（`current_password` ルール）。開きっぱなしの端末から勝手に変えられないため
@@ -299,7 +315,7 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
 - `App\Support\OrderNotifier` … 通知先の振り分け
 - `OrderController::validateOrderInput()` / `buildItemSnapshots()` … 申請フォームの検証と明細の組み立て。新規申請（`store`）と再申請（`update`）で共有
 - `resources/views/orders/_form.blade.php` … 発注申請の入力フォーム。新規申請と再申請で共有
-- 権限判定は `User` のメソッドに寄せる（`canManageMasters()` / `canIssuePurchaseOrder()` / `isBackOffice()` / `isManager()` など）。
+- 権限判定は `User` のメソッドに寄せる（`canManageMasters()` / `canViewMaster()` / `canIssuePurchaseOrder()` / `isBackOffice()` / `isManager()` など）。
   ビューやコントローラで `isAdmin() || isGeneralAffairs()` のように書かない
 - **申請1件ごとの「誰が何をできるか」は `Order` のメソッドに集約**（`canBeManagerApprovedBy()` / `canBeAffairsApprovedBy()` /
   `canBeSpecialApprovedBy()` / `canBeReturnedBy()` / `canBeRejectedBy()` / `canBeEditedBy()` / `canBeDeletedBy()`）。
@@ -332,6 +348,14 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
 - 画面文言・コメントは日本語。フォームは `_form.blade.php` パーシャルで共通化。
 - **バリデーションのメッセージも日本語**（`APP_LOCALE=ja` ＋ `lang/ja/validation.php`）。項目名はコントローラー／モデルから日本語で渡す。
 - リソースルートで `create` を `{model}` より先に定義する（"create" がIDと誤解釈されるのを防ぐ）。
+- **マイグレーションはテーブルごとに1ファイル**。列を足すときは `add_..._to_..._table` を新設せず、
+  そのテーブルの `create_..._table` に直接書く（シーダーと同じ「1テーブル1ファイル」）。
+  - 例外はデータ変換だけのもの（`..._shift_timestamps_to_jst`）。テーブル定義ではないので単独で残す
+  - `materials.unit_id` の外部キーだけは `create_units_table` 側にある（materials が units より先に作られるため）
+  - **すでに動いているDBには効かない**。作り直せない環境（本番）に列を足すときは、
+    先にそこへマイグレーションを流し切ってから統合するか、手で `ALTER TABLE` を当てる
+  - **ファイル名は変えない**（`migrations` テーブルに実行済みの名前が残っているので、
+    リネームすると既存DBでもう一度実行されてしまう）
 - Blade で `@php(...)` の短縮形と `@php ... @endphp` ブロックを**同じファイルで併用しない**（コンパイルが壊れて "Undefined variable" になる）。ブロック形に統一する。
 - シーダーは**テーブルごとに1ファイル**（`OfficeSeeder` `UserSeeder` `CategorySeeder` `SupplierSeeder` `MaterialSeeder` `OrderSeeder`）。`DatabaseSeeder` は外部キーの依存順に `call()` するだけ。
   - `OrderSeeder` は発注12件。6ステータス（所長承認待ち・総務承認待ち・発注待ち・発注済・差し戻し・却下）を網羅し、発注済は当月／先月に散らしてある（集計の期間絞り込みを確認できる）。数量は最低ロット以上を守る
@@ -345,4 +369,6 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
 
 ## 進捗
 認証・マスタ管理・発注申請・承認フロー（承認／特例承認／差し戻し・再申請／却下／削除）・発注集計・発注書PDFまで完成、実機確認済み。
+自動テストは `tests/Feature`（`MustChangePasswordTest` / `MasterVisibilityTest`）に権限まわりだけある。
+`./vendor/bin/sail artisan test` で実行（`ExampleTest` は Laravel 標準のままで、`/` がログインへ飛ぶので失敗する）。
 今後の候補：自動テスト整備、発注書のメール添付（Outlook向けに `.eml` ダウンロード方式が有力）。

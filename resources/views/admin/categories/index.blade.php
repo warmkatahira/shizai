@@ -1,20 +1,29 @@
 @extends('layouts.app')
 
-@section('title', 'カテゴリマスタ管理')
+{{-- 閲覧だけの人には「管理」と言わない --}}
+@section('title', auth()->user()->canManageMasters() ? 'カテゴリマスタ管理' : 'カテゴリマスタ')
 
 @section('content')
+    @php
+        // 登録・編集・削除・CSVは管理者・総務だけ。
+        // それ以外の権限は「表示するマスタ」でオンにされて見ているので、一覧を読むだけ
+        $canEditMasters = auth()->user()->canManageMasters();
+    @endphp
     <div class="flex items-center justify-between mb-6">
-        <h1 class="text-xl font-bold">カテゴリマスタ管理</h1>
+        <h1 class="text-xl font-bold">{{ $canEditMasters ? 'カテゴリマスタ管理' : 'カテゴリマスタ' }}</h1>
+        @if ($canEditMasters)
         <div class="flex items-center gap-3">
             <a href="{{ route('admin.categories.export') }}" data-no-loader
                class="bg-green-600 hover:bg-green-700 text-white text-sm px-4 py-2 rounded-md">📥 CSVダウンロード</a>
             <a href="{{ route('admin.categories.create') }}"
                class="bg-accent hover:bg-accent-dark text-ink text-sm px-4 py-2 rounded-md">＋ 新規カテゴリ</a>
         </div>
+        @endif
     </div>
 
     @include('admin.partials.errors')
 
+    @if ($canEditMasters)
     @include('admin.partials.csv-panel', [
         'label' => 'カテゴリ',
         'importUrl' => route('admin.categories.import'),
@@ -22,6 +31,7 @@
             'カテゴリ名は資材CSVから引くキーです。<span class="font-medium">名前を変えると</span>、その名前で書かれた資材CSVは取り込めなくなります。',
         ],
     ])
+    @endif
 
     <div class="bg-white shadow rounded-lg overflow-auto max-h-[70vh]">
         <table class="w-full text-sm">
@@ -32,7 +42,9 @@
                     <th class="px-4 py-3 text-right">表示順</th>
                     <th class="px-4 py-3 text-right">資材数</th>
                     <th class="px-4 py-3">状態</th>
-                    <th class="px-4 py-3 text-right">操作</th>
+                    @if ($canEditMasters)
+                        <th class="px-4 py-3 text-right">操作</th>
+                    @endif
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
@@ -44,6 +56,7 @@
                         <td class="px-4 py-3">
                             @include('admin.partials.status-badge', ['active' => $category->is_active])
                         </td>
+                        @if ($canEditMasters)
                         <td class="px-4 py-3 text-right whitespace-nowrap">
                             <a href="{{ route('admin.categories.edit', $category) }}" class="text-accent-strong hover:underline">編集</a>
                             <form method="POST" action="{{ route('admin.categories.destroy', $category) }}" class="inline"
@@ -52,9 +65,10 @@
                                 <button class="text-red-500 hover:underline ml-2">削除</button>
                             </form>
                         </td>
+                        @endif
                     </tr>
                 @empty
-                    <tr><td colspan="5" class="px-4 py-8 text-center text-gray-400">カテゴリがまだありません。</td></tr>
+                    <tr><td colspan="{{ $canEditMasters ? 5 : 4 }}" class="px-4 py-8 text-center text-gray-400">カテゴリがまだありません。</td></tr>
                 @endforelse
             </tbody>
         </table>

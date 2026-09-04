@@ -89,29 +89,43 @@ Route::middleware(['auth', 'password.changed'])->group(function () {
 
     // ----- マスタ管理 -----
     Route::prefix('admin')->name('admin.')->group(function () {
-        // 管理者・総務が編集できる
+        // 一覧の閲覧。管理者・総務は常に全マスタ見られる。
+        // それ以外の権限は、ユーザー管理の「表示するマスタ」でオンにしたものだけ（閲覧のみ）。
+        // 判定は User::canViewMaster（ナビの出し分けと同じもの）
+        Route::get('materials', [MaterialController::class, 'index'])
+            ->middleware('master:materials')->name('materials.index');
+        Route::get('categories', [CategoryController::class, 'index'])
+            ->middleware('master:categories')->name('categories.index');
+        Route::get('units', [UnitController::class, 'index'])
+            ->middleware('master:units')->name('units.index');
+        Route::get('suppliers', [SupplierController::class, 'index'])
+            ->middleware('master:suppliers')->name('suppliers.index');
+        Route::get('offices', [OfficeController::class, 'index'])
+            ->middleware('master:offices')->name('offices.index');
+
+        // 登録・編集・削除・CSVは管理者・総務だけ（一覧は上で定義済みなので除く）
         Route::middleware('role:admin,general_affairs')->group(function () {
             // 各マスタのCSV出力・取り込み（取り込みはIDで突合。詳細は App\Support\MasterCsv とその継承先）。
             // ユーザーマスタは権限の付与を伴うので対象外
             Route::get('offices-export', [OfficeController::class, 'export'])->name('offices.export');
             Route::post('offices-import', [OfficeController::class, 'import'])->name('offices.import');
-            Route::resource('offices', OfficeController::class)->except('show');
+            Route::resource('offices', OfficeController::class)->except(['show', 'index']);
 
             Route::get('suppliers-export', [SupplierController::class, 'export'])->name('suppliers.export');
             Route::post('suppliers-import', [SupplierController::class, 'import'])->name('suppliers.import');
-            Route::resource('suppliers', SupplierController::class)->except('show');
+            Route::resource('suppliers', SupplierController::class)->except(['show', 'index']);
 
             Route::get('categories-export', [CategoryController::class, 'export'])->name('categories.export');
             Route::post('categories-import', [CategoryController::class, 'import'])->name('categories.import');
-            Route::resource('categories', CategoryController::class)->except('show');
+            Route::resource('categories', CategoryController::class)->except(['show', 'index']);
 
             Route::get('units-export', [UnitController::class, 'export'])->name('units.export');
             Route::post('units-import', [UnitController::class, 'import'])->name('units.import');
-            Route::resource('units', UnitController::class)->except('show');
+            Route::resource('units', UnitController::class)->except(['show', 'index']);
 
             Route::get('materials-export', [MaterialController::class, 'export'])->name('materials.export');
             Route::post('materials-import', [MaterialController::class, 'import'])->name('materials.import');
-            Route::resource('materials', MaterialController::class)->except('show');
+            Route::resource('materials', MaterialController::class)->except(['show', 'index']);
         });
 
         // ユーザー管理は権限の付与・パスワード変更ができるので管理者のみ。

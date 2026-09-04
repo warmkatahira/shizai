@@ -25,8 +25,10 @@
     <span class="relative inline-flex items-center shrink-0">
         <input autocomplete="off" type="checkbox" name="{{ $name }}" value="1"
                class="sr-only peer" {{ $checked ? 'checked' : '' }}>
+        {{-- disabled のときは薄く見せる（権限で常時オンにしている場合など） --}}
         <span class="block w-11 h-6 rounded-full bg-gray-300 transition-colors peer-checked:bg-[#34C759]
-                     peer-focus-visible:ring-2 peer-focus-visible:ring-[#34C759]/40"></span>
+                     peer-focus-visible:ring-2 peer-focus-visible:ring-[#34C759]/40
+                     peer-disabled:opacity-50"></span>
         <span class="absolute left-0.5 top-0.5 w-5 h-5 rounded-full bg-white shadow
                      transition-transform peer-checked:translate-x-5"></span>
     </span>

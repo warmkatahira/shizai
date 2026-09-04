@@ -31,8 +31,9 @@ return new class extends Migration
             $table->unsignedInteger('length_mm')->nullable()->comment('申請時の縦（mm）');
             $table->unsignedInteger('width_mm')->nullable()->comment('申請時の横（mm）');
             $table->unsignedInteger('height_mm')->nullable()->comment('申請時の高さ（mm）');
+            // 発注書の「寸法」欄はこれを引用する
+            $table->string('size_text', 100)->nullable()->comment('申請時の自由入力サイズ表記');
             $table->unsignedInteger('min_lot_qty')->nullable()->comment('申請時の最低ロット数量');
-            $table->string('min_lot_unit', 20)->nullable()->comment('申請時の最低ロットの単位');
             $table->timestamps();
         });
     }

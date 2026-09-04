@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'login_id', 'email', 'password', 'role', 'office_id', 'is_manager', 'is_active', 'must_change_password'])]
+#[Fillable(['name', 'login_id', 'email', 'password', 'role', 'office_id', 'is_manager', 'is_active', 'must_change_password', 'visible_masters'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -22,6 +22,20 @@ class User extends Authenticatable
     public const ROLE_ADMIN = 'admin';            // 管理者
     public const ROLE_GENERAL_AFFAIRS = 'general_affairs'; // 総務
     public const ROLE_SALES = 'sales';            // 営業所
+
+    /**
+     * マスタ管理の画面（キー → 画面名）。
+     *
+     * ユーザー管理はここに入れない。権限の付与ができるので管理者だけのままで、
+     * アカウントごとの出し分けの対象にしない。
+     */
+    public const MASTERS = [
+        'materials' => '資材',
+        'categories' => 'カテゴリ',
+        'units' => '単位',
+        'suppliers' => '業者',
+        'offices' => '営業所',
+    ];
 
     /** 権限のラベル（画面表示用） */
     public const ROLE_LABELS = [
@@ -43,6 +57,7 @@ class User extends Authenticatable
             'is_active' => 'boolean',
             'is_manager' => 'boolean',
             'must_change_password' => 'boolean',
+            'visible_masters' => 'array',
         ];
     }
 
@@ -75,6 +90,35 @@ class User extends Authenticatable
     public function canManageMasters(): bool
     {
         return $this->isAdmin() || $this->isGeneralAffairs();
+    }
+
+    /**
+     * そのマスタの一覧を見られるか。
+     *
+     * 管理者・総務は常に全部見られる（編集もできる）。
+     * それ以外の権限は、ユーザー管理の「表示するマスタ」でオンにしたものだけを**閲覧**できる。
+     * 登録・編集・削除・CSVは canManageMasters()（＝管理者・総務）のまま。
+     */
+    public function canViewMaster(string $master): bool
+    {
+        if (! array_key_exists($master, self::MASTERS)) {
+            return false;
+        }
+
+        return $this->canManageMasters()
+            || in_array($master, $this->visible_masters ?? [], true);
+    }
+
+    /** 表示できるマスタが1つでもあるか（ナビにマスタのメニューを出すかの判定） */
+    public function canViewAnyMaster(): bool
+    {
+        foreach (array_keys(self::MASTERS) as $master) {
+            if ($this->canViewMaster($master)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /** 全営業所の申請を扱う側か（総務・管理者）。営業所ユーザーは自分の営業所だけ */

@@ -19,10 +19,20 @@ return new class extends Migration
             $table->boolean('is_active')->default(true)->comment('有効フラグ');
             $table->timestamps();
         });
+
+        // materials.unit_id の外部キーはここで張る。
+        // materials は units より先に作られるので、列だけあちらで用意してある
+        Schema::table('materials', function (Blueprint $table) {
+            $table->foreign('unit_id')->references('id')->on('units')->nullOnDelete();
+        });
     }
 
     public function down(): void
     {
+        Schema::table('materials', function (Blueprint $table) {
+            $table->dropForeign(['unit_id']);
+        });
+
         Schema::dropIfExists('units');
     }
 };
