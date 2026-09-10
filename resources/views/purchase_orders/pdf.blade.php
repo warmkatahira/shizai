@@ -106,11 +106,10 @@
 <table class="items">
     <thead>
         <tr>
-            <th style="width: 38%;">商品名</th>
-            <th style="width: 17%;">寸法</th>
-            <th style="width: 10%;">ロット</th>
-            <th style="width: 11%;">単価</th>
-            <th style="width: 11%;">購入数</th>
+            <th style="width: 44%;">商品名</th>
+            <th style="width: 19%;">寸法</th>
+            <th style="width: 12%;">単価</th>
+            <th style="width: 12%;">購入数</th>
             <th style="width: 13%;">返信納期</th>
         </tr>
     </thead>
@@ -120,7 +119,6 @@
             <tr class="{{ $loop->even ? 'alt' : '' }}">
                 <td>{{ $item->material_name }}</td>
                 <td class="center">{{ $item->size_text ?: ($item->sizeText() ?? '') }}</td>
-                <td class="num nowrap">{{ $item->minLotText() ?? '' }}</td>
                 <td class="num nowrap">{{ \App\Support\Money::yen($item->unit_price, '') }}</td>
                 <td class="num nowrap">{{ number_format($item->quantity) }} {{ $item->unit }}</td>
                 <td></td>
