@@ -67,6 +67,22 @@
                     <dt class="text-gray-500">発注業者</dt>
                     <dd class="font-medium">{{ $order->supplier?->name ?? '—' }}</dd>
                 </div>
+                {{-- 納入先。直送は営業所と違う場所へ届くので、住所まで出して取り違えを防ぐ --}}
+                <div>
+                    <dt class="text-gray-500">納入先</dt>
+                    <dd class="font-medium">
+                        @if ($order->isDirectShipping())
+                            <span class="inline-block rounded bg-amber-100 text-amber-800 text-xs px-1.5 py-0.5 align-middle">直送</span>
+                            {{ $order->shipToName() }}
+                            @if ($order->shippingDestination)
+                                <span class="block text-xs text-gray-400 font-normal">{{ $order->shippingDestination->addressText() }}</span>
+                            @endif
+                        @else
+                            {{ $order->office->name }}
+                            <span class="block text-xs text-gray-400 font-normal">自営業所へ納入</span>
+                        @endif
+                    </dd>
+                </div>
                 <div>
                     <dt class="text-gray-500">申請者</dt>
                     <dd class="font-medium">

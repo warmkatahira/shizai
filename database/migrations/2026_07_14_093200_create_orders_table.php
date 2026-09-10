@@ -21,6 +21,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('office_id')->constrained('offices')->comment('発注元の営業所');
             $table->foreignId('supplier_id')->nullable()->constrained('suppliers')->nullOnDelete()->comment('発注先の業者');
+            // 納入先。通常は発注元の営業所へ届けるので null。
+            // 客先や他社の倉庫など、自営業所以外へ直接送る（＝直送）ときだけ直送先マスタを指す。
+            // 外部キーは create_shipping_destinations_table 側で張る
+            // （orders が shipping_destinations より先に作られるので、列だけここに用意する）
+            $table->unsignedBigInteger('shipping_destination_id')->nullable()
+                ->comment('直送先（null＝発注元の営業所へ納入）');
             $table->foreignId('requested_by')->constrained('users')->comment('申請したログインアカウント');
             // 営業所のアカウントは共通で使い回すため、実際の申請者の氏名を別に持つ
             $table->string('requester_name')->nullable()->comment('発注者の氏名（手入力）');

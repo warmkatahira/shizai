@@ -37,6 +37,7 @@
         ['label' => '単位', 'route' => 'admin.units.index', 'master' => 'units'],
         ['label' => '業者', 'route' => 'admin.suppliers.index', 'master' => 'suppliers'],
         ['label' => '営業所', 'route' => 'admin.offices.index', 'master' => 'offices'],
+        ['label' => '直送先', 'route' => 'admin.shipping_destinations.index', 'master' => 'shipping_destinations'],
         ['label' => 'ユーザー', 'route' => 'admin.users.index', 'adminOnly' => true],
     ])->reject(fn ($item) => isset($item['master'])
         ? ! $user->canViewMaster($item['master'])
@@ -94,7 +95,7 @@
             @endunless
 
             @if ($masters->isNotEmpty())
-                {{-- マスタは5つあってナビが渋滞するので、ドロップダウンにまとめる（JSフレームワークは使わず details で） --}}
+                {{-- マスタは6つあってナビが渋滞するので、ドロップダウンにまとめる（JSフレームワークは使わず details で） --}}
                 <details class="group relative" data-menu>
                     <summary class="list-none [&::-webkit-details-marker]:hidden cursor-pointer select-none
                                     flex items-center gap-1 px-3 py-1.5 rounded-full transition {{ $pill($current['masters']) }}">

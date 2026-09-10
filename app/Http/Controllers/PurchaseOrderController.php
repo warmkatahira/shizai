@@ -54,13 +54,15 @@ class PurchaseOrderController extends Controller
         // （発注書を出す＝発注する、なので必ず issue を通ってから）
         abort_unless($order->isOrdered(), 403, 'まだ発注していない申請の発注書は出力できません。');
 
-        $order->load(['office', 'supplier', 'items']);
+        $order->load(['office', 'supplier', 'shippingDestination', 'items']);
 
         $html = view('purchase_orders.pdf', [
             'order' => $order,
             'supplier' => $order->supplier,
             'items' => $order->items,
             'office' => $order->office,
+            // 直送のときだけ入る。null なら納入先は発注元の営業所
+            'destination' => $order->shippingDestination,
             'company' => config('company'),
             // 担当者＝いま出力した人。再発行なら再発行した人の氏名が入る
             // （業者からの問い合わせ先は「その発注書を出した人」であってほしいため）

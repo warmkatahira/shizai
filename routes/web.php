@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\MaterialController;
 use App\Http\Controllers\Admin\OfficeController;
+use App\Http\Controllers\Admin\ShippingDestinationController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\UnitController;
 use App\Http\Controllers\Admin\UserController;
@@ -133,6 +134,15 @@ Route::middleware(['auth', 'password.changed'])->group(function () {
             Route::get('offices-export', [OfficeController::class, 'export'])->name('offices.export');
             Route::post('offices-import', [OfficeController::class, 'import'])->name('offices.import');
             Route::resource('offices', OfficeController::class)->except(['show', 'index']);
+        });
+
+        // 直送先（発注申請で自営業所以外へ送るときの送り先）
+        Route::get('shipping_destinations', [ShippingDestinationController::class, 'index'])
+            ->middleware('master:shipping_destinations')->name('shipping_destinations.index');
+        Route::middleware('master:shipping_destinations,edit')->group(function () {
+            Route::get('shipping_destinations-export', [ShippingDestinationController::class, 'export'])->name('shipping_destinations.export');
+            Route::post('shipping_destinations-import', [ShippingDestinationController::class, 'import'])->name('shipping_destinations.import');
+            Route::resource('shipping_destinations', ShippingDestinationController::class)->except(['show', 'index']);
         });
 
         // ユーザー管理は権限の付与・パスワード変更ができるので管理者のみ。

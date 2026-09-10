@@ -151,7 +151,13 @@
                     {{-- 行のどこを押しても詳細へ（処理は layouts/app.blade.php の共通スクリプト） --}}
                     <tr data-href="{{ route('orders.show', $order) }}"
                         class="cursor-pointer hover:bg-accent-light/40 transition-colors">
-                        <td class="px-4 py-3 font-medium">#{{ $order->id }}</td>
+                        {{-- 直送は納入先が営業所と違うので、一覧でも分かるように印を付ける --}}
+                        <td class="px-4 py-3 font-medium whitespace-nowrap">
+                            #{{ $order->id }}
+                            @if ($order->isDirectShipping())
+                                <span class="ml-1 inline-block rounded bg-amber-100 text-amber-800 text-xs px-1.5 py-0.5">直送</span>
+                            @endif
+                        </td>
                         <td class="px-4 py-3 text-gray-500">{{ $order->created_at->format('Y/m/d H:i') }}</td>
                         {{-- 希望納期。まだ発注していないもののうち、過ぎているもの・迫っているものだけ
                              色を付けて気づかせる（判定は Order::deliveryUrgency）。

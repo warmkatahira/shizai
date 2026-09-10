@@ -46,13 +46,27 @@
     .fill-box { border: 0.6pt solid #000; padding: 8px; height: 110px; vertical-align: top; }
     .fill-box div { padding: 1px 0; }
 
+    /* 直送の申請だけ、左上に黒地・白抜きの「直送」ラベルを出す。
+       納入先が発注元の営業所ではないことを、業者が最初に気づけるようにするため。
+       文字の周りの余白を四方そろえたいので、幅を決め打ちせず
+       中身に合わせて縮む1セルの表にしている（mPDF は inline-block を解さない）。
+       letter-spacing は最後の字のうしろにも空きを作るので、text-indent で左に足して中央に見せる */
+    .direct-tag { width: auto; }
+    .direct-tag td { background: #000; color: #fff; font-size: 13pt;
+                     padding: 8px; letter-spacing: 4pt; text-indent: 4pt; }
+
     .page-no { text-align: right; font-size: 8pt; color: #333; padding-top: 3px; }
 </style>
 
 {{-- 発注NO・発注日・希望納期はタイトルより上の右端に置く（希望納期は発注単位で1つ） --}}
 <table style="width: 100%; margin-bottom: 6px;">
     <tr>
-        <td style="width: 62%;"></td>
+        {{-- 直送のときだけ左上に「直送」のラベル（右上は発注NO・納期の伝票情報が入っている） --}}
+        <td style="width: 62%; vertical-align: top;">
+            @if ($destination)
+                <table class="direct-tag"><tr><td>直送</td></tr></table>
+            @endif
+        </td>
         <td style="width: 38%;">
             <table class="meta">
                 <tr><th>発注NO</th><td>{{ $order->purchaseOrderNo() }}</td></tr>
@@ -130,12 +144,21 @@
             <td style="width: 48%;"><div class="section-title">備考欄</div></td>
         </tr>
         <tr>
-            {{-- 納入先：実際に納入する営業所だけ。項目ごとに改行して縦に並べる --}}
+            {{-- 納入先：実際に届ける先だけ。項目ごとに改行して縦に並べる。
+                 直送のときは自社名を出さず、直送先マスタの内容をそのまま印字する
+                 （送り先が客先・他社の倉庫のこともあるため）。 --}}
             <td class="fill-box">
-                <div>{{ $company['name'] }}　{{ $office->name }}</div>
-                <div>@if ($office->postal_code)〒{{ $office->postal_code }}　@endif{{ $office->address }}</div>
-                <div>TEL：{{ $office->tel ?: '—' }}</div>
-                <div>FAX：{{ $office->fax ?: '—' }}</div>
+                @if ($destination)
+                    <div>{{ $destination->name }}　※直送</div>
+                    <div>{{ $destination->addressText() }}</div>
+                    <div>TEL：{{ $destination->tel ?: '—' }}</div>
+                    <div>FAX：{{ $destination->fax ?: '—' }}</div>
+                @else
+                    <div>{{ $company['name'] }}　{{ $office->name }}</div>
+                    <div>@if ($office->postal_code)〒{{ $office->postal_code }}　@endif{{ $office->address }}</div>
+                    <div>TEL：{{ $office->tel ?: '—' }}</div>
+                    <div>FAX：{{ $office->fax ?: '—' }}</div>
+                @endif
             </td>
             <td></td>
             {{-- 備考欄：業者への連絡事項。mPDF は white-space:pre-wrap を解さないので改行は <br> にする --}}

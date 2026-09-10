@@ -35,6 +35,7 @@ class User extends Authenticatable
         'units' => '単位',
         'suppliers' => '業者',
         'offices' => '営業所',
+        'shipping_destinations' => '直送先',
     ];
 
     /** 権限のラベル（画面表示用） */

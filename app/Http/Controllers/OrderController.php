@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Material;
 use App\Models\Office;
 use App\Models\Order;
+use App\Models\ShippingDestination;
 use App\Models\Supplier;
 use App\Models\User;
 use App\Http\Controllers\Concerns\FiltersByPeriod;
@@ -15,6 +16,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -78,7 +80,7 @@ class OrderController extends Controller
 
         // 並び順も画面と揃える（見えている順にそのままCSVへ出す）
         $orders = $this->applySort($this->filteredOrders($request), $request)
-            ->with(['office', 'supplier', 'requester', 'managerApprover', 'reviewer', 'orderedBy', 'rejectedBy', 'returnedBy', 'items'])
+            ->with(['office', 'supplier', 'shippingDestination', 'requester', 'managerApprover', 'reviewer', 'orderedBy', 'rejectedBy', 'returnedBy', 'items'])
             ->withCount('items')
             ->get();
 
@@ -93,7 +95,7 @@ class OrderController extends Controller
 
             fputcsv($out, [
                 // 申請
-                '申請番号', '申請日', '営業所', '発注業者', '発注者', '申請アカウント', 'ステータス',
+                '申請番号', '申請日', '営業所', '納入先', '発注業者', '発注者', '申請アカウント', 'ステータス',
                 // 承認・発注・却下の履歴
                 '所長承認者', '所長承認日時',
                 '総務承認者', '総務承認日時',
@@ -113,6 +115,8 @@ class OrderController extends Controller
                     $order->id,
                     $datetime($order->created_at),
                     $order->office->name,
+                    // 直送は送り先が分かるように「直送：〜」と書く（自営業所へ納入なら営業所名）
+                    $order->isDirectShipping() ? '直送：' . $order->shipToName() : $order->office->name,
                     $order->supplier?->name ?? '',
                     $order->requester_name ?? '',
                     $order->requester->name,
@@ -270,6 +274,7 @@ class OrderController extends Controller
             'supplier' => $supplier,
             'materials' => $supplier ? $this->activeMaterialsOf($supplier) : collect(),
             'quantities' => [], // 新規なので初期数量はなし
+            'shippingDestinations' => ShippingDestination::options(),
         ]);
     }
 
@@ -298,6 +303,8 @@ class OrderController extends Controller
             'supplier' => $supplier,
             'materials' => $supplier ? $this->activeMaterialsOf($supplier) : collect(),
             'quantities' => $quantities,
+            // いま選ばれている直送先が後から無効にされていても、選択が消えないよう残す
+            'shippingDestinations' => ShippingDestination::options($order->shipping_destination_id),
         ]);
     }
 
@@ -338,6 +345,7 @@ class OrderController extends Controller
             $order = Order::create([
                 'office_id' => $user->office_id,
                 'supplier_id' => $validated['supplier_id'],
+                'shipping_destination_id' => $this->shippingDestinationId($validated),
                 'requested_by' => $user->id,
                 'requester_name' => $validated['requester_name'],
                 'status' => $this->initialStatusFor($user),
@@ -379,6 +387,7 @@ class OrderController extends Controller
         DB::transaction(function () use ($order, $user, $validated, $items) {
             $order->update([
                 'supplier_id' => $validated['supplier_id'],
+                'shipping_destination_id' => $this->shippingDestinationId($validated),
                 // 再申請したアカウントを申請者にする（申請の内容はこの人が出したものになる）
                 'requested_by' => $user->id,
                 'requester_name' => $validated['requester_name'],
@@ -424,6 +433,17 @@ class OrderController extends Controller
             ->with('status', "発注申請 #{$id} を削除しました。");
     }
 
+    /**
+     * 納入先の入力から、保存する直送先IDを決める（新規申請・再申請で共通）。
+     * 自営業所へ納入するなら null（＝発注元の営業所へ届ける）。
+     */
+    private function shippingDestinationId(array $validated): ?int
+    {
+        return $validated['ship_to'] === 'direct'
+            ? (int) $validated['shipping_destination_id']
+            : null;
+    }
+
     /** 申請者が所長なら所長承認を飛ばして総務へ、そうでなければ所長承認待ち */
     private function initialStatusFor(User $user): string
     {
@@ -437,6 +457,9 @@ class OrderController extends Controller
     {
         return $request->validate([
             'supplier_id' => ['required', 'exists:suppliers,id'],
+            // 納入先。既定は自営業所（office）。直送（direct）を選んだときだけ直送先を選ぶ
+            'ship_to' => ['required', Rule::in(['office', 'direct'])],
+            'shipping_destination_id' => ['nullable', 'required_if:ship_to,direct', 'exists:shipping_destinations,id'],
             'requester_name' => ['required', 'string', 'max:50'],
             'note' => ['nullable', 'string', 'max:1000'],
             'supplier_note' => ['nullable', 'string', 'max:1000'],
@@ -448,8 +471,11 @@ class OrderController extends Controller
             'quantities.*' => ['nullable', 'integer', 'min:0', 'max:999999'],
         ], [
             'desired_delivery_date.after' => '納入希望日は明日以降の日付を選んでください。',
+            'shipping_destination_id.required_if' => '直送を選んだ場合は、直送先を選んでください。',
         ], [
             'supplier_id' => '発注業者',
+            'ship_to' => '納入先',
+            'shipping_destination_id' => '直送先',
             'requester_name' => '発注者の氏名',
             'note' => '備考',
             'supplier_note' => '業者への連絡事項',
@@ -562,7 +588,7 @@ class OrderController extends Controller
     {
         $this->authorizeView($request, $order);
 
-        $order->load(['office', 'supplier', 'requester', 'managerApprover', 'reviewer', 'rejectedBy', 'returnedBy', 'orderedBy', 'postOrderNoteUpdatedBy', 'items.material']);
+        $order->load(['office', 'supplier', 'shippingDestination', 'requester', 'managerApprover', 'reviewer', 'rejectedBy', 'returnedBy', 'orderedBy', 'postOrderNoteUpdatedBy', 'items.material']);
 
         $user = $request->user();
 

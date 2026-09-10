@@ -99,9 +99,15 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
     - 3辺計から機械的に決まるものではなく運用で分かる値なので**手入力**。任意（`nullable` / 10文字）
   - unit（単位） / unit_price（単価） / min_lot_qty ＋ min_lot_unit（最低ロット。「2700枚」を数量と単位に分けて保持）
   - has_imprint（名入れフラグ） / note（備考） / is_active
+- `shipping_destinations`（直送先マスタ） … name/postal_code/address/tel/fax/sort_order/is_active。`orders.shipping_destination_id` で参照
+  - **納入先が自営業所以外になるときの送り先**（客先・他社の倉庫など）。**全営業所で共通**（どの営業所からも同じ一覧が出る）
+  - **住所だけ必須**。発注書の【納入先】欄にそのまま印字するため。電話・FAXは任意
+  - 過去の申請が指しているものは削除できない（無効にする）。無効にすると申請のプルダウンから消えるだけで、過去の申請の表示は変わらない
 - `orders`（発注ヘッダー） + `order_items`（明細）
   - **明細は申請時点の情報をスナップショット保存**（material_name / category_name / supplier_name / unit / unit_price / 寸法 / 最低ロット）。マスタが後で変わっても過去の申請・集計・発注書は不変。
   - `orders.supplier_id`＝発注先の業者（1申請＝1業者）／`orders.requester_name`＝発注者の氏名（手入力）
+  - `orders.shipping_destination_id`＝納入先。**null＝発注元の営業所へ納入**（普段はこちら）、値が入っていれば**直送**。
+    判定は `Order::isDirectShipping()`、表示名は `Order::shipToName()`（コントローラー・ビューで同じものを使う）
   - 備考は2種類。`note`＝**社内メモ**（所長・総務向け。発注書には出ない） / `supplier_note`＝**業者への連絡事項**（発注書の備考欄に印字）
   - `desired_delivery_date`＝納入希望日（申請時に**必須**。発注書に印字）。列は `nullable`（必須にする前のデータが残るため）
   - 差し戻しは `return_reason` / `returned_by` / `returned_at`。再申請しても消さない（経緯の記録）
@@ -110,7 +116,7 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
 - ヘッダーは `resources/views/layouts/partials/header.blade.php`。**上部固定＋半透明＋ぼかし**（`sticky top-0` / `bg-white/85` / `backdrop-blur`）
   - ロゴのマークは**ファビコン（`public/favicon.svg`）を `<img>` で使い回す**（同じ絵を2箇所に持たない）
   - 現在いるページのリンクはベージュの塗り（`aria-current="page"` も付ける）。判定は `request()->routeIs()`
-  - マスタは5つあってナビが渋滞するので、**`<details>` のドロップダウン**にまとめている（JSフレームワークは使わない）。
+  - マスタは6つあってナビが渋滞するので、**`<details>` のドロップダウン**にまとめている（JSフレームワークは使わない）。
     スマホはハンバーガーで同じリンクを畳む。外クリック・Esc で閉じる処理は `layouts/app.blade.php` の共通スクリプト
   - **一覧の表はすべて枠内スクロール**（`overflow-auto max-h-[70vh]`）なので、`thead` の `sticky` は `top-0` でよい。
     ページごとスクロールする表を作る場合だけ、固定ヘッダーの高さぶん `top-16` で止める必要がある
@@ -160,6 +166,7 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
     - 並び順はクエリ文字列に乗るので、ページ送り・CSV・「一覧に戻る」にそのまま引き継がれる。**CSVも画面と同じ並び**
   - **詳細から「一覧に戻る」で検索結果に戻る**。直前の検索条件をセッションに覚えている（`Concerns\RemembersLastSearch`）
   - CSVには承認履歴（所長承認者/日時・総務承認者/日時・特例承認・発注書作成者/発注日・差し戻し者/日時/理由・却下者/却下理由）も出る。CSVは**ページ分割の影響を受けず全件**出力
+  - **直送の申請は申請番号の横に「直送」のタグ**が出る（納入先が営業所と違うため）。CSVには「納入先」列があり、直送は「直送：〜」と書く
 - `/orders/create` 発注申請（営業所ユーザーのみ）
   - **1申請＝1業者**。発注業者をプルダウンで選ぶと、その業者の有効な資材だけが並ぶ（`onchange` で GET 再読込。JSフレームワークは使わない）
   - 数量を入れた資材だけが申請される。他業者の資材を混ぜられないよう `store` 側でも業者で絞って検証する
@@ -173,11 +180,19 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
     - **入力必須**。空だと総務が発注の優先順位を判断できず、一覧の希望納期も意味をなさないため
     - **明日以降しか選べない**（当日納品は業者の締めに間に合わないため）。画面は `min` 属性、`store`/`update` は `after:today` で検証。
       差し戻しの再申請で元の希望日が過去になっている場合は、初期値を空にして選び直させる（必須なので選び直しになる）
+  - **納入先は「自営業所」か「直送」のどちらか**（ラジオ。既定は自営業所）。
+    直送を選んだときだけ直送先マスタのプルダウンが出て、選んだ直送先の住所がその場に表示される
+    - 送信されるのは `ship_to`（`office` / `direct`）と `shipping_destination_id`。
+      自営業所のときはプルダウンを `disabled` にするので直送先は送られない。`store`/`update` でも
+      `required_if:ship_to,direct` で検証し、自営業所なら `null` を保存する（`OrderController::shippingDestinationId()`）
+    - 選択肢は**有効な直送先だけ**。ただし再申請では、後から無効にされた直送先でも選択が消えないよう
+      いま選ばれているものは残す（`ShippingDestination::options($keepId)`）
 - `/orders/{order}/edit` 差し戻された申請の修正・再申請（営業所ユーザー。`Order::canBeEditedBy` で自営業所＋差し戻し中のみ）
   - 画面は新規申請と同じ（`orders/_form.blade.php` を共有）。**業者も選び直せる**（差し戻しの理由が「業者違い」のこともあるため）。
     業者を変えると数量はクリアされる（他業者の資材は混ぜられないので当然そうなる）
   - 数量の初期値は今の明細。ロット未満は `update` 側でも弾く（`store` と同じ `buildItemSnapshots` を通す）
 - `/orders/{order}` 詳細＋承認/差し戻し/却下アクション＋**発注書PDF**のボタン＋（差し戻し中・却下なら）修正・削除のボタン
+  - 基本情報に**納入先**を出す。直送なら「直送」タグ＋直送先名＋住所、そうでなければ営業所名＋「自営業所へ納入」
   - 右側に**承認の経緯（タイムライン）**。申請 → 所長承認 → 総務承認 → 発注書の作成を縦に並べ、「いまここ」を出す。
     段の組み立ては `Order::approvalSteps()`（表示専用。列に入っている日時と担当者を並べ替えているだけ）、
     描画は `orders/partials/approval-timeline.blade.php`。承認者と日時は基本情報から外してここに集約している
@@ -193,7 +208,9 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
     - GETは**発注済のみ**・状態を変えない。だから先読みや誤クリックで発注済になる心配がない。再発行もこちら（ただのリンク）
     - 発注待ちのままGETを直接叩いても403（発注書を出す＝発注する、なので必ずPOSTを通す）
   - 発注NO＝`orders.id`（`Order::purchaseOrderNo()`）／発注日＝`ordered_at`／自社の連絡先＝`config/company.php`（本社）
-  - 納入先＝発注元の営業所。備考欄＝`orders.supplier_note`（**業者向け**。社内メモの `orders.note` は印字しない）
+  - 納入先＝発注元の営業所。**直送の申請だけは直送先マスタの内容を印字する**（`直送先名　※直送` ＋ 住所・TEL・FAX）。
+    直送のときは**自社名を出さない**（送り先が客先・他社の倉庫のこともあるため）
+  - 備考欄＝`orders.supplier_note`（**業者向け**。社内メモの `orders.note` は印字しない）
   - 宛名は `Supplier::formalName()`＝正式名称（`formal_name`。空なら `name`）。**正式名称を使うのはここだけ**
   - PDFは **mPDF**。日本語フォントは `storage/fonts/ipaexg.ttf`（IPAexゴシック / IPAフォントライセンス）をリポジトリに同梱し、サブセット埋め込みしている
 - `/reports` 発注集計（`ReportController`）
@@ -216,7 +233,7 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
 - `/materials` 資材一覧（**閲覧のみ・全ログインユーザー**。`MaterialCatalogController`）
   - 営業所・総務が「どの業者に何がいくらであるか」を確認するための読み取り専用。編集は管理者のみ
   - ナビには管理者以外に表示（管理者はマスタ管理の「資材」から見られるため）
-- `/admin/{offices,suppliers,categories,units,materials}` マスタ管理（編集は**管理者と総務**）
+- `/admin/{offices,suppliers,categories,units,materials,shipping_destinations}` マスタ管理（編集は**管理者と総務**）
   - **誰が何をできるかはアカウントごとに決める**（判定は `User::canViewMaster()` / `canEditMaster()`）。
     管理者・総務は常に全マスタを閲覧・編集できる。それ以外の権限は、ユーザー管理でオンにしたものだけ
     - ルートは**マスタごとに「閲覧」と「編集」で分けてある**
@@ -229,10 +246,10 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
   - **ユーザー管理はトグルの対象にしない**（管理者だけのまま。権限の付与ができるため）
   - 資材の **状態は初期値が「有効」**（普段使うのは有効な資材だけ）。CSV出力にも同じ初期値がかかる。
     「すべて」は空文字で送られて `null` になるので、値ではなく**キーの有無**で初回表示か判定する（`applyDefaultStatus`）
-  - **5つのマスタすべてが CSV出力・CSV取り込みに対応**（`/admin/{名前}-export` / `-import`）。
+  - **6つのマスタすべてが CSV出力・CSV取り込みに対応**（`/admin/{名前}-export` / `-import`）。
     **ユーザーマスタだけは対象外**（権限の付与を伴うため、画面から1件ずつ操作する）
     - 共通処理は `App\Support\MasterCsv`（抽象クラス）。マスタごとの差分は継承先
-      （`OfficeCsv` / `SupplierCsv` / `CategoryCsv` / `UnitCsv` / `MaterialCsv`）が
+      （`OfficeCsv` / `SupplierCsv` / `CategoryCsv` / `UnitCsv` / `MaterialCsv` / `ShippingDestinationCsv`）が
       `headers()` / `row()` / `attributes()` で持つ
     - 入口は `Concerns\HandlesMasterCsv`（`streamCsv()` / `importCsv()`）。各コントローラーの export/import はこれを呼ぶだけ
     - 列の位置で読むので、**見出し行がCSV出力と違うファイルは取り込まない**（`MasterCsv::assertHeaderRow`）。
@@ -251,7 +268,7 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
       （`<label>` が `<input type="file">` を包んでいるので、JSが動かなくてもクリックで選べる。
       落とされたファイルを input に入れる処理だけ `layouts/app.blade.php` の共通スクリプトにある）
 - `/admin/users` ユーザー管理（**管理者のみ**。権限の付与・パスワード変更ができるため）
-  - **「マスタの権限」のトグル**。5つのマスタ（資材・カテゴリ・単位・業者・営業所＝`User::MASTERS`）×
+  - **「マスタの権限」のトグル**。6つのマスタ（資材・カテゴリ・単位・業者・営業所・直送先＝`User::MASTERS`）×
     **閲覧・編集の2列**。閲覧＝一覧を見るだけ、編集＝そのマスタは総務と同じ操作ができる
     - **管理者・総務のときは全部が常時オン＋操作不可**（全マスタを扱える立場なので外させない）。
       権限のプルダウンに合わせてJSで切り替える。送られてこないので保存側でも全部入れる（`UserController::validateData`）
@@ -311,12 +328,12 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
 - `App\Http\Controllers\Concerns\RemembersLastSearch` … 直前の検索条件をセッションに覚えて一覧へ戻す。
   発注一覧（詳細から「一覧に戻る」）と資材マスタ（編集のキャンセル・保存後の戻り先）で共有。
   **条件はクエリ文字列のまま持つ**（配列だと「すべて＝空」が null になって消え、既定値が再適用される）
-- `{Office,Supplier,Category,Unit,Material}::validationRules($ignoreId)` / `attributeNames()` …
+- `{Office,Supplier,Category,Unit,Material,ShippingDestination}::validationRules($ignoreId)` / `attributeNames()` …
   マスタ1件の入力チェック。**編集フォームとCSV取り込みで共有**（コントローラーに規則を書かない）
 - `App\Support\MasterCsv` … マスタCSVの共通処理（読み込み・ID突合・検証・重複チェック・トランザクション）。
   マスタごとの列と変換だけ継承先が持つ
-- `App\Http\Controllers\Concerns\HandlesMasterCsv` … CSV出力・取り込みの入口。5つのマスタで共有
-- `resources/views/admin/partials/csv-panel.blade.php` … CSV取り込みパネル（説明文＋ドロップ枠）。5つのマスタで共有
+- `App\Http\Controllers\Concerns\HandlesMasterCsv` … CSV出力・取り込みの入口。6つのマスタで共有
+- `resources/views/admin/partials/csv-panel.blade.php` … CSV取り込みパネル（説明文＋ドロップ枠）。6つのマスタで共有
 - `App\Support\Money::yen()` … 金額表示（小数がある時だけ小数を出す）
 - `App\Support\OrderNotifier` … 通知先の振り分け
 - `OrderController::validateOrderInput()` / `buildItemSnapshots()` … 申請フォームの検証と明細の組み立て。新規申請（`store`）と再申請（`update`）で共有
@@ -357,7 +374,9 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
 - **マイグレーションはテーブルごとに1ファイル**。列を足すときは `add_..._to_..._table` を新設せず、
   そのテーブルの `create_..._table` に直接書く（シーダーと同じ「1テーブル1ファイル」）。
   - 例外はデータ変換だけのもの（`..._shift_timestamps_to_jst`）。テーブル定義ではないので単独で残す
-  - `materials.unit_id` の外部キーだけは `create_units_table` 側にある（materials が units より先に作られるため）
+  - `materials.unit_id` / `orders.shipping_destination_id` の外部キーは、参照先のテーブルを作るマイグレーション側で張る
+    （参照元のテーブルのほうが先に作られるため。列だけ参照元の `create_..._table` に用意しておく）。
+    `create_shipping_destinations_table` は、列がまだ無い既存のDB（本番）でも動くよう `Schema::hasColumn` で列も足す
   - **すでに動いているDBには効かない**。作り直せない環境（本番）に列を足すときは、
     先にそこへマイグレーションを流し切ってから統合するか、手で `ALTER TABLE` を当てる
   - **ファイル名は変えない**（`migrations` テーブルに実行済みの名前が残っているので、

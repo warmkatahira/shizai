@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * 発注申請（ヘッダー）モデル。
  */
 #[Fillable([
-    'office_id', 'supplier_id', 'requested_by', 'requester_name', 'status',
+    'office_id', 'supplier_id', 'shipping_destination_id', 'requested_by', 'requester_name', 'status',
     'note', 'supplier_note', 'desired_delivery_date',
     'manager_approved_by', 'manager_approved_at',
     'reviewed_by', 'reviewed_at', 'ordered_by', 'ordered_at',
@@ -72,6 +72,26 @@ class Order extends Model
     public function office(): BelongsTo
     {
         return $this->belongsTo(Office::class);
+    }
+
+    /** 直送先（null＝発注元の営業所へ納入） */
+    public function shippingDestination(): BelongsTo
+    {
+        return $this->belongsTo(ShippingDestination::class);
+    }
+
+    /** 自営業所ではなく直送先へ届ける申請か */
+    public function isDirectShipping(): bool
+    {
+        return $this->shipping_destination_id !== null;
+    }
+
+    /** 納入先の名前（直送なら直送先名、そうでなければ発注元の営業所名） */
+    public function shipToName(): string
+    {
+        return $this->isDirectShipping()
+            ? ($this->shippingDestination?->name ?? '（削除された直送先）')
+            : $this->office->name;
     }
 
     /** 申請者 */

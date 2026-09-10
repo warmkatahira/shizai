@@ -53,6 +53,9 @@ return [
         'admin.materials.update' => ['action' => 'master.material_updated', 'label' => '資材の更新', 'category' => 'master', 'default' => true],
         'admin.materials.destroy' => ['action' => 'master.material_deleted', 'label' => '資材の削除', 'category' => 'master', 'default' => true],
         'admin.materials.import' => ['action' => 'master.material_imported', 'label' => '資材CSVの取り込み', 'category' => 'master', 'default' => true],
+        'admin.shipping_destinations.store' => ['action' => 'master.shipping_destination_created', 'label' => '直送先の登録', 'category' => 'master', 'default' => true],
+        'admin.shipping_destinations.update' => ['action' => 'master.shipping_destination_updated', 'label' => '直送先の更新', 'category' => 'master', 'default' => true],
+        'admin.shipping_destinations.destroy' => ['action' => 'master.shipping_destination_deleted', 'label' => '直送先の削除', 'category' => 'master', 'default' => true],
 
         // ユーザー
         'admin.users.store' => ['action' => 'user.created', 'label' => 'ユーザーの登録', 'category' => 'user', 'default' => true],

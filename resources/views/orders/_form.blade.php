@@ -158,8 +158,53 @@
                 </span>
             </div>
 
-            {{-- ステップ3：申請者・納期・連絡事項 --}}
+            {{-- ステップ3：納入先・申請者・納期・連絡事項 --}}
             <div class="bg-white shadow rounded-lg p-6 mb-6 max-w-2xl space-y-4">
+                {{-- 納入先。既定は自営業所。「直送」を選んだときだけ直送先マスタから送り先を選ぶ --}}
+                @php
+                    $ownOffice = $order?->office ?? auth()->user()->office;
+                    $shipTo = old('ship_to', $order?->shipping_destination_id ? 'direct' : 'office');
+                    $shipToId = old('shipping_destination_id', $order?->shipping_destination_id);
+                @endphp
+                <div data-ship-to>
+                    <span class="block text-sm font-medium text-gray-700 mb-1">納入先 <span class="text-red-500">*</span></span>
+                    <div class="space-y-2">
+                        <label class="flex items-center gap-2 text-sm cursor-pointer">
+                            <input type="radio" name="ship_to" value="office" {{ $shipTo === 'office' ? 'checked' : '' }}
+                                   class="text-accent-dark focus:ring-accent-dark">
+                            <span>自営業所（{{ $ownOffice?->name ?? '—' }}）へ納入</span>
+                        </label>
+                        <label class="flex items-center gap-2 text-sm cursor-pointer">
+                            <input type="radio" name="ship_to" value="direct" {{ $shipTo === 'direct' ? 'checked' : '' }}
+                                   class="text-accent-dark focus:ring-accent-dark">
+                            <span>直送（自営業所以外へ届ける）</span>
+                        </label>
+
+                        {{-- 直送を選んだときだけ出す。選んでいない間は disabled なので送信もされない --}}
+                        <div data-direct-fields class="{{ $shipTo === 'direct' ? '' : 'hidden' }} pl-6">
+                            <select name="shipping_destination_id" data-direct-select
+                                    {{ $shipTo === 'direct' ? '' : 'disabled' }}
+                                    class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">
+                                <option value="">（直送先を選択してください）</option>
+                                @foreach ($shippingDestinations as $destination)
+                                    <option value="{{ $destination->id }}"
+                                            data-address="{{ $destination->addressText() }}"
+                                            {{ (string) $shipToId === (string) $destination->id ? 'selected' : '' }}>
+                                        {{ $destination->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <p class="text-xs text-gray-400 mt-1" data-direct-address>
+                                @if ($shippingDestinations->isEmpty())
+                                    直送先が登録されていません。総務・管理者に直送先マスタへの登録を依頼してください。
+                                @else
+                                    選んだ直送先の住所が、発注書の【納入先】欄に印字されます。
+                                @endif
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label for="requester_name" class="block text-sm font-medium text-gray-700 mb-1">
@@ -333,6 +378,39 @@
                         e.returnValue = ''; // 文言はブラウザ側が決める（指定しても表示されない）
                     }
                 });
+            })();
+        </script>
+
+        {{-- 納入先：「直送」を選んだときだけ直送先のプルダウンを出す。
+             自営業所のときは disabled にして、直送先が送信されないようにする --}}
+        <script>
+            (function () {
+                const box = document.querySelector('[data-ship-to]');
+                if (! box) return;
+
+                const radios = box.querySelectorAll('input[name="ship_to"]');
+                const fields = box.querySelector('[data-direct-fields]');
+                const select = box.querySelector('[data-direct-select]');
+                const note = box.querySelector('[data-direct-address]');
+                const defaultNote = note.textContent.trim();
+
+                // 選んだ直送先の住所をその場に出す（間違った送り先を選んでいないか確かめられるように）
+                const showAddress = () => {
+                    const address = select.selectedOptions[0]?.dataset.address;
+                    note.textContent = address || defaultNote;
+                };
+
+                const sync = () => {
+                    const direct = box.querySelector('input[name="ship_to"]:checked')?.value === 'direct';
+                    fields.classList.toggle('hidden', ! direct);
+                    select.disabled = ! direct;
+                    select.required = direct;
+                    if (direct) showAddress();
+                };
+
+                radios.forEach((radio) => radio.addEventListener('change', sync));
+                select.addEventListener('change', showAddress);
+                sync();
             })();
         </script>
     @endif
