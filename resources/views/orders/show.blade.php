@@ -64,8 +64,15 @@
                     <dd class="font-medium">{{ $order->office->name }}</dd>
                 </div>
                 <div>
-                    <dt class="text-gray-500">発注業者</dt>
-                    <dd class="font-medium">{{ $order->supplier?->name ?? '—' }}</dd>
+                    <dt class="text-gray-500">発注業者（発注方法）</dt>
+                    {{-- 発注方法（メール／電話／FAX／web）は業者ごとに決まっているので、
+                         総務がどう発注すればよいか分かるよう業者名に添える --}}
+                    <dd class="font-medium">
+                        {{ $order->supplier?->name ?? '—' }}
+                        @if ($order->supplier?->orderMethodLabel())
+                            <span class="text-gray-500 font-normal">（{{ $order->supplier->orderMethodLabel() }}）</span>
+                        @endif
+                    </dd>
                 </div>
                 {{-- 納入先。直送は営業所と違う場所へ届くので、住所まで出して取り違えを防ぐ --}}
                 <div>
