@@ -71,7 +71,7 @@
             <table class="meta">
                 <tr><th>発注NO</th><td>{{ $order->purchaseOrderNo() }}</td></tr>
                 <tr><th>発注日</th><td>{{ ($order->ordered_at ?? now())->format('Y/m/d') }}</td></tr>
-                <tr class="due"><th>希望納期</th><td>{{ $order->desired_delivery_date?->format('Y/m/d') ?? '—' }}</td></tr>
+                <tr class="due"><th>希望納期</th><td>{{ $order->deliveryText() ?? '—' }}</td></tr>
             </table>
         </td>
     </tr>

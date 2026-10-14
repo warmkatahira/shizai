@@ -97,7 +97,7 @@ class OrderController extends Controller
                 // 申請
                 '申請番号', '申請日', '営業所', '納入先', '発注業者', '発注者', '申請アカウント', 'ステータス',
                 // 承認・発注・却下の履歴
-                '所長承認者', '所長承認日時',
+                '所長承認者', '所長承認日時', '所長による希望納期の変更', '所長のコメント',
                 '総務承認者', '総務承認日時',
                 '特例承認', '特例承認の理由',
                 '発注書作成者', '発注日',
@@ -124,6 +124,8 @@ class OrderController extends Controller
 
                     $order->managerApprover?->name ?? '',
                     $datetime($order->manager_approved_at),
+                    $order->manager_delivery_change ?? '',
+                    $order->manager_comment ?? '',
                     $order->reviewer?->name ?? '',
                     $datetime($order->reviewed_at),
                     $order->is_special_approval ? 'あり' : '',
@@ -136,7 +138,7 @@ class OrderController extends Controller
                     $order->rejectedBy?->name ?? '',
                     $order->reject_reason ?? '',
 
-                    $order->desired_delivery_date?->format('Y/m/d') ?? '',
+                    $order->deliveryText() ?? '',
                     $order->supplier_note ?? '',
                     $order->note ?? '',
                 ];
@@ -240,6 +242,10 @@ class OrderController extends Controller
                 array_keys(Order::STATUS_LABELS)),
             // withCount が付けた別名。orders の列ではないので修飾しない
             'items_count' => $query->orderBy('items_count', $direction),
+            // 「最短」は日付を持たないが一番急ぐので、早い順なら先頭・遅い順なら末尾に置く
+            'desired_delivery_date' => $query
+                ->orderBy('orders.is_delivery_asap', $direction === 'asc' ? 'desc' : 'asc')
+                ->orderBy('orders.desired_delivery_date', $direction),
             default => $query->orderBy('orders.' . $sort, $direction),
         };
 
@@ -351,7 +357,7 @@ class OrderController extends Controller
                 'status' => $this->initialStatusFor($user),
                 'note' => $validated['note'] ?? null,
                 'supplier_note' => $validated['supplier_note'] ?? null,
-                'desired_delivery_date' => $validated['desired_delivery_date'],
+                ...Order::deliveryAttributes($validated),
             ]);
 
             $order->items()->createMany($items);
@@ -394,10 +400,12 @@ class OrderController extends Controller
                 'status' => $this->initialStatusFor($user),
                 'note' => $validated['note'] ?? null,
                 'supplier_note' => $validated['supplier_note'] ?? null,
-                'desired_delivery_date' => $validated['desired_delivery_date'],
+                ...Order::deliveryAttributes($validated),
                 // 承認をやり直すので履歴を消す
                 'manager_approved_by' => null,
                 'manager_approved_at' => null,
+                'manager_comment' => null,
+                'manager_delivery_change' => null,
                 'reviewed_by' => null,
                 'reviewed_at' => null,
                 'is_special_approval' => false,
@@ -463,14 +471,12 @@ class OrderController extends Controller
             'requester_name' => ['required', 'string', 'max:50'],
             'note' => ['nullable', 'string', 'max:1000'],
             'supplier_note' => ['nullable', 'string', 'max:1000'],
-            // 納入希望日は必須（総務が発注の優先順位を判断できないため）。
-            // 明日以降しか選べない。当日納品は業者の締めに間に合わないため
-            // （画面の date 入力にも min を入れているが、迂回されても通らないようにここでも見る）
-            'desired_delivery_date' => ['required', 'date', 'after:today'],
+            // 納入希望日は「最短」か日付のどちらか必須（総務が発注の優先順位を判断できないため）
+            ...Order::deliveryRules(),
             'quantities' => ['array'],
             'quantities.*' => ['nullable', 'integer', 'min:0', 'max:999999'],
         ], [
-            'desired_delivery_date.after' => '納入希望日は明日以降の日付を選んでください。',
+            ...Order::deliveryMessages(),
             'shipping_destination_id.required_if' => '直送を選んだ場合は、直送先を選んでください。',
         ], [
             'supplier_id' => '発注業者',

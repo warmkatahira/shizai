@@ -166,12 +166,12 @@
                             @php
                                 $urgency = $order->deliveryUrgency();
                             @endphp
-                            @if ($order->desired_delivery_date)
+                            @if ($order->deliveryText())
                                 <span class="{{ match ($urgency) {
                                     'over' => 'text-red-600 font-bold',
                                     'soon' => 'text-orange-600 font-bold',
                                     default => 'text-gray-500',
-                                } }}">{{ $order->desired_delivery_date->format('Y/m/d') }}</span>
+                                } }}">{{ $order->deliveryText() }}</span>
                                 @if ($urgency === 'over')
                                     <span class="ml-1 text-xs text-red-600">超過</span>
                                 @endif

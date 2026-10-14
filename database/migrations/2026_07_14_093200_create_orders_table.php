@@ -36,10 +36,16 @@ return new class extends Migration
             // 所長承認
             $table->foreignId('manager_approved_by')->nullable()->constrained('users')->nullOnDelete()->comment('所長承認者');
             $table->timestamp('manager_approved_at')->nullable()->comment('所長承認日時');
+            // 所長が承認時に残す、この発注に対するコメント（任意）
+            $table->text('manager_comment')->nullable()->comment('所長承認時のコメント（この発注に対するもの）');
+            // 所長が承認時に希望納期を変えたときの「変更前 → 変更後」（例：2026/10/20 → 最短）。経緯の記録
+            $table->string('manager_delivery_change')->nullable()->comment('所長による希望納期の変更内容');
 
             $table->text('note')->nullable()->comment('申請者メモ（社内用。発注書には印字しない）');
             $table->text('supplier_note')->nullable()->comment('業者への連絡事項（発注書の備考欄に印字する）');
             $table->date('desired_delivery_date')->nullable()->comment('希望納期（発注書に印字）');
+            // 希望納期を「最短」にしたとき true（このとき desired_delivery_date は null）
+            $table->boolean('is_delivery_asap')->default(false)->comment('希望納期＝最短');
 
             // 総務の確認・発注
             $table->foreignId('reviewed_by')->nullable()->constrained('users')->nullOnDelete()->comment('総務の確認者');

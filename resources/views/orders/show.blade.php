@@ -103,12 +103,23 @@
                 </div>
             </dl>
 
-            @if ($order->desired_delivery_date || $order->note || $order->supplier_note)
+            @if ($order->deliveryText() || $order->note || $order->supplier_note)
                 <div class="mt-4 pt-4 border-t border-gray-100 text-sm space-y-3">
-                    @if ($order->desired_delivery_date)
+                    @if ($order->deliveryText())
                         <div>
                             <dt class="text-gray-500 mb-1">希望納期</dt>
-                            <dd>{{ $order->desired_delivery_date->format('Y/m/d') }}</dd>
+                            <dd>
+                                {{ $order->deliveryText() }}
+                                @if ($order->manager_delivery_change)
+                                    <span class="text-xs text-gray-400">（所長が変更：{{ $order->manager_delivery_change }}）</span>
+                                @endif
+                            </dd>
+                        </div>
+                    @endif
+                    @if ($order->manager_comment)
+                        <div>
+                            <dt class="text-gray-500 mb-1">所長のコメント</dt>
+                            <dd class="whitespace-pre-wrap">{{ $order->manager_comment }}</dd>
                         </div>
                     @endif
                     @if ($order->note)
@@ -262,17 +273,32 @@
 
             @include('admin.partials.errors')
 
+            {{-- 所長承認。総務へのコメント（任意）を残し、希望納期を直してから承認できる --}}
+            @if ($actions['managerApprove'])
+                <form method="POST" action="{{ route('orders.managerApprove', $order) }}" class="max-w-xl space-y-4"
+                      onsubmit="return confirm('この申請を承認して総務へ回しますか？')">
+                    @csrf
+                    <div>
+                        <label for="desired_delivery_date" class="block text-sm text-gray-600 mb-1">
+                            希望納期 <span class="text-xs text-gray-400">（申請者の指定：{{ $order->deliveryText() ?? '未指定' }}。必要なら変更してください）</span>
+                        </label>
+                        @include('orders.partials.delivery-input', [
+                            'asap' => (bool) old('is_delivery_asap', $order->is_delivery_asap),
+                            'date' => old('desired_delivery_date', $order->desired_delivery_date?->format('Y-m-d')),
+                        ])
+                    </div>
+                    <div>
+                        <label for="manager_comment" class="block text-sm text-gray-600 mb-1">コメント（任意）</label>
+                        <textarea id="manager_comment" name="manager_comment" rows="2" maxlength="1000"
+                                  class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-accent-dark focus:ring-1 focus:ring-accent-dark outline-none">{{ old('manager_comment') }}</textarea>
+                    </div>
+                    <button class="bg-accent hover:bg-accent-dark text-ink text-sm px-5 py-2 rounded-md">
+                        承認する（総務へ）
+                    </button>
+                </form>
+            @endif
+
             <div class="flex flex-wrap gap-3">
-                {{-- 所長承認 --}}
-                @if ($actions['managerApprove'])
-                    <form method="POST" action="{{ route('orders.managerApprove', $order) }}"
-                          onsubmit="return confirm('この申請を承認して総務へ回しますか？')">
-                        @csrf
-                        <button class="bg-accent hover:bg-accent-dark text-ink text-sm px-5 py-2 rounded-md">
-                            承認する（総務へ）
-                        </button>
-                    </form>
-                @endif
 
                 {{-- 総務による承認（＝発注確定） --}}
                 @if ($actions['affairsApprove'])

@@ -38,6 +38,10 @@ class OrderPendingApprovalNotification extends Notification
             // 直送は納入先が営業所と違うので、承認前に気づけるよう本文にも出す
             ->when($order->isDirectShipping(), fn (MailMessage $mail) => $mail->line("納入先：直送（{$order->shipToName()}）"))
             ->line("申請者：{$order->requester_name}")
+            ->line('希望納期：' . ($order->deliveryText() ?? '未指定')
+                . ($order->manager_delivery_change ? "（所長が変更：{$order->manager_delivery_change}）" : ''))
+            // 所長が承認時に残した、この発注に対するコメント
+            ->when(filled($order->manager_comment), fn (MailMessage $mail) => $mail->line("所長のコメント：{$order->manager_comment}"))
             ->line("点数：{$order->items->count()} 点 / 参考合計：¥" . number_format($order->totalPrice()))
             ->action('申請内容を確認する', route('orders.show', $order))
             ->line('内容をご確認のうえ、承認または却下をお願いします。');

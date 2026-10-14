@@ -19,17 +19,36 @@ use Illuminate\Http\Request;
  */
 class OrderApprovalController extends Controller
 {
-    /** 所長による一次承認：所長承認待ち → 総務承認待ち */
+    /**
+     * 所長による一次承認：所長承認待ち → 総務承認待ち
+     *
+     * 承認と同時に、この発注に対する所長のコメント（任意）を残し、希望納期を直せる。
+     * 希望納期を変えたときは「変更前 → 変更後」を経緯として残す。
+     */
     public function managerApprove(Request $request, Order $order): RedirectResponse
     {
         $user = $request->user();
         abort_unless($order->canBeManagerApprovedBy($user), 403, 'この申請を承認する権限がありません。');
 
-        $order->update([
+        $validated = $request->validate([
+            'manager_comment' => ['nullable', 'string', 'max:1000'],
+            ...Order::deliveryRules(),
+        ], Order::deliveryMessages(), [
+            'manager_comment' => 'コメント',
+            'desired_delivery_date' => '納入希望日',
+        ]);
+
+        $before = $order->deliveryText();
+        $order->fill(Order::deliveryAttributes($validated));
+        $after = $order->deliveryText();
+
+        $order->fill([
             'status' => Order::STATUS_PENDING_AFFAIRS,
             'manager_approved_by' => $user->id,
             'manager_approved_at' => now(),
-        ]);
+            'manager_comment' => $validated['manager_comment'] ?? null,
+            'manager_delivery_change' => $before !== $after ? ($before ?? '未指定') . ' → ' . $after : null,
+        ])->save();
 
         // 総務へ通知
         $order->load(['office', 'requester', 'items']);

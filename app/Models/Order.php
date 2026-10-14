@@ -12,8 +12,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 #[Fillable([
     'office_id', 'supplier_id', 'shipping_destination_id', 'requested_by', 'requester_name', 'status',
-    'note', 'supplier_note', 'desired_delivery_date',
-    'manager_approved_by', 'manager_approved_at',
+    'note', 'supplier_note', 'desired_delivery_date', 'is_delivery_asap',
+    'manager_approved_by', 'manager_approved_at', 'manager_comment', 'manager_delivery_change',
     'reviewed_by', 'reviewed_at', 'ordered_by', 'ordered_at',
     'is_special_approval', 'special_reason',
     'reject_reason', 'rejected_by',
@@ -53,7 +53,50 @@ class Order extends Model
             'post_order_note_updated_at' => 'datetime',
             'desired_delivery_date' => 'date',
             'is_special_approval' => 'boolean',
+            'is_delivery_asap' => 'boolean',
         ];
+    }
+
+    /**
+     * 希望納期の入力チェック（申請・再申請・所長承認で共通）。
+     * 「最短」にチェックがあれば日付は見ない。無ければ日付が必須で、明日以降のみ
+     * （当日納品は業者の締めに間に合わないため。画面の min を迂回されても通らないようにここでも見る）。
+     */
+    public static function deliveryRules(): array
+    {
+        return [
+            'is_delivery_asap' => ['boolean'],
+            'desired_delivery_date' => ['exclude_if:is_delivery_asap,1', 'required', 'date', 'after:today'],
+        ];
+    }
+
+    /** deliveryRules() のメッセージ */
+    public static function deliveryMessages(): array
+    {
+        return [
+            'desired_delivery_date.required' => '納入希望日を選ぶか、「最短」にチェックを入れてください。',
+            'desired_delivery_date.after' => '納入希望日は明日以降の日付を選んでください。',
+        ];
+    }
+
+    /** 検証済みの入力から、保存する希望納期の列を作る（最短なら日付は null） */
+    public static function deliveryAttributes(array $validated): array
+    {
+        $asap = (bool) ($validated['is_delivery_asap'] ?? false);
+
+        return [
+            'is_delivery_asap' => $asap,
+            'desired_delivery_date' => $asap ? null : $validated['desired_delivery_date'],
+        ];
+    }
+
+    /**
+     * 希望納期の表示（「最短」または「Y/m/d」。未入力なら null）。
+     * 画面・CSV・発注書・メールで同じ表記にするため、ここに集約する。
+     */
+    public function deliveryText(): ?string
+    {
+        return $this->is_delivery_asap ? '最短' : $this->desired_delivery_date?->format('Y/m/d');
     }
 
     /** 発注書に印字する発注NO（orders の連番） */
@@ -181,7 +224,13 @@ class Order extends Model
         $steps[] = match (true) {
             (bool) $this->manager_approved_at => [
                 'label' => '所長承認', 'name' => $this->managerApprover?->name,
-                'at' => $this->manager_approved_at, 'note' => null, 'state' => self::STEP_DONE,
+                'at' => $this->manager_approved_at,
+                // 希望納期の変更とコメントがあれば、承認の段にまとめて出す
+                'note' => collect([
+                    $this->manager_delivery_change ? "希望納期を変更：{$this->manager_delivery_change}" : null,
+                    $this->manager_comment,
+                ])->filter()->implode("\n") ?: null,
+                'state' => self::STEP_DONE,
             ],
             (bool) $this->is_special_approval => [
                 'label' => '所長承認', 'name' => null, 'at' => null,
@@ -281,13 +330,22 @@ class Order extends Model
 
     /**
      * 納入希望日の切迫度（表示専用）。'over'＝過ぎている / 'soon'＝3日以内 / null＝それ以外。
+     * 「最短」は急ぎなので 'soon' 扱い。
      *
      * まだ業者へ発注していないものだけが対象。発注済・却下は手を動かす必要が
      * 無いので、日付が過ぎていても色は付けない。
      */
     public function deliveryUrgency(): ?string
     {
-        if (! $this->desired_delivery_date || $this->isOrdered() || $this->isRejected()) {
+        if ($this->isOrdered() || $this->isRejected()) {
+            return null;
+        }
+
+        if ($this->is_delivery_asap) {
+            return 'soon';
+        }
+
+        if (! $this->desired_delivery_date) {
             return null;
         }
 

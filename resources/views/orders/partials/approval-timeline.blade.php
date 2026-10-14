@@ -66,9 +66,7 @@
             @endif
 
             @if ($step['note'])
-                <p class="text-xs {{ $step['state'] === \App\Models\Order::STEP_STOPPED ? 'text-orange-700' : 'text-gray-400' }} mt-0.5">
-                    {{ $step['note'] }}
-                </p>
+                <p class="text-xs {{ $step['state'] === \App\Models\Order::STEP_STOPPED ? 'text-orange-700' : 'text-gray-400' }} mt-0.5 whitespace-pre-wrap">{{ $step['note'] }}</p>
             @endif
         </li>
     @endforeach
