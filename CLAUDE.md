@@ -384,6 +384,9 @@ PHPはホストに入っていない。すべて Sail（Docker）経由で実行
 - **マイグレーションはテーブルごとに1ファイル**。列を足すときは `add_..._to_..._table` を新設せず、
   そのテーブルの `create_..._table` に直接書く（シーダーと同じ「1テーブル1ファイル」）。
   - 例外はデータ変換だけのもの（`..._shift_timestamps_to_jst`）。テーブル定義ではないので単独で残す
+  - もう1つの例外は**既存DB（本番）へ列を届けるための補助**（`..._add_delivery_asap_and_manager_comment_to_orders`）。
+    列の定義は `create_orders_table` に書いたうえで、`Schema::hasColumn` で**列が無いときだけ**足す。
+    新しいDBでは何もしない。`down` は空（消すと `create_..._table` が作った列まで消えるため）
   - `materials.unit_id` / `orders.shipping_destination_id` の外部キーは、参照先のテーブルを作るマイグレーション側で張る
     （参照元のテーブルのほうが先に作られるため。列だけ参照元の `create_..._table` に用意しておく）。
     `create_shipping_destinations_table` は、列がまだ無い既存のDB（本番）でも動くよう `Schema::hasColumn` で列も足す
