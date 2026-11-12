@@ -52,7 +52,7 @@ class OrderController extends Controller
      */
     public function index(Request $request): View
     {
-        $this->applyDefaultFilters($request);
+        $this->applyDefaultPeriod($request);
 
         // 詳細から「一覧に戻る」で同じ検索結果に戻れるよう、検索条件を覚えておく
         $this->rememberSearch($request);
@@ -76,7 +76,7 @@ class OrderController extends Controller
     /** 検索結果をCSVでダウンロード（明細1行ずつ、Excel対応のBOM付きUTF-8） */
     public function export(Request $request): StreamedResponse
     {
-        $this->applyDefaultFilters($request);
+        $this->applyDefaultPeriod($request);
 
         // 並び順も画面と揃える（見えている順にそのままCSVへ出す）
         $orders = $this->applySort($this->filteredOrders($request), $request)
@@ -157,17 +157,6 @@ class OrderController extends Controller
 
             fclose($out);
         }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);
-    }
-
-    /** 検索条件の初期値。メニューから開いた初回表示のときだけ効く */
-    private function applyDefaultFilters(Request $request): void
-    {
-        $this->applyDefaultPeriod($request);
-
-        // 総務は「自分が承認すべき申請」から見たいので、ステータスの初期値を総務承認待ちにする
-        if (! $request->has('status') && $request->user()->isGeneralAffairs()) {
-            $request->merge(['status' => Order::STATUS_PENDING_AFFAIRS]);
-        }
     }
 
     /**
